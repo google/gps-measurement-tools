@@ -34,10 +34,13 @@ if bGotLlaTrue
     llaRef = llaTrueDegDegM;
 else
     llaRef = llaMed;
+    %print median lla so user can use it as reference position if they want
+    fprintf('Median llaDegDegM = [%.7f %.7f %.2f]\n',llaMed)
 end
 
 %% plot ne errors vs llaTrueDegDegM --------------------------------------------
-nedM = Lla2Ned(gpsPvt.allLlaDegDegM,llaRef);
+nedM = Lla2Ned(gpsPvt.allLlaDegDegM,llaRef);%keep the NaNs in for the plot
+%so we see a break in the lines where there was no position
 h123=subplot(4,1,1:2);
 h1 = plot(nedM(:,2),nedM(:,1));
 set(h1,'LineStyle','-','LineWidth',0.1,'Color',ltgray)
@@ -71,7 +74,7 @@ title(titleString);
 axis equal, grid on
 ylabel('North (m)'),xlabel('East (m)')
 % compute error distribution and plot circle
-distM = sqrt(sum(nedM(:,1:2).^2,2));
+distM = sqrt(sum(nedM(iFi,1:2).^2,2));%use only finite values here
 medM = median(distM);
 %plot a circle using 'rectangle' (yes really :)
 hr=rectangle('Position',[-1 -1 2 2]*medM,'Curvature',[1 1]);

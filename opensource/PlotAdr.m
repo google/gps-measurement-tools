@@ -1,6 +1,6 @@
 function [colorsOut]= PlotAdr(gnssMeas,prFileName,colors)
 % [colors] = PlotAdr(gnssMeas,[prFileName],[colors])
-% plot the Accumulated Delta Ranges obtained from ProcessAdr
+% plot Valid Accumulated Delta Ranges obtained from ProcessAdr
 %
 %gnssMeas.FctSeconds = Nx1 vector. Rx time tag of measurements.
 %        .ClkDCount  = Nx1 vector. Hw clock discontinuity count
@@ -38,8 +38,19 @@ timeSeconds =gnssMeas.FctSeconds-gnssMeas.FctSeconds(1);%elapsed time in seconds
 for j=1:M %loop over Svid
     %% plot AdrM
     h123(1) = subplot(5,1,1:2); grid on, hold on,
-    AdrM = gnssMeas.AdrM(:,j);%local variable for convenience
-    iFi = find(isfinite(AdrM));
+    AdrM = gnssMeas.AdrM(:,j);%local variables for convenience
+    AdrState = gnssMeas.AdrState(:,j);
+
+    %From gps.h:
+    %/* However, it is expected that the data is only accurate when:
+    % *  'accumulated delta range state' == GPS_ADR_STATE_VALID.
+    %*/
+    % #define GPS_ADR_STATE_UNKNOWN                       0
+    % #define GPS_ADR_STATE_VALID                     (1<<0)
+    % #define GPS_ADR_STATE_RESET                     (1<<1)
+    % #define GPS_ADR_STATE_CYCLE_SLIP                (1<<2)
+    iValid = bitand(AdrState,2^0);
+    iFi = find(isfinite(AdrM) & iValid);
     if ~isempty(iFi)
         ti = timeSeconds(iFi(end));
         h=plot(timeSeconds,AdrM); set(h,'Marker','.','MarkerSize',4)
@@ -57,7 +68,7 @@ for j=1:M %loop over Svid
     end
 end
 subplot(5,1,1:2); ax=axis;
-title('Accumulated Delta Range (= -k*carrier phase) vs time'), ylabel('(meters)')
+title('Valid Accumulated Delta Range (= -k*carrier phase) vs time'), ylabel('(meters)')
 subplot(5,1,3:4); set(gca,'XLim',ax(1:2));
 title('DelPrM - AdrM'),ylabel('(meters)')
 
@@ -83,7 +94,7 @@ if nargout>1
     colorsOut = colors;
 end
 
-end %end of function PlotPseudorangeRates
+end %end of function PlotAdr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Copyright 2016 Google Inc.

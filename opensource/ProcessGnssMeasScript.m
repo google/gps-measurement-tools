@@ -10,6 +10,7 @@ prFileName = 'pseudoranges_log_2016_06_30_21_26_07.txt'; %with duty cycling, no 
 % 2) change 'dirName = ...' to match the local directory you are using:
 dirName = '~/Documents/MATLAB/gpstools/opensource/demoFiles';
 % 3) run ProcessGnssMeasScript.m script file 
+param.llaTrueDegDegM = [];
 
 %Author: Frank van Diggelen
 %Open Source code for processing Android GNSS Measurements
@@ -18,24 +19,23 @@ dirName = '~/Documents/MATLAB/gpstools/opensource/demoFiles';
 %To add your own data:
 % save data from GnssLogger App, and edit dirName and prFileName appropriately
 %dirName = 'put the full path for your directory here';
-%prFileName = 'put the pseudoranges log file name here';
+%prFileName = 'put the pseuoranges log file name here';
 
 %% parameters
-param.llaTrueDegDegM = [];
+%param.llaTrueDegDegM = [];
 %enter true WGS84 lla, if you know it:
 param.llaTrueDegDegM = [37.422578, -122.081678, -28];%Charleston Park Test Site
 
 %% Set the data filter and Read log file
 dataFilter = SetDataFilter;
 [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,prFileName,dataFilter,param);
+if isempty(gnssRaw), return, end
 
 %% Get online ephemeris from Nasa ftp, first compute UTC Time from gnssRaw:
 fctSeconds = 1e-3*double(gnssRaw.allRxMillis(end));
-gpsTime = [0,0];
-gpsTime(1) = floor(fctSeconds./GpsConstants.WEEKSEC);
-gpsTime(2) = fctSeconds - gpsTime(1)*GpsConstants.WEEKSEC;
-utcTime = Gps2Utc(gpsTime);
+utcTime = Gps2Utc([],fctSeconds);
 allGpsEph = GetNasaHourlyEphemeris(utcTime,dirName);
+if isempty(allGpsEph), return, end
 
 %% process raw measurements, compute pseudoranges:
 [gnssMeas] = ProcessGnssMeas(gnssRaw);
@@ -75,7 +75,7 @@ end
 % you may not use this file except in compliance with the License.
 % You may obtain a copy of the License at
 % 
-%     http://www.apache.org/licenses/LICENSE-2.0
+%     http://www.apache.org/licenses/LICENSE-2.0
 % 
 % Unless required by applicable law or agreed to in writing, software
 % distributed under the License is distributed on an "AS IS" BASIS,

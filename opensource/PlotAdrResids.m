@@ -17,7 +17,7 @@ function PlotAdrResids(adrResid,gnssMeas,prFileName,colors)
 %Open Source code for processing Android GNSS Measurements
 
 K = 5; %number of satellites to plot 
-if ~any(any(isfinite(adrResid.ResidM))) %Nothing but NaNs
+if isempty(adrResid) || ~any(any(isfinite(adrResid.ResidM))) %Nothing but NaNs
     fprintf(' No adr residuals to plot\n'), return
 end
 if nargin<2

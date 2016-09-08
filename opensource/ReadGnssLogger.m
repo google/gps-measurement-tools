@@ -1,4 +1,4 @@
-function [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,fileName,dataFilterIn,gnssAnalysis)
+function [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,fileName,dataFilter,gnssAnalysis)
 %% [gnssRaw,gnssAnalysis]=ReadGnssLogger(dirName,fileName,dataFilter,gnssAnalysis);
 % Read the log file created by Gnss Logger App in Android
 % Compatible with Android release N
@@ -7,8 +7,12 @@ function [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,fileName,dataFilterIn,g
 %  dirName = string with directory of fileName, 
 %                e.g. '~/Documents/MATLAB/Pseudoranges/2016-03-28'
 %  fileName = string with filename
-%  dataFilter = cell array, dataFilter.{i}=string with a valid matlab expression
-%              e.g. dataFilter{1} = 'ConstellationType==1'
+%  dataFilter = nx2 cell array of pairs of strings, 
+%      dataFilter{i,1} is a string with one of 'Raw' header values from the 
+%                      GnssLogger log file e.g. 'ConstellationType'
+%      dataFilter{i,2} is a string with a valid matlab expression, containing
+%                      the header value, e.g. 'ConstellationType==1'
+%  See SetDataFilter.m for full rules and examples of dataFilter.
 %
 % Output: 
 %  gnssRaw, all GnssClock and GnssMeasurement fields from log file, including:
@@ -44,7 +48,7 @@ function [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,fileName,dataFilterIn,g
 gnssAnalysis.GnssClockErrors = 'GnssClock Errors.';
 gnssAnalysis.GnssMeasurementErrors = 'GnssMeasurement Errors.';
 gnssAnalysis.ApiPassFail = '';
-if nargin<3, dataFilterIn = []; end
+if nargin<3, dataFilter = []; end
 
 %% check we have the right kind of fileName
 extension = fileName(end-3:end);
@@ -57,7 +61,8 @@ rawCsvFile = MakeCsv(dirName,fileName);
 [header,C] = ReadRawCsv(rawCsvFile);
 
 %% apply dataFilter 
-[dataFilter] = CheckDataFilter(dataFilterIn,header);
+[bOk] = CheckDataFilter(dataFilter,header);
+if ~bOk, return, end
 C = FilterData(C,dataFilter,header);
 
 %% pack data into gnssRaw structure
@@ -67,8 +72,6 @@ C = FilterData(C,dataFilter,header);
 [gnssRaw,gnssAnalysis] = CheckGnssClock(gnssRaw,gnssAnalysis);
 gnssAnalysis = ReportMissingFields(gnssAnalysis,missing);
 
-%TBD on any early return, return gnssAnalysis.ApiPassFail  = 'explanation'
-% so that reporting tool reports why
 
 end %end of function ReadGnssLogger
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +87,7 @@ function csvFileName = MakeCsv(dirName,fileName)
 if dirName(end)~='/'
     dirName = [dirName,'/']; %add /
 end
-csvFileName = [dirName,'prs.csv'];
+csvFileName = [dirName,'raw.csv'];
 if strcmp(fileName(end-3:end),'.csv')
     return %input file is a csv file, nothing more to do here
 end
@@ -146,6 +149,7 @@ end
 %     ' | sed -e ''s/true/1/'' -e ''s/false/0/'' -e ''s/# //'' ',...
 %     ' -e ''s/Raw,//'' ',... %replace "Raw," with nothing
 %     '-e ''s/(//g'' -e ''s/)//g'' > ',csvFileName]);
+%
 % On versions from v1.4.0.0 N:
 % grep on "Raw," replace alpha characters amongst the numbers,
 % remove parentheses in the header,
@@ -171,7 +175,6 @@ fclose(csvfileID);
 if isempty(line) %line should be -1 at eof
     error('\nError occurred while reading file %s\n',fileName)
 end
-
 
 end %end of function MakeCsv
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,42 +230,11 @@ for i=1:M
         formatSpec = sprintf('%s %%f',formatSpec);
     end
 end
+%for empty fields, enter 'NaN' into csv
 C = textscan(fid,formatSpec,'Delimiter',',','EmptyValue',NaN);
 fclose(fid);
 
 end% of function ReadRawCsv
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-function [dataFilter] = CheckDataFilter(dataFilterIn,header)
-%% check that dataFilter has matching values in the header, 
-% extract this header value and add it as a second column for datafilter
-dataFilter = dataFilterIn(:); %make dataFilter a column array
-if isempty(dataFilterIn)
-    return
-end
-N = length(dataFilter);
-%check that each value of dataFilter is valid: i.e. it contains one of the
-%header types from the GnssLogger file
-L = length(header);
-for i=1:N
-    foundInHeader = zeros(1,L);
-    for j=1:L
-        foundInHeader(j) = any(strfind(dataFilter{i,1},header{j}));
-    end
-    if ~any(foundInHeader) %no match found (too coold)
-        error('dataFilter value ''%s'' has no matches in log file header',...
-            dataFilter{i,1});
-    elseif sum(foundInHeader)>1 % too many matches found (tooo hot)
-        error('dataFilter value ''%s'' has >1 match in log file header',...
-            dataFilter{i,1});
-    else %one match found (juust right)
-        k = find(foundInHeader);%index into where we found the matching header
-        dataFilter{i,2} = header{k};%save in second column
-    end
-end
-%dataFilter now has two columns: second one contains the matching header type
-end% of function CheckDataFilter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function C = FilterData(C,dataFilter,header)
@@ -270,30 +242,30 @@ function C = FilterData(C,dataFilter,header)
 
 iS = ones(size(C{1})); %initialize index into rows of C
 for i=1:size(dataFilter,1)
-    j=find(strcmp(header,dataFilter{i,2}));%j = index into header
+    j=find(strcmp(header,dataFilter{i,1}));%j = index into header
     %we should always be a value of j, because checkDataFilter checks for this:
     assert(any(j),'dataFilter{i} = %s not found in header\n',dataFilter{i,1})
     
-    %now we must evaluate the expression in dataFilter{i}, for example:
+    %now we must evaluate the expression in dataFilter{i,2}, for example:
     % 'BiasUncertaintyNanos < 1e7'
     %assign the relevant cell of C to a variable with same name as the header
     ts = sprintf('%s = C{%d};',header{j},j);
     eval(ts);
-    %create an index vector from the expression in dataFilter{i}
-    ts = sprintf('iSi = %s;',dataFilter{i,1});
+    %create an index vector from the expression in dataFilter{i,2}
+    ts = sprintf('iSi = %s;',dataFilter{i,2});
     eval(ts);
     
     %AND the iS index values on each iteration of i
     iS = iS & iSi;
 end
-%Check if filter removes all values,
+% Check if filter removes all values
 if ~any(iS) %if all zeros
-    fprintf('\nAll measurements removed. Specify dataFilter less strictly, ')
-    dataFilter(:,1)
+    fprintf('\nAll measurements removed. Specify dataFilter less strictly than this:, ')
+    dataFilter(:,2)
     return
 end
 
-%Now remove all values of C indexed by iS
+% Keep only those values of C indexed by iS
 for i=1:length(C)
     C{i} = C{i}(iS);
 end
@@ -355,6 +327,9 @@ for j = 1:length(header)
         missing.MeasurementFields{end+1} = header{j};
     end
 end
+%So, if a field is not reported, it will be all NaNs from makeCsv, and the above
+%code will not load it into gnssRaw. So when we call 'CheckGnssClock' it can
+%check for missing fields in gnssRaw.
 
 %TBD look for all zeros that can not legitimately be all zero, 
 %e.g. AccumulatedDeltaRangeMeters, and report these as missing data
@@ -362,41 +337,54 @@ end
 end %end of function PackGnssRaw
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [gnssRaw,gnssAnalysis] = CheckGnssClock(gnssRaw,gnssAnalysis)
+function [gnssRaw,gnssAnalysis,bOk] = CheckGnssClock(gnssRaw,gnssAnalysis)
 %% check clock values in gnssRaw
-
+bOk = true;
+sFail = ''; %initialize string to record failure messafes
 N = length(gnssRaw.ReceivedSvTimeNanos);
 %Insist on the presence of TimeNanos (time from hw clock)
 if ~isfield(gnssRaw,'TimeNanos')
-    error('TimeNanos data missing from GnssLogger file\n');
+    s = ' TimeNanos  missing from GnssLogger File.';
+    fprintf('WARNING: %s\n',s);
+    sFail = [sFail,s];
+    bOk = false;
 end
 if ~isfield(gnssRaw,'FullBiasNanos')
-    error('FullBiasNanos is missing or zero, we need it to get gnssRaw week\n')
-    %TBD change to fatal warning, so a report is still generated, with warning
+    s = 'FullBiasNanos missing from GnssLogger file.';
+    fprintf('WARNING: %s, we need it to get the week number\n',s);
+    sFail = [sFail,s];
+    bOk = false;
 end
 if ~isfield(gnssRaw,'BiasNanos')
     gnssRaw.BiasNanos = zeros(N,1);
 end
 if ~isfield(gnssRaw,'HardwareClockDiscontinuityCount')
+    %possibly non fatal error, we assume there is no hardware clock discontinuity
+    %so we set to zero and move on, but we print a warning
     gnssRaw.HardwareClockDiscontinuityCount = zeros(N,1);
-    fprintf('WARNING: Added HardwareClockDiscontinuityCount because it is missing from GNSS Logger file\n');
+    fprintf('WARNING: Added HardwareClockDiscontinuityCount=0 because it is missing from GNSS Logger file\n');
 end
-%auto-detect sign of FullBiasNanos, if it is positive, give warning and change
-if ~all(gnssRaw.FullBiasNanos<=0)
+
+%check FullBiasNanos, it should be negative values
+bChangeSign = any(gnssRaw.FullBiasNanos<0) & any(gnssRaw.FullBiasNanos>0);
+assert(~bChangeSign,...
+    'FullBiasNanos changes sign within log file, this should never happen');
+%Now we know FullBiasNanos doesnt change sign,auto-detect sign of FullBiasNanos, 
+%if it is positive, give warning and change
+if any(gnssRaw.FullBiasNanos>0)
     gnssRaw.FullBiasNanos = -1*gnssRaw.FullBiasNanos;
     fprintf('WARNING: FullBiasNanos wrong sign. Should be negative. Auto changing inside ReadGpsLogger\n');
     gnssAnalysis.GnssClockErrors = [gnssAnalysis.GnssClockErrors,...
         sprintf(' FullBiasNanos wrong sign.')];
 end
-%now all FullBiasNanos should be negative - if there are any are > 0 it means
-%something is very wrong with the log file, because FullBiasNanos has changed
-%sign from a large negative to large positive number, and we must assert
-assert(all(gnssRaw.FullBiasNanos<=0),...
-    'FullBiasNanos changes sign within log file, this should never happen')
 
 %compute full cycle time of measurement, in milliseonds
 gnssRaw.allRxMillis = int64((gnssRaw.TimeNanos - gnssRaw.FullBiasNanos)*1e-6);
 %allRxMillis is now accurate to one millisecond (because it's an integer)
+
+if ~bOk
+    gnssAnalysis.ApiPassFail = ['FAIL ',sFail]; 
+end
 
 end %end of function CheckGnssClock
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -428,10 +416,12 @@ if ~isempty(missing.MeasurementFields)
 end
 
 %assign pass/fail
-if isempty(missing.ClockFields) && isempty(missing.MeasurementFields)
-    gnssAnalysis.ApiPassFail = 'PASS';
-else
-    gnssAnalysis.ApiPassFail = 'FAIL BECAUSE OF MISSING FIELDS';
+if ~any(strfind(gnssAnalysis.ApiPassFail,'FAIL')) %didn't already fail
+    if isempty(missing.ClockFields) && isempty(missing.MeasurementFields)
+        gnssAnalysis.ApiPassFail = 'PASS';
+    else
+        gnssAnalysis.ApiPassFail = 'FAIL BECAUSE OF MISSING FIELDS';
+    end
 end
 end %end of function ReportMissingFields
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

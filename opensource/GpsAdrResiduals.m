@@ -34,7 +34,7 @@ if ~any(any(isfinite(gnssMeas.AdrM) & gnssMeas.AdrM~=0))
     return
 end
 if nargin<3 || isempty(llaDegDegM)
-    fprintf('\nGpsAdrWlsPvt needs the true position: llaDegDegM')
+    fprintf('GpsAdrResiduals needs the true position: llaDegDegM\n')
     return
 end
 xyz0M = Lla2Xyz(llaDegDegM);

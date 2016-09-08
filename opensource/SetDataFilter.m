@@ -1,36 +1,38 @@
 function dataFilter = SetDataFilter
-% dataFilter = SetDataFilter
+% dataFilter = SetDataFilter;
 % Function to set data filter for use with ReadGnssLogger
 % This function has no inputs. Edit it directly to change the data filter
 %
-% Rule for setting dataFilter:
-% dataFilter{i} is a cell with a string with a valid matlab expression, 
-% containing one of the 'Raw' headings in the GnssLogger log file
-% and where any comparison is against a scalar value
-%
-% the heading type may be repeated, for example,
-% dataFilter{i} = 'ConstellationType==1 | ConstellationType==3';
-% but you may not have more than one heading type in a single dataFilter{i} cell
+% Rule for setting dataFilter: see CheckDataFilter.m
 
 %Author: Frank van Diggelen
 %Open Source code for processing Android GNSS Measurements
 
 %filter for fine time measurements only  <=> uncertainty < 10 ms = 1e7 ns
-dataFilter{1} = 'BiasUncertaintyNanos < 1e7'; 
+dataFilter{1,1} = 'BiasUncertaintyNanos'; 
+dataFilter{1,2} = 'BiasUncertaintyNanos < 1e7'; 
+
+%filter out FullBiasNanos == 0
+dataFilter{end+1,1} = 'FullBiasNanos'; 
+dataFilter{end,2}   = 'FullBiasNanos ~= 0'; 
 
 %you can create other filters in the same way ...
 %for example, suppose you want to remove Svid 23:
-% dataFilter{end+1} = 'Svid~=23';
+% dataFilter{end+1,1} = 'Svid'; 
+% dataFilter{end,2}   = 'Svid ~= 23';
+% 
 %or suppose you want to keep only Svid 2,5,10, & 17
-% dataFilter{end+1} = 'Svid==2 | Svid==5 | Svid==10 | Svid==17';
+% dataFilter{end,2} = 'Svid==2 | Svid==5 | Svid==10 | Svid==17';
 % NOTE: you *cannot* use 'any(Svid)==[2,5,10,17]' because Svid refers to a 
 % vector variable and you must compare it to a scalar.
 
 %keep only Svid 2
-% dataFilter{end+1} = 'Svid==2';
+% dataFilter{end+1,1} = 'Svid'; 
+% dataFilter{end,2}   = 'Svid==2';
 
 %limit to GPS only:
-dataFilter{end+1} = 'ConstellationType==1'; 
+dataFilter{end+1,1} = 'ConstellationType'; 
+dataFilter{end,2}   = 'ConstellationType==1'; 
 %ConstellationType values are defined in Android HAL Documentation, gps.h, 
 %   typedef uint8_t                         GnssConstellationType;
 %   #define GNSS_CONSTELLATION_UNKNOWN      0
@@ -42,8 +44,8 @@ dataFilter{end+1} = 'ConstellationType==1';
 %   #define GNSS_CONSTELLATION_GALILEO      6
 
 %Example of how to select satellites from GPS and GLONASS:
-% dataFilter{end+1} = 'ConstellationType==1 | ConstellationType==3'; 
-%You may use the heading value (e.g. 'ConstellationType') more than once,
+% dataFilter{end+1} = '(ConstellationType)==1 | (ConstellationType)==3'; 
+%You may use the heading value e.g. '(ConstellationType)' more than once,
 %so long as you dont use different heading types in one dataFilter{} entry
 
 %bitwise data filters
@@ -69,7 +71,8 @@ dataFilter{end+1} = 'ConstellationType==1';
 
 %Example of how to use dataFilter for GnssMeasurementState 'State' bit fields: 
 %filter on GPS measurements with Code lock & TOW decoded:
-dataFilter{end+1} = 'bitand(State,2^0) &  bitand(State,2^3)';
+dataFilter{end+1,1} = 'State';
+dataFilter{end,2}   = 'bitand(State,2^0) & bitand(State,2^3)';
 % GNSS_MEASUREMENT_STATE_CODE_LOCK & GNSS_MEASUREMENT_STATE_TOW_DECODED
 
 % GnssAccumulatedDeltaRangeState values are defined gps.h, 
@@ -81,7 +84,8 @@ dataFilter{end+1} = 'bitand(State,2^0) &  bitand(State,2^3)';
 %
 %Example of how to use dataFilter for ADR State bit fields: 
 % get AccumulatedDeltaRangeState values that are valid
-% dataFilter{end+1} = 'bitand(AccumulatedDeltaRangeState,1)'; 
+% dataFilter{end+1,1} = 'AccumulatedDeltaRangeState'; 
+% dataFilter{end,2}   = 'bitand(AccumulatedDeltaRangeState,1)'; 
 end %end of function SetDataFilter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

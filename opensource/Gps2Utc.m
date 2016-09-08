@@ -1,14 +1,18 @@
-function [utcTime] = Gps2Utc(gpsTime)
-% [utcTime] = Gps2Utc(gpsTime)
-%   Convert GPS time (week & seconds) to UTC
+function [utcTime] = Gps2Utc(gpsTime,fctSeconds)
+% [utcTime] = Gps2Utc(gpsTime,[fctSeconds])
+%   Convert GPS time (week & seconds), or Full Cycle Time (seconds) to UTC
 % 
 % Input: gpsTime, [mx2] matrix [gpsWeek, gpsSeconds], 
+%        fctSeconds, [optional] Full Cycle Time (seconds)
 %
 % Outputs: utcTime, [mx6] matrix = [year,month,day,hours,minutes,seconds]
 % 
+% If fctSeconds is provided, gpsTime is ignored
+%
 % Valid range of inputs: 
 %   gps times corresponding to 1980/6/1 <= time < 2100/1/1
 %   i.e. [0,0] <= gpsTime < [6260, 432000]
+%        0 <= fctSeconds < 3786480000
 %
 % See also: Utc2Gps
 
@@ -32,10 +36,13 @@ function [utcTime] = Gps2Utc(gpsTime)
 % 5) if ls1~=ls, convert (gpsTime-ls1) to UTC Time
 
 %% Check inputs
-if size(gpsTime,2)~=2
+if nargin<2 && size(gpsTime,2)~=2
     error('gpsTime must have two columns')
 end
-fctSeconds = gpsTime*[GpsConstants.WEEKSEC; 1];
+if nargin<2
+    fctSeconds = gpsTime*[GpsConstants.WEEKSEC; 1];
+end
+
 %fct at 2100/1/1 00:00:00, not counting leap seconds:
 fct2100 =  [6260, 432000]*[GpsConstants.WEEKSEC; 1];
 if any(fctSeconds<0) || any (fctSeconds >= fct2100)

@@ -51,7 +51,7 @@ set(h(iMin),'VerticalAlignment','top');
 
 %plot common bias, in microseconds and meters ---------------------------------
 h1234(2)=subplot(4,1,2);
-iFi = isfinite(gnssPvt.allBcMeters);%index into finite results
+iFi = find(isfinite(gnssPvt.allBcMeters));%index into finite results
 if any(iFi)
     plot(tSeconds,gnssPvt.allBcMeters - gnssPvt.allBcMeters(iFi(1)))
     grid on

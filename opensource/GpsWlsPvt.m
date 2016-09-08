@@ -33,6 +33,16 @@ end
 xo =zeros(8,1);%initial state: [center of the Earth, bc=0, velocities = 0]'
 
 weekNum     = floor(gnssMeas.FctSeconds/GpsConstants.WEEKSEC);
+%TBD check for week rollover here (it is checked in ProcessGnssMeas, but
+%this function should stand alone, so we should check again, and adjust 
+%tRxSeconds by +- a week if necessary)
+%btw, Q. why not just carry around fct and not worry about the hassle of
+%weeknumber, and the associated week rollover problems?
+% A. because you cannot get better than 1000ns (1 microsecond) precsision
+% when you put fct into a double. And that would cause errors of ~800m/s * 1us
+% (satellite range rate * time error) ~ 1mm in the range residual computation
+% So what? well, if you start processing with carrier phase, these errors
+% could accumulate.
 
 N = length(gnssMeas.FctSeconds);
 gpsPvt.FctSeconds      = gnssMeas.FctSeconds;

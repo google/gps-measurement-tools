@@ -81,8 +81,9 @@ State = gnssRaw.State(1);
 assert(bitand(State,2^0) &  bitand(State,2^3),...
   'gnssRaw.State(1) must have bits 0 and 3 true before calling ProcessGnssMeas')
 
-%tRxNanos is now since the beginning of the week
-assert(all(tRxNanos <= WEEKNANOS),'tRxNanos should be <= WEEKNANOS')
+%tRxNanos now since beginning of the week, unless we had a week rollover
+%assert(all(tRxNanos <= WEEKNANOS),'tRxNanos should be <= WEEKNANOS')
+%TBD check week rollover code, and add assert tRxNanos <= WEEKNANOS after
 assert(all(tRxNanos >= 0),'tRxNanos should be >= 0')
 
 %subtract the fractional offsets TimeOffsetNanos and BiasNanos:
@@ -90,8 +91,7 @@ tRxSeconds  = (double(tRxNanos)-gnssRaw.TimeOffsetNanos-gnssRaw.BiasNanos)*1e-9;
 tTxSeconds  = double(gnssRaw.ReceivedSvTimeNanos)*1e-9;
 
 %check for week rollover in tRxSeconds
-prSeconds  = tRxSeconds - tTxSeconds;
-prSeconds  = CheckGpsWeekRollover(prSeconds);
+[prSeconds,tRxSeconds]  = CheckGpsWeekRollover(tRxSeconds,tTxSeconds);
 %we are ready to compute pseudorange in meters:
 PrM         = prSeconds*GpsConstants.LIGHTSPEED;
 
@@ -203,22 +203,27 @@ gnssMeas.DelPrM = delPrM;
 end %of function GetDelPr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function prSeconds  = CheckGpsWeekRollover(prSeconds)
+function [prSeconds,tRxSeconds]  = CheckGpsWeekRollover(tRxSeconds,tTxSeconds)
 %utility function for ProcessGnssMeas
+
+prSeconds  = tRxSeconds - tTxSeconds;
 
 iRollover = prSeconds > GpsConstants.WEEKSEC/2;
 if any(iRollover)
-    fprintf('\nWARNING: week rollover detected in time tags. Adjusting ...')
+    fprintf('\nWARNING: week rollover detected in time tags. Adjusting ...\n')
     prS = prSeconds(iRollover);
-    prS = prS - round(prS/GpsConstants.WEEKSEC)*GpsConstants.WEEKSEC;
+    delS = round(prS/GpsConstants.WEEKSEC)*GpsConstants.WEEKSEC;
+    prS = prS - delS;
     %prS are in the range [-WEEKSEC/2 : WEEKSEC/2];
     %check that common bias is not huge (like, bigger than 10s)
     maxBiasSeconds = 10; 
     if any(prS>maxBiasSeconds)
-        error('Failed to correct week rollover')
+        error('Failed to correct week rollover\n')
     else
         prSeconds(iRollover) = prS; %put back into prSeconds vector
-        fprintf('\nCorrected week rollover')
+        %Now adjust tRxSeconds by the same amount:
+        tRxSeconds(iRollover) = tRxSeconds(iRollover) - delS;
+        fprintf('Corrected week rollover\n')
     end
 end
 %TBD Unit test this
