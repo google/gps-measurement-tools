@@ -5,7 +5,7 @@ clc;clear all; close(findall(0,'Type','figure'));
 % pseudoranges, C/No, and weighted least squares PVT solution
 %
 % you can run the data in pseudoranges log files provided for you:
-prFileName = 'workshop_trials01.txt';
+prFileName = 'workshop_trials01.txt'; %CHANGE HERE
 %prFileName = 'pseudoranges_log_2016_06_30_21_26_07.txt'; %with duty cycling, no carrier phase
 % prFileName = 'pseudoranges_log_2016_08_22_14_45_50.txt'; %no duty cycling, with carrier phase
 % as follows
@@ -26,8 +26,10 @@ dbstop if error
 dbstatus
 
 %dirName = '~/Documents/MATLAB/gpstools/opensource/demoFiles';
+%CHANGE THOSE TWO LINES BELOW
 dirName = 'd:/tmp/Dropbox/Edu/ION_GNSS/gps-measurement-tools/opensource/demoFiles/'
-addpath('d:/tmp/Dropbox/Edu/ION_GNSS/gps-measurement-tools/opensource/')
+softPath = 'd:/tmp/Dropbox/Edu/ION_GNSS/gps-measurement-tools/opensource/'
+addpath(softPath)
 % 3) run ProcessGnssMeasScript.m script file 
 param.llaTrueDegDegM = [];
 % get display screen file
@@ -87,6 +89,7 @@ if any(any(isfinite(gnssMeas.AdrM) & gnssMeas.AdrM~=0))
 end
 
 %% end of ProcessGnssMeasScript
+rmpath(softPath)
 toc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Copyright 2016 Google Inc.
