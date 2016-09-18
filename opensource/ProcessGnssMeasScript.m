@@ -5,9 +5,9 @@ clc;clear all; close(findall(0,'Type','figure'));
 % pseudoranges, C/No, and weighted least squares PVT solution
 %
 % you can run the data in pseudoranges log files provided for you:
-prFileName = 'workshop_trials01.txt'; %CHANGE HERE
-%prFileName = 'pseudoranges_log_2016_06_30_21_26_07.txt'; %with duty cycling, no carrier phase
+prFileName = 'pseudoranges_log_2016_06_30_21_26_07.txt'; %with duty cycling, no carrier phase
 % prFileName = 'pseudoranges_log_2016_08_22_14_45_50.txt'; %no duty cycling, with carrier phase
+%prFileName = 'workshop_trials01.txt';
 % as follows
 % 1) copy everything from GitHub google/gps-measurement-tools/ to 
 %    a local directory on your machine
@@ -44,8 +44,8 @@ HW_ScrSize = get(0,'ScreenSize');%in pixels
 %% parameters
 %param.llaTrueDegDegM = [];
 %enter true WGS84 lla, if you know it:
-%param.llaTrueDegDegM = [37.422578, -122.081678, -28];%Charleston Park Test Site
-param.llaTrueDegDegM = [45.5298979 -122.6619045 24.16] %trial coords
+param.llaTrueDegDegM = [37.422578, -122.081678, -28];%Charleston Park Test Site
+%param.llaTrueDegDegM = [45.5298979 -122.6619045 24.16] %workshop trial approx coords
 %% Set the data filter and Read log file
 dataFilter = SetDataFilter;
 [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,prFileName,dataFilter,param);
