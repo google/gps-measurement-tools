@@ -12,7 +12,15 @@ prFileName = 'workshop_trials01.txt'; %CHANGE HERE
 % 1) copy everything from GitHub google/gps-measurement-tools/ to 
 %    a local directory on your machine
 % 2) change 'dirName = ...' to match the local directory you are using:
+%dirName = '~/Documents/MATLAB/gpstools/opensource/demoFiles';
 
+softPath = pwd;
+addpath(softPath);
+%CHANGE this to your data folder
+dirName = sprintf('%s%s',softPath,'\demoFiles');
+%'d:/tmp/Dropbox/Edu/ION_GNSS/gps-measurement-tools/opensource/demoFiles/'
+
+% 3) run ProcessGnssMeasScript.m script file 
 
 %Author: Frank van Diggelen
 %Open Source code for processing Android GNSS Measurements
@@ -25,12 +33,6 @@ dbstop if error
 % dbstop in subRoutine at 17 if idx==7
 dbstatus
 
-%dirName = '~/Documents/MATLAB/gpstools/opensource/demoFiles';
-%CHANGE THOSE TWO LINES BELOW
-dirName = 'd:/tmp/Dropbox/Edu/ION_GNSS/gps-measurement-tools/opensource/demoFiles/'
-softPath = 'd:/tmp/Dropbox/Edu/ION_GNSS/gps-measurement-tools/opensource/'
-addpath(softPath)
-% 3) run ProcessGnssMeasScript.m script file 
 param.llaTrueDegDegM = [];
 % get display screen file
 HW_ScrSize = get(0,'ScreenSize');%in pixels
