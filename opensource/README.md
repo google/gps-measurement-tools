@@ -15,10 +15,8 @@ https://github.com/google/gps-measurement-tools
 
 # Initial setup:
 
-1. Extract the contents of the zip file to a directory, for example:
-
-        ~/gpstools/*
-2. Open and run ProcessGnssMeasScript.m, when prompted select `Change dir`
+1. Extract the contents of the zip file to a directory
+2. Open and run ProcessGnssMeasScript.m, when prompted by Matlab select `Change dir`
 
 ## To process a log file you collected from GnssLogger:
 

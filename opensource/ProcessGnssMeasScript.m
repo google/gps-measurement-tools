@@ -33,7 +33,6 @@ dbstop if error
 % dbstop in subRoutine at 17 if idx==7
 dbstatus
 
-param.llaTrueDegDegM = [];
 % get display screen file
 HW_ScrSize = get(0,'ScreenSize');%in pixels
 %% data
@@ -46,7 +45,7 @@ HW_ScrSize = get(0,'ScreenSize');%in pixels
 %param.llaTrueDegDegM = [];
 %enter true WGS84 lla, if you know it:
 %param.llaTrueDegDegM = [37.422578, -122.081678, -28];%Charleston Park Test Site
-param.llaTrueDegDegM = [45.5298979 -122.6619045 24.16] %trial
+param.llaTrueDegDegM = [45.5298979 -122.6619045 24.16] %trial coords
 %% Set the data filter and Read log file
 dataFilter = SetDataFilter;
 [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,prFileName,dataFilter,param);
