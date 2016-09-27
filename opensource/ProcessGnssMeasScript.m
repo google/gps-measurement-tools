@@ -28,7 +28,7 @@ param.llaTrueDegDegM = [37.422578, -122.081678, -28];%Charleston Park Test Site
 
 %% Set the data filter and Read log file
 dataFilter = SetDataFilter;
-[gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,prFileName,dataFilter,param);
+[gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,prFileName,dataFilter);
 if isempty(gnssRaw), return, end
 
 %% Get online ephemeris from Nasa ftp, first compute UTC Time from gnssRaw:
