@@ -1,0 +1,20 @@
+<a href="#about_apphelp">About AppHelp</a>
+<br>
+<a href="#feedback">Feedback</a>
+<br>
+<a name="about_apphelp" id="about_apphelp">
+<h3>About AppHelp</h3>
+<ul>
+  <li>Start Log button: Starts logging when pushed.</li>
+  <li>Stop & Send button: Stops logging and shows dialog to send the file via email or other options.</li>  
+</ul>
+
+</a>
+<br>
+<a name="feedback" id="feedback">
+<h3>Feedback</h3>
+Any comments, feedback, suggestions on GNSSLogger please write to us using the link below.
+<br>
+<a href="mailto:pseudoranges-feedback@google.com">Contact support</a>
+</a>
+<br>

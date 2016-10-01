@@ -13,7 +13,9 @@ This code is maintained on GitHub at the following link:
 
 https://github.com/google/gps-measurement-tools
 
-# Initial setup:
+# Matlab
+
+## Initial setup:
 
 1. Extract the contents of the zip file to a directory, for example:
 
@@ -34,7 +36,7 @@ https://github.com/google/gps-measurement-tools
 
 3. Run ProcessGnssMeasScript.m, it will run with pre-recorded log files.
 
-## To process a log file you collected from GnssLogger:
+### To process a log file you collected from GnssLogger:
 
 1. save the log file in a directory
 2. edit ProcessGpsMeasScript.m, specify the file name and directory path
@@ -50,12 +52,12 @@ site (GetNasaHourlyEphemeris.m will tell you the correct url and filename),
 copy the file to the directory where your log file is, 
 and GetNasaHourlyEphemeris.m will read it from there.
 
-## For a summary of the open source GNSS Measurements Tools
+### For a summary of the open source GNSS Measurements Tools
 
 See  ~/gpstools/opensource/Contents.m or type 'help opensource' in matlab
 command window.
 
-# Platform specific notes:
+## Platform specific notes:
 
 For Windows: use '\' (backslash), instead of '/' for directories.
 
@@ -74,6 +76,16 @@ edit the name of the unzip utility:
   
 If you uncompress the file 'by hand' and rerun GetNasaHourlyEphemeris.m, it will
 read the uncompressed file.
+
+# GNSSLogger
+
+Sample App that allows registering for various Android location related measurements
+and log the measurements to the screen and optionally to a text file.
+
+This source code is supplied as an Android Studio project that can be built and run
+with [Android Studio](https://developer.android.com/studio/index.html).
+
+The APK is also provided for convience.
 
 # Copyright Notice
 
