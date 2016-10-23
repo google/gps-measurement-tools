@@ -60,8 +60,11 @@ for i=1:M
             else
                 colors(i,:) = get(h,'Color');
             end
-           text(ti,y(iFi(end)-1),int2str(gnssMeas.Svid(i)),'Color',colors(i,:));
-           meanDprM = mean(y(isfinite(y)));%store for analysing delta prr dpr
+            iFi = find(isfinite(y));
+            if any(iFi)
+                text(ti,y(iFi(end)),int2str(gnssMeas.Svid(i)),'Color',colors(i,:));
+            end
+           meanDprM = mean(y(iFi));%store for analysing delta prr dpr
            deltaMeanM(i) = meanPrrM - meanDprM;
         end
     end

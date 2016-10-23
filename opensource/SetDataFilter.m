@@ -8,13 +8,9 @@ function dataFilter = SetDataFilter
 %Author: Frank van Diggelen
 %Open Source code for processing Android GNSS Measurements
 
-%filter for fine time measurements only  <=> uncertainty < 10 ms = 1e7 ns
-dataFilter{1,1} = 'BiasUncertaintyNanos'; 
-dataFilter{1,2} = 'BiasUncertaintyNanos < 1e7'; 
-
 %filter out FullBiasNanos == 0
-dataFilter{end+1,1} = 'FullBiasNanos'; 
-dataFilter{end,2}   = 'FullBiasNanos ~= 0'; 
+dataFilter{1,1} = 'FullBiasNanos'; 
+dataFilter{1,2}   = 'FullBiasNanos ~= 0'; 
 
 %you can create other filters in the same way ...
 %for example, suppose you want to remove Svid 23:
@@ -25,6 +21,11 @@ dataFilter{end,2}   = 'FullBiasNanos ~= 0';
 % dataFilter{end,2} = 'Svid==2 | Svid==5 | Svid==10 | Svid==17';
 % NOTE: you *cannot* use 'any(Svid)==[2,5,10,17]' because Svid refers to a 
 % vector variable and you must compare it to a scalar.
+
+%filter for fine time measurements only  <=> uncertainty < 10 ms = 1e7 ns
+%For Nexus 5x and 6p this field is not filled, so comment out these next 2 lines
+% dataFilter{end+1,1} = 'BiasUncertaintyNanos'; 
+% dataFilter{end,2} = 'BiasUncertaintyNanos < 1e7'; 
 
 %keep only Svid 2
 % dataFilter{end+1,1} = 'Svid'; 
