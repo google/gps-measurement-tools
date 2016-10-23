@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GnssLogger</string>
+    <string name="app_version">v1.4.0.0</string>
+
+    <string name="title_settings">Settings</string>
+    <string name="title_log">Log</string>   
+    <string name="title_device">Device</string>
+    <integer name="google_play_services_version">8487000</integer>
+    <string name="location_label">Location</string>
+    <string name="measurements_label">Measurements</string>
+    <string name="nav_msg_label">Navigation Messages</string>
+    <string name="gnss_status_label">GnssStatus</string>
+    <string name="nmea_label">Nmea</string>
+    <string name="help">HELP</string>
+    <string name="exit">Exit</string> 
+
+</resources>

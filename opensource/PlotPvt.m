@@ -25,17 +25,18 @@ iFi = isfinite(gpsPvt.allLlaDegDegM(:,1));%index into finite results
 if ~any(iFi)
     return
 end
-llaMed = median(gpsPvt.allLlaDegDegM(iFi,:));%use median position as reference
+llaMed = median(gpsPvt.allLlaDegDegM(iFi,:));%median position
+%print median lla so user can use it as reference position if they want:
+fprintf('Median llaDegDegM = [%.7f %.7f %.2f]\n',llaMed)
+
 if nargin < 3, llaTrueDegDegM = []; end
-if nargin < 4. titleString = 'PVT solution'; end
+if nargin < 4, titleString = 'PVT solution'; end
 bGotLlaTrue = ~isempty(llaTrueDegDegM) && any(llaTrueDegDegM);
 %not empty and not all zeros
 if bGotLlaTrue
     llaRef = llaTrueDegDegM;
 else
     llaRef = llaMed;
-    %print median lla so user can use it as reference position if they want
-    fprintf('Median llaDegDegM = [%.7f %.7f %.2f]\n',llaMed)
 end
 
 %% plot ne errors vs llaTrueDegDegM --------------------------------------------

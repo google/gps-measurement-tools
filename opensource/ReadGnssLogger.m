@@ -1,5 +1,5 @@
 function [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,fileName,dataFilter,gnssAnalysis)
-%% [gnssRaw,gnssAnalysis]=ReadGnssLogger(dirName,fileName,dataFilter,gnssAnalysis);
+%% [gnssRaw,gnssAnalysis]=ReadGnssLogger(dirName,fileName,[dataFilter],[gnssAnalysis]);
 % Read the log file created by Gnss Logger App in Android
 % Compatible with Android release N
 %
@@ -7,12 +7,14 @@ function [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,fileName,dataFilter,gns
 %  dirName = string with directory of fileName, 
 %                e.g. '~/Documents/MATLAB/Pseudoranges/2016-03-28'
 %  fileName = string with filename
-%  dataFilter = nx2 cell array of pairs of strings, 
+%  optional inputs:
+%  [dataFilter], nx2 cell array of pairs of strings, 
 %      dataFilter{i,1} is a string with one of 'Raw' header values from the 
 %                      GnssLogger log file e.g. 'ConstellationType'
 %      dataFilter{i,2} is a string with a valid matlab expression, containing
 %                      the header value, e.g. 'ConstellationType==1'
-%  See SetDataFilter.m for full rules and examples of dataFilter.
+%      See SetDataFilter.m for full rules and examples of dataFilter.
+%  [gnssAnalysis] structure containing analysis, incl list of missing fields
 %
 % Output: 
 %  gnssRaw, all GnssClock and GnssMeasurement fields from log file, including:
@@ -45,6 +47,7 @@ function [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,fileName,dataFilter,gns
 % ReportMissingFields()
 
 %% Initialize outputs and inputs
+gnssRaw = [];
 gnssAnalysis.GnssClockErrors = 'GnssClock Errors.';
 gnssAnalysis.GnssMeasurementErrors = 'GnssMeasurement Errors.';
 gnssAnalysis.ApiPassFail = '';
@@ -63,7 +66,8 @@ rawCsvFile = MakeCsv(dirName,fileName);
 %% apply dataFilter 
 [bOk] = CheckDataFilter(dataFilter,header);
 if ~bOk, return, end
-C = FilterData(C,dataFilter,header);
+[bOk,C] = FilterData(C,dataFilter,header);
+if ~bOk, return, end
 
 %% pack data into gnssRaw structure
 [gnssRaw,missing] = PackGnssRaw(C,header);
@@ -130,7 +134,9 @@ end
 if isempty(strfind(sPlatform,'N'))
     %add || strfind(platform,'O') and so on for future platforms
     fprintf('\nThis version of ReadGnssLogger supports Android N\n')
-    error('Found "%s" in log file, expected "Platform: N"',line)
+    fprintf('WARNING: did not find "Platform" type in log file, expected "Platform: N"\n')
+    fprintf('Please Update GnssLogger\n')
+    sPlatform = 'N';%assume version N
 end
 
 v1 = [1;4;0;0];
@@ -237,9 +243,10 @@ fclose(fid);
 end% of function ReadRawCsv
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function C = FilterData(C,dataFilter,header)
+function [bOk,C] = FilterData(C,dataFilter,header)
 %% filter C based on contents of dataFilter
 
+bOk = true;
 iS = ones(size(C{1})); %initialize index into rows of C
 for i=1:size(dataFilter,1)
     j=find(strcmp(header,dataFilter{i,1}));%j = index into header
@@ -262,6 +269,8 @@ end
 if ~any(iS) %if all zeros
     fprintf('\nAll measurements removed. Specify dataFilter less strictly than this:, ')
     dataFilter(:,2)
+    bOk=false;
+    C=[];
     return
 end
 
