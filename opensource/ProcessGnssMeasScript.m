@@ -5,63 +5,58 @@ clc;clear all; close(findall(0,'Type','figure'));
 % pseudoranges, C/No, and weighted least squares PVT solution
 %
 % you can run the data in pseudoranges log files provided for you:
-prFileName = 'pseudoranges_log_2016_06_30_21_26_07.txt'; %with duty cycling, no carrier phase
+%prFileName = 'pseudoranges_log_2016_06_30_21_26_07.txt'; %with duty cycling, no carrier phase
 % prFileName = 'pseudoranges_log_2016_08_22_14_45_50.txt'; %no duty cycling, with carrier phase
-%prFileName = 'workshop_trials01.txt';
+prFileName = 'workshop_trials01.txt';
 % as follows
 % 1) copy everything from GitHub google/gps-measurement-tools/ to 
 %    a local directory on your machine
-% 2) change 'dirName = ...' to match the local directory you are using:
-%dirName = '~/Documents/MATLAB/gpstools/opensource/demoFiles';
-
+% 2) softPath will read current working directory
 softPath = pwd;
 addpath(softPath);
 %CHANGE this to your data folder
 dirName = sprintf('%s%s',softPath,'\demoFiles');
-%'d:/tmp/Dropbox/Edu/ION_GNSS/gps-measurement-tools/opensource/demoFiles/'
 
 % 3) run ProcessGnssMeasScript.m script file 
+% 4) when asked select 'change folder' to get proper pwd
 
 %Author: Frank van Diggelen
+%edits: LKB
 %Open Source code for processing Android GNSS Measurements
 %% debug and profiling tools
+% tools below are used to debug/follow code
 % profile on;
 % profile clear;
 display('DEBUG MODE');
-dbstop if error
+dbstop if error %gives post-mortem
 % dbstop if naninf
 % dbstop in subRoutine at 17 if idx==7
+dbstop in ProcessGnssMeas at 17 if idx==7
 dbstatus
-
+ProcessGnssMeas
 % get display screen file
 HW_ScrSize = get(0,'ScreenSize');%in pixels
-%% data
-%To add your own data:
-% save data from GnssLogger App, and edit dirName and prFileName appropriately
-%dirName = 'put the full path for your directory here';
-%prFileName = 'put the pseuoranges log file name here';
 
 %% parameters
 %param.llaTrueDegDegM = [];
 %enter true WGS84 lla, if you know it:
-param.llaTrueDegDegM = [37.422578, -122.081678, -28];%Charleston Park Test Site
-%param.llaTrueDegDegM = [45.5298979 -122.6619045 24.16] %workshop trial approx coords
+%param.llaTrueDegDegM = [37.422578, -122.081678, -28];%Charleston Park Test Site
+param.llaTrueDegDegM = [45.5298979 -122.6619045 24.16] %workshop trial approx coords
 %% Set the data filter and Read log file
 dataFilter = SetDataFilter;
 [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,prFileName,dataFilter);
 if isempty(gnssRaw), return, end
 
-%% Get online ephemeris from Nasa ftp, first compute UTC Time from gnssRaw:
+%% Get online ephemeris from Nasa ftp, first 
 fctSeconds = 1e-3*double(gnssRaw.allRxMillis(end));
-utcTime = Gps2Utc([],fctSeconds);
-allGpsEph = GetNasaHourlyEphemeris(utcTime,dirName);
+utcTime = Gps2Utc([],fctSeconds); %compute UTC Time from gnssRaw:
+allGpsEph = GetNasaHourlyEphemeris(utcTime,dirName); %Get online ephemeris
 if isempty(allGpsEph), return, end
 
 %% process raw measurements, compute pseudoranges:
 [gnssMeas] = ProcessGnssMeas(gnssRaw);
 
 %% plot pseudoranges and pseudorange rates
-%h1 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
 h1 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
 [colors] = PlotPseudoranges(gnssMeas,prFileName);
 h2 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
@@ -79,6 +74,9 @@ PlotPvt(gpsPvt,prFileName,param.llaTrueDegDegM,ts); drawnow;
 h5 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
 PlotPvtStates(gpsPvt,prFileName);
 
+% if no results visible make sure that param.llaTrueDegDegM is correctly set
+% if unknown, use Median llaDegDegM 
+
 %% Plot Accumulated Delta Range 
 if any(any(isfinite(gnssMeas.AdrM) & gnssMeas.AdrM~=0))
     [gnssMeas]= ProcessAdr(gnssMeas);
@@ -92,6 +90,9 @@ end
 %% end of ProcessGnssMeasScript
 rmpath(softPath)
 toc
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Copyright 2016 Google Inc.
 % 
