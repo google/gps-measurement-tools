@@ -28,12 +28,14 @@ dirName = sprintf('%s%s',softPath,'\demoFiles');
 % profile on;
 % profile clear;
 display('DEBUG MODE');
+dbclear all
 dbstop if error %gives post-mortem
 % dbstop if naninf
 % dbstop in subRoutine at 17 if idx==7
-dbstop in ProcessGnssMeas at 17 if idx==7
+%dbstop in ProcessGnssMeas at 98
+%dbstop in ReadGnssLogger at 20
+dbstop at 60
 dbstatus
-ProcessGnssMeas
 % get display screen file
 HW_ScrSize = get(0,'ScreenSize');%in pixels
 

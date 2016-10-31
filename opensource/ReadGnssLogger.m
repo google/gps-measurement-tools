@@ -60,7 +60,7 @@ if ~any(strcmp(extension,{'.txt','.csv'}))
 end
 
 %% read log file into a numeric matrix 'S', and a cell array 'header'
-rawCsvFile = MakeCsv(dirName,fileName);
+rawCsvFile = MakeCsv(dirName,fileName); %create output file
 [header,C] = ReadRawCsv(rawCsvFile);
 
 %% apply dataFilter 
