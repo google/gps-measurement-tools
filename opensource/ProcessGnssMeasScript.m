@@ -61,10 +61,10 @@ if isempty(allGpsEph), return, end
 %% plot pseudoranges and pseudorange rates
 h1 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
 [colors] = PlotPseudoranges(gnssMeas,prFileName);
-h2 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
-PlotPseudorangeRates(gnssMeas,prFileName,colors);
-h3 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
-PlotCno(gnssMeas,prFileName,colors);
+%h2 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
+%PlotPseudorangeRates(gnssMeas,prFileName,colors);
+%h3 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
+%PlotCno(gnssMeas,prFileName,colors);
 
 %% compute WLS position and velocity
 gpsPvt = GpsWlsPvt(gnssMeas,allGpsEph);
@@ -80,14 +80,14 @@ PlotPvtStates(gpsPvt,prFileName);
 % if unknown, use Median llaDegDegM 
 
 %% Plot Accumulated Delta Range 
-if any(any(isfinite(gnssMeas.AdrM) & gnssMeas.AdrM~=0))
-    [gnssMeas]= ProcessAdr(gnssMeas);
-    h6 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
-    PlotAdr(gnssMeas,prFileName,colors);
-    [adrResid]= GpsAdrResiduals(gnssMeas,allGpsEph,param.llaTrueDegDegM);drawnow
-    h7 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
-    PlotAdrResids(adrResid,gnssMeas,prFileName,colors);
-end
+% if any(any(isfinite(gnssMeas.AdrM) & gnssMeas.AdrM~=0))
+%     [gnssMeas]= ProcessAdr(gnssMeas);
+%     h6 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
+%     PlotAdr(gnssMeas,prFileName,colors);
+%     [adrResid]= GpsAdrResiduals(gnssMeas,allGpsEph,param.llaTrueDegDegM);drawnow
+%     h7 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
+%     PlotAdrResids(adrResid,gnssMeas,prFileName,colors);
+% end
 
 %% end of ProcessGnssMeasScript
 rmpath(softPath)
