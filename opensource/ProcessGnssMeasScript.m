@@ -34,7 +34,7 @@ dbstop if error %gives post-mortem
 % dbstop in subRoutine at 17 if idx==7
 %dbstop in ProcessGnssMeas at 98
 %dbstop in ReadGnssLogger at 20
-dbstop at 60
+%dbstop at 66
 dbstatus
 % get display screen file
 HW_ScrSize = get(0,'ScreenSize');%in pixels
