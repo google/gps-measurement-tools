@@ -22,7 +22,7 @@ end
 y = utcTime(:,1);
 m = utcTime(:,2);
 d = utcTime(:,3);
-h = utcTime(:,4) + utcTime(:,5)/60 + utcTime(:,5)/3600;
+h = utcTime(:,4) + utcTime(:,5)/60 + utcTime(:,6)/3600;
 
 %check that date is in valid range
 if ( any(y<1901) || any (y>2099) )
