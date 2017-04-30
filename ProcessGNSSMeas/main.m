@@ -7,7 +7,9 @@ clc;clear all; close(findall(0,'Type','figure'));
 % you can run the data in pseudoranges log files provided for you:
 %prFileName = 'pseudoranges_log_2016_06_30_21_26_07.txt'; %with duty cycling, no carrier phase
 % prFileName = 'pseudoranges_log_2016_08_22_14_45_50.txt'; %no duty cycling, with carrier phase
-prFileName = 'workshop_trials01.txt';
+%prFileName = 'workshop_trials01.txt';
+%prFileName = 'N9_google.txt';
+prFileName = 's8_01.txt';
 % as follows
 % 1) copy everything from GitHub google/gps-measurement-tools/ to 
 %    a local directory on your machine
@@ -44,6 +46,9 @@ HW_ScrSize = get(0,'ScreenSize');%in pixels
 %enter true WGS84 lla, if you know it:
 %param.llaTrueDegDegM = [37.422578, -122.081678, -28];%Charleston Park Test Site
 param.llaTrueDegDegM = [45.5298979 -122.6619045 24.16] %workshop trial approx coords
+param.llaTrueDegDegM = [37.4224423 -122.0819186 -16.66] %google Nexus9 approx coords
+param.llaTrueDegDegM = [48.0530356 11.6535412 660.57] %S8 trial approx coords
+
 %% Set the data filter and Read log file
 dataFilter = SetDataFilter;
 [gnssRaw,gnssAnalysis] = ReadGnssLogger(dirName,prFileName,dataFilter);
@@ -61,10 +66,10 @@ if isempty(allGpsEph), return, end
 %% plot pseudoranges and pseudorange rates
 h1 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
 [colors] = PlotPseudoranges(gnssMeas,prFileName);
-%h2 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
-%PlotPseudorangeRates(gnssMeas,prFileName,colors);
-%h3 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
-%PlotCno(gnssMeas,prFileName,colors);
+% h2 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
+% PlotPseudorangeRates(gnssMeas,prFileName,colors);
+% h3 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
+% PlotCno(gnssMeas,prFileName,colors);
 
 %% compute WLS position and velocity
 gpsPvt = GpsWlsPvt(gnssMeas,allGpsEph);
@@ -80,14 +85,16 @@ PlotPvtStates(gpsPvt,prFileName);
 % if unknown, use Median llaDegDegM 
 
 %% Plot Accumulated Delta Range 
-% if any(any(isfinite(gnssMeas.AdrM) & gnssMeas.AdrM~=0))
-%     [gnssMeas]= ProcessAdr(gnssMeas);
-%     h6 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
-%     PlotAdr(gnssMeas,prFileName,colors);
-%     [adrResid]= GpsAdrResiduals(gnssMeas,allGpsEph,param.llaTrueDegDegM);drawnow
-%     h7 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
-%     PlotAdrResids(adrResid,gnssMeas,prFileName,colors);
-% end
+if any(any(isfinite(gnssMeas.AdrM) & gnssMeas.AdrM~=0))
+    print('this phone has ICP');
+    [gnssMeas]= ProcessAdr(gnssMeas);
+    h6 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
+    PlotAdr(gnssMeas,prFileName,colors);
+    [adrResid]= GpsAdrResiduals(gnssMeas,allGpsEph,param.llaTrueDegDegM);drawnow
+    h7 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
+    PlotAdrResids(adrResid,gnssMeas,prFileName,colors);
+else print('this phone do not have ICP capacity, sorry');
+end
 
 %% end of ProcessGnssMeasScript
 rmpath(softPath)
