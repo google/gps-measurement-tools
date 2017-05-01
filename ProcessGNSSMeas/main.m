@@ -8,12 +8,10 @@ clc;clear all; close(findall(0,'Type','figure'));
 %prFileName = 'pseudoranges_log_2016_06_30_21_26_07.txt'; %with duty cycling, no carrier phase
 % prFileName = 'pseudoranges_log_2016_08_22_14_45_50.txt'; %no duty cycling, with carrier phase
 %prFileName = 'workshop_trials01.txt';
-%prFileName = 'N9_google.txt';
-prFileName = 's8_01.txt';
-% as follows
-% 1) copy everything from GitHub google/gps-measurement-tools/ to 
-%    a local directory on your machine
-% 2) softPath will read current working directory
+% SET UP FILE NAME:
+prFileName = 'pseudoranges_log_2017_05_01_13_50_52.txt'; %my Nexus9
+
+%SET UP PATHS
 softPath = pwd;
 addpath(softPath);
 %CHANGE this to your data folder
@@ -45,9 +43,8 @@ HW_ScrSize = get(0,'ScreenSize');%in pixels
 %param.llaTrueDegDegM = [];
 %enter true WGS84 lla, if you know it:
 %param.llaTrueDegDegM = [37.422578, -122.081678, -28];%Charleston Park Test Site
-param.llaTrueDegDegM = [45.5298979 -122.6619045 24.16] %workshop trial approx coords
-param.llaTrueDegDegM = [37.4224423 -122.0819186 -16.66] %google Nexus9 approx coords
-param.llaTrueDegDegM = [48.0530356 11.6535412 660.57] %S8 trial approx coords
+param.llaTrueDegDegM = [53.0710038591 -1.3896084336 173.339] %AD1 UoN FC site
+
 
 %% Set the data filter and Read log file
 dataFilter = SetDataFilter;
@@ -58,7 +55,7 @@ if isempty(gnssRaw), return, end
 fctSeconds = 1e-3*double(gnssRaw.allRxMillis(end));
 utcTime = Gps2Utc([],fctSeconds); %compute UTC Time from gnssRaw:
 allGpsEph = GetNasaHourlyEphemeris(utcTime,dirName); %Get online ephemeris
-if isempty(allGpsEph), return, end
+if isempty(allGpsEph), return, end %uable to process without EPH
 
 %% process raw measurements, compute pseudoranges:
 [gnssMeas] = ProcessGnssMeas(gnssRaw);
@@ -86,14 +83,14 @@ PlotPvtStates(gpsPvt,prFileName);
 
 %% Plot Accumulated Delta Range 
 if any(any(isfinite(gnssMeas.AdrM) & gnssMeas.AdrM~=0))
-    print('this phone has ICP');
+    display('this phone has ICP data, check plots:');
     [gnssMeas]= ProcessAdr(gnssMeas);
     h6 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
     PlotAdr(gnssMeas,prFileName,colors);
     [adrResid]= GpsAdrResiduals(gnssMeas,allGpsEph,param.llaTrueDegDegM);drawnow
     h7 = figure('Color','white','MenuBar','figure','Position',[0 0 HW_ScrSize(3) HW_ScrSize(4)]);
     PlotAdrResids(adrResid,gnssMeas,prFileName,colors);
-else print('this phone do not have ICP capacity, sorry');
+else display('no ICP data on this phone!');
 end
 
 %% end of ProcessGnssMeasScript
