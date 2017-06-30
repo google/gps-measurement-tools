@@ -117,7 +117,7 @@ public class LoggerFragment extends Fragment {
                         mFileLogger.send();
                     }
                 });
-
+        sendFile.setEnabled(false);
         return newView;
     }
 
