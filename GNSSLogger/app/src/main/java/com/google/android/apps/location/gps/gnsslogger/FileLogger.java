@@ -29,6 +29,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.support.v4.BuildConfig;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.android.apps.location.gps.gnsslogger.LoggerFragment.UIFragmentComponent;
@@ -200,10 +202,13 @@ public class FileLogger implements GnssListener {
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "SensorLog");
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
         // attach the file
-        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mFile));
+        Uri fileURI =
+                FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID + ".provider", mFile);
+        emailIntent.putExtra(Intent.EXTRA_STREAM, fileURI);
         getUiComponent().startActivity(Intent.createChooser(emailIntent, "Send log.."));
         if (mFileWriter != null) {
             try {
+                mFileWriter.flush();
                 mFileWriter.close();
                 mFileWriter = null;
             } catch (IOException e) {
