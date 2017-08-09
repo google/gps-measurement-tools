@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Center landmark -->
+    <RelativeLayout
+        android:id="@+id/minutes_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true">
+        <NumberPicker
+            android:id="@+id/minutes_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/minutes_text"
+            android:text="@string/timer_minutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/minutes_picker"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/hours_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/minutes_container">
+        <NumberPicker
+            android:id="@+id/hours_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/hours_text"
+            android:text="@string/timer_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/hours_picker"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/seconds_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/minutes_container">
+        <NumberPicker
+            android:id="@+id/seconds_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/seconds_text"
+            android:text="@string/timer_seconds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/seconds_picker"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

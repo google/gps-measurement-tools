@@ -85,7 +85,15 @@ and log the measurements to the screen and optionally to a text file.
 This source code is supplied as an Android Studio project that can be built and run
 with [Android Studio](https://developer.android.com/studio/index.html).
 
-The APK is also provided for convience.
+The APK is also provided for convenience.
+
+# Pseudorange Library
+
+Position Solution Engine from Gnss Raw measurements as a dependency android library of
+GnssLogger application. Part of the dependencies concerning communicating with SUPL server
+to retrieve ephemeris info has been packed in Jar for project cleanness. To access the SUPL server
+related code, please visit git repository of Android CTS.
+https://android.googlesource.com/platform/cts/+/master/tests/tests/location/src/android/location/cts
 
 # Copyright Notice
 
