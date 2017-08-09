@@ -51,7 +51,7 @@ public class SettingsFragment extends Fragment {
   public static final String TAG = ":SettingsFragment";
 
   /** Position in the drop down menu of the auto ground truth mode */
-  private static int AUTO_GROUND_TRUTH_MODE = 4;
+  private static int AUTO_GROUND_TRUTH_MODE = 3;
 
   /** Key in the {@link SharedPreferences} indicating whether auto-scroll has been enabled */
   protected static String PREFERENCE_KEY_AUTO_SCROLL =  "autoScroll";
