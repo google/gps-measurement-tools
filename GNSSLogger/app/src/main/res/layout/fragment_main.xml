@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/setting_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,147 +10,207 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:layout_marginTop="15dp"
-            android:id="@+id/register_location_label" />
-        <Switch
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/register_location"
-            android:singleLine="true"
-            android:layout_marginTop="15dp"
-            android:text="@string/location_label" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:layout_marginTop="15dp"
-            android:id="@+id/register_measurement_label" />
-        <Switch
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/register_measurements"
-            android:singleLine="true"
-            android:layout_marginTop="15dp"
-            android:text="@string/measurements_label" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textStyle="bold"
-            android:layout_marginTop="15dp"
-            android:id="@+id/register_navigation_label" />
-        <Switch
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/register_navigation"
-            android:singleLine="true"
-            android:layout_marginTop="15dp"
-            android:text="@string/nav_msg_label" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:layout_marginTop="15dp"
-            android:id="@+id/register_status_label" />
-        <Switch
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/register_status"
-            android:singleLine="true"
-            android:layout_marginTop="15dp"
-            android:text="@string/gnss_status_label" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:layout_marginTop="15dp"
-            android:id="@+id/register_nmea_label" />
-        <Switch
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:id="@+id/register_nmea"
-            android:singleLine="true"
-            android:layout_marginTop="15dp"
-            android:text="@string/nmea_label" />
-    </LinearLayout>
-       
- <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">                  
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"            
-            android:text="@string/help"
-            android:layout_marginTop="150dp" 
-            android:id="@+id/help"
-            android:singleLine="true" />       
-        <Button
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"            
-            android:text="@string/exit"
-            android:layout_marginTop="150dp" 
-            android:id="@+id/exit"
-            android:singleLine="true" />      
-    </LinearLayout>
-
-   <TextView
-        android:id="@+id/sw_info"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:textStyle="bold"
-        android:gravity="bottom"/>
-
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
     <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:id="@+id/register_location_label" />
+    <Switch
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_location"
+        android:singleLine="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/location_label" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:id="@+id/register_measurement_label" />
+    <Switch
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_measurements"
+        android:singleLine="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/measurements_label" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:id="@+id/register_navigation_label" />
+    <Switch
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_navigation"
+        android:singleLine="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/nav_msg_label" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:id="@+id/register_status_label" />
+    <Switch
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_status"
+        android:singleLine="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/gnss_status_label" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:id="@+id/register_nmea_label" />
+    <Switch
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_nmea"
+        android:singleLine="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/nmea_label" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:id="@+id/turn_on_auto_scroll" />
+    <Switch
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:id="@+id/auto_scroll_on"
+        android:singleLine="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/auto_scroll" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:id="@+id/turn_on_residual_plot" />
+    <Switch
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:id="@+id/residual_plot_enabled"
+        android:singleLine="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/residual_plot" />
+  </LinearLayout>
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end|bottom"
-        android:textStyle="italic|bold"
-        android:text="@string/app_version"/>
+        android:layout_above="@+id/sw_and_info"
+        android:orientation="horizontal">
+
+      <Button
+          android:id="@+id/help"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:singleLine="true"
+          android:text="@string/help" />
+
+      <Button
+          android:id="@+id/exit"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:singleLine="true"
+          android:text="@string/exit" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sw_and_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+      <TextView
+          android:id="@+id/sw_info"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:gravity="start|bottom"
+          android:textStyle="bold" />
+
+      <TextView
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:gravity="end|bottom"
+          android:text="@string/app_version"
+          android:textStyle="italic|bold" />
+    </LinearLayout>
+  </RelativeLayout>
+
 
 </LinearLayout>

@@ -1,19 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">GnssLogger</string>
-    <string name="app_version">v1.4.0.0</string>
+    <string name="app_version">v2.0.0.0</string>
 
     <string name="title_settings">Settings</string>
-    <string name="title_log">Log</string>   
+    <string name="title_log">Log</string>
+    <string name="title_offset">Position Offset</string>
+    <string name="title_map">Map</string>
+    <string name="title_agnss">AGNSS</string>
     <string name="title_device">Device</string>
-    <integer name="google_play_services_version">8487000</integer>
+    <string name="title_wls">WLS</string>
+    <string name="title_plot">Plot</string>
+
     <string name="location_label">Location</string>
     <string name="measurements_label">Measurements</string>
     <string name="nav_msg_label">Navigation Messages</string>
     <string name="gnss_status_label">GnssStatus</string>
     <string name="nmea_label">Nmea</string>
-    <string name="help">HELP</string>
-    <string name="exit">Exit</string> 
+    <string name="auto_scroll">Auto Scroll</string>
+    <string name="residual_plot">Residual Plot</string>
 
+    <string name="help">HELP</string>
+    <string name="exit">Exit</string>
+    <string name="clearAgps">Clear AGPS</string>
+    <string name="fetchExtraData">Get Xtra</string>
+    <string name="fetchTimeData">Inject Time</string>
+    <string name="requestSingleNlp">Get Network Loc.</string>
+    <string name="requestSingleGps">Get GPS Loc.</string>
+    <string name="ttff">TTFF</string>
+
+    <string name="timer_service_name">GNSS Logger timer</string>
+    <string name="timer_title">Timer Settings</string>
+    <string name="timer_hours">Hours</string>
+    <string name="timer_minutes">Minutes</string>
+    <string name="timer_seconds">Seconds</string>
+    <string name="timer_set">Set</string>
+    <string name="timer_reset">Reset</string>
+    <string name="timer_cancel">Cancel</string>
+    <string name="timer_display">Time Remaining</string>
+    <string name="start_message">Starting log...</string>
+    <string name="stop_message">Sending file...</string>
+    <string name="longitude_in_degrees">Longitude in decimal degrees</string>
+    <string name="ground_solution_mode">Ground Truth Mode:</string>
+    <string name="please_select_ground_truth_mode">Please Select Ground Truth Mode</string>
+    <string name="latitude_in_degrees">Latitude in decimal degrees</string>
+    <string name="altitude_in_meters">Altitude in meters</string>
+    <string name="turn_on_location_measurement">
+        No Measurement has been received yet. Please turn on Measurement and Location in Settings.
+    </string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="current_average_hint">Current Average Of Strongest 4 Satellites:
+        <xliff:g id="currentAverage">%s</xliff:g></string>
+    <string name="history_average_hint">History Average of Strongest 4 Satellites:
+        <xliff:g id="historyAverage">%s</xliff:g></string>
+    <string name="satellite_number_sum_hint">Total Number of Visible Satellites:
+        <xliff:g id="totalNumber">%d</xliff:g></string>
+    <string-array name="constellation_arrays">
+        <item>All</item>
+        <item>GPS</item>
+        <item>SBAS</item>
+        <item>GLONASS</item>
+        <item>QZSS</item>
+        <item>BEIDOU</item>
+        <item>GALILEO</item>
+    </string-array>
+    <string-array name="tab_arrays">
+        <item>C/N0</item>
+        <item>PR Residual</item>
+    </string-array>
+    <string-array name="residual_options">
+        <item>Manual - Still</item>
+        <item>Manual - Moving</item>
+        <item>Manual - Use LLA input</item>
+        <item>Automatic - AR Based</item>
+    </string-array>
+    <string-array name="plot_titles">
+        <item>CN0(dB.Hz) vs Time(s)</item>
+        <item>Pseudorange residual(m) vs Time(s)</item>
+    </string-array>
 </resources>

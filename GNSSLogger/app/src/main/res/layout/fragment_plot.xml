@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:orientation="vertical"
+      android:id="@+id/plot"
+      android:layout_weight="3">
+  </LinearLayout>
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation = "horizontal">
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:id = "@+id/constellation_spinner"
+        android:entries="@array/constellation_arrays">
+    </Spinner>
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:id = "@+id/tab_spinner"
+        android:entries="@array/tab_arrays">
+    </Spinner>
+  </LinearLayout>
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:id="@+id/analysis"
+      android:text="@string/turn_on_location_measurement"
+      android:layout_weight="1"/>
+</LinearLayout>
