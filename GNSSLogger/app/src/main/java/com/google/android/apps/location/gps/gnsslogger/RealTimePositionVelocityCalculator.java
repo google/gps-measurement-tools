@@ -47,8 +47,8 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
   /** Residual analysis where the user is not moving */
   public static final int RESIDUAL_MODE_STILL = 0;
 
-  /** Residual analysis where the user is moving fast (like driving). */
-  public static final int RESIDUAL_MODE_DRIVING = 1;
+  /** Residual analysis where the user is moving */
+  public static final int RESIDUAL_MODE_MOVING = 1;
 
   /**
    * Residual analysis where the user chose to enter a LLA input as their position
@@ -467,7 +467,7 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
           (mGroundTruth[2] * mPositionSolutionCount + posSolution[2])
               / (mPositionSolutionCount + 1);
       mPositionSolutionCount++;
-    } else if (mResidualPlotStatus == RESIDUAL_MODE_DRIVING) {
+    } else if (mResidualPlotStatus == RESIDUAL_MODE_MOVING) {
       // If the user is moving fast, we use single WLS position solution
       mGroundTruth[0] = posSolution[0];
       mGroundTruth[1] = posSolution[1];
@@ -508,10 +508,10 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
       return;
     }
     switch (mResidualPlotStatus) {
-      case RESIDUAL_MODE_DRIVING:
+      case RESIDUAL_MODE_MOVING:
         mPseudorangePositionVelocityFromRealTimeEvents
             .setCorrectedResidualComputationTruthLocationLla(mGroundTruth);
-        logEvent("Residual Plot", "Mode is set to driving", mCurrentColor);
+        logEvent("Residual Plot", "Mode is set to moving", mCurrentColor);
         break;
 
       case RESIDUAL_MODE_STILL:

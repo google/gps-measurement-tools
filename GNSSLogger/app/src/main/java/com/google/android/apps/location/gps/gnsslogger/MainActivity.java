@@ -354,7 +354,9 @@ public class MainActivity extends AppCompatActivity
 
   /**
    * Sets up the ground truth mode of {@link RealTimePositionVelocityCalculator} given an result
-   * from Activity Recognition update.
+   * from Activity Recognition update. For activities other than {@link DetectedActivity#STILL}
+   * and {@link DetectedActivity#TILTING}, we conservatively assume the user is moving and use the
+   * last WLS position solution as ground truth for corrected residual computation.
    */
   private void setGroundTruthModeOnResult(ActivityRecognitionResult result){
     if (result != null){
@@ -365,7 +367,7 @@ public class MainActivity extends AppCompatActivity
             RealTimePositionVelocityCalculator.RESIDUAL_MODE_STILL, null);
       } else {
         mRealTimePositionVelocityCalculator.setResidualPlotMode(
-            RealTimePositionVelocityCalculator.RESIDUAL_MODE_DRIVING, null);
+            RealTimePositionVelocityCalculator.RESIDUAL_MODE_MOVING, null);
       }
     }
   }

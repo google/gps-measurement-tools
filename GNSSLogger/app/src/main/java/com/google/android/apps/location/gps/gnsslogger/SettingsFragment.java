@@ -312,7 +312,7 @@ public class SettingsFragment extends Fragment {
                       // If user select auto, we need to put moving first and turn on AR updates
                       if (mResidualSetting == AUTO_GROUND_TRUTH_MODE) {
                         mResidualSetting
-                            = RealTimePositionVelocityCalculator.RESIDUAL_MODE_DRIVING;
+                            = RealTimePositionVelocityCalculator.RESIDUAL_MODE_MOVING;
                         mModeSwitcher.setAutoSwitchGroundTruthModeEnabled(true);
                       }
                       popupWindow.dismiss();
