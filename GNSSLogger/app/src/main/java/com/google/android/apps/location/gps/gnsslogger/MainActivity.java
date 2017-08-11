@@ -123,6 +123,12 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
+  protected void onDestroy(){
+    mGnssContainer.unregisterAll();
+    super.onDestroy();
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     SharedPreferences sharedPreferences = PreferenceManager.
         getDefaultSharedPreferences(this);
