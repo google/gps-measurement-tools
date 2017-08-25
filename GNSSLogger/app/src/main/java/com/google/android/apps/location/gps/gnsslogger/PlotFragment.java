@@ -38,10 +38,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import com.google.location.lbs.gnss.gps.pseudorange.GpsNavigationMessageStore;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import org.achartengine.ChartFactory;
@@ -77,7 +79,8 @@ public class PlotFragment extends Fragment {
   private static final int NUMBER_OF_STRONGEST_SATELLITES = 4;
 
   /** Data format used to format the data in the text view */
-  private static final DecimalFormat sDataFormat = new DecimalFormat("##.#");
+  private static final DecimalFormat sDataFormat =
+      new DecimalFormat("##.#", new DecimalFormatSymbols(Locale.US));
 
   private GraphicalView mChartView;
 
