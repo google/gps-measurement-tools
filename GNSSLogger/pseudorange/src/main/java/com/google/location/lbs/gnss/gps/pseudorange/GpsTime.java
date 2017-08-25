@@ -21,10 +21,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.primitives.Longs;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.Instant;
-import java.util.GregorianCalendar;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  * A simple class to represent time unit used by GPS.
@@ -46,27 +44,18 @@ public class GpsTime implements Comparable<GpsTime> {
       TimeUnit.DAYS.toSeconds(GPS_DAYS_SINCE_JAVA_EPOCH);
   public static final long GPS_UTC_EPOCH_OFFSET_NANOS =
       TimeUnit.SECONDS.toNanos(GPS_UTC_EPOCH_OFFSET_SECONDS);
-  private static final ZonedDateTime LEAP_SECOND_DATE_1981 = getZonedDateTimeUTC(1981, 7, 1);
-  private static final ZonedDateTime LEAP_SECOND_DATE_2012 = getZonedDateTimeUTC(2012, 7, 1);
-  private static final ZonedDateTime LEAP_SECOND_DATE_2015 = getZonedDateTimeUTC(2015, 7, 1);
-  private static final ZonedDateTime LEAP_SECOND_DATE_2017 = getZonedDateTimeUTC(2017, 7, 1);
-  private static final long nanoSecPerSec = TimeUnit.SECONDS.toNanos(7);
+  private static final DateTimeZone UTC_ZONE = DateTimeZone.UTC;
+  private static final DateTime LEAP_SECOND_DATE_1981 =
+      new DateTime(1981, 7, 1, 0, 0, UTC_ZONE);
+  private static final DateTime LEAP_SECOND_DATE_2012 =
+      new DateTime(2012, 7, 1, 0, 0, UTC_ZONE);
+  private static final DateTime LEAP_SECOND_DATE_2015 =
+      new DateTime(2015, 7, 1, 0, 0, UTC_ZONE);
+  private static final DateTime LEAP_SECOND_DATE_2017 =
+      new DateTime(2017, 1, 1, 0, 0, UTC_ZONE);
   // nanoseconds since GPS epoch (1980/1/6).
   private long gpsNanos;
-  private static ZonedDateTime getZonedDateTimeUTC(int year, int month, int day) {
-    return getZonedDateTimeUTC(year, month, day, 0, 0, 0, 0);
-  }
 
-  private static ZonedDateTime getZonedDateTimeUTC(int year, int month, int day,
-                                                int hour, int minute, int sec, int nanoSec){
-    ZoneId zone = ZoneId.of("UTC");
-    ZonedDateTime zdt = ZonedDateTime.of(year, month, day, hour, minute, sec, nanoSec, zone);
-    return zdt;
-  }
-
-  private static long getMillisFromZonedDateTime(ZonedDateTime zdt) {
-    return zdt.toInstant().toEpochMilli();
-  }
   /**
    * Constructor for GpsTime. Input values are all in GPS time.
    * @param year Year
@@ -77,27 +66,23 @@ public class GpsTime implements Comparable<GpsTime> {
    * @param second Second from 0 to 59
    */
   public GpsTime(int year, int month, int day, int hour, int minute, double second) {
-    ZonedDateTime utcDateTime = getZonedDateTimeUTC(year, month, day, hour, minute,
-        (int) second, (int) ((second * nanoSecPerSec) % nanoSecPerSec));
-
+    DateTime utcDateTime = new DateTime(year, month, day, hour, minute,
+        (int) second, (int) (second * 1000) % 1000, UTC_ZONE);
 
     // Since input time is already specify in GPS time, no need to count leap second here.
-    initGpsNanos(utcDateTime);
-
+    gpsNanos = TimeUnit.MILLISECONDS.toNanos(utcDateTime.getMillis())
+        - GPS_UTC_EPOCH_OFFSET_NANOS;
   }
 
   /**
    * Constructor
-   * @param zDateTime is created using GPS time values.
+   * @param dateTime is created using GPS time values.
    */
-  public GpsTime(ZonedDateTime zDateTime) {
-    initGpsNanos(zDateTime);
-  }
-
-  public void initGpsNanos(ZonedDateTime zDateTime){
-    this.gpsNanos = TimeUnit.MILLISECONDS.toNanos(getMillisFromZonedDateTime(zDateTime))
+  public GpsTime(DateTime dateTime) {
+    gpsNanos = TimeUnit.MILLISECONDS.toNanos(dateTime.getMillis())
         - GPS_UTC_EPOCH_OFFSET_NANOS;
   }
+
   /**
    * Constructor
    * @param gpsNanos nanoseconds since GPS epoch.
@@ -108,21 +93,20 @@ public class GpsTime implements Comparable<GpsTime> {
 
   /**
    * Creates a GPS time using a UTC based date and time.
-   * @param zDateTime represents the current time in UTC time, must be after 2009
+   * @param dateTime represents the current time in UTC time, must be after 2009
    */
-  public static GpsTime fromUtc(ZonedDateTime zDateTime) {
-    return new GpsTime(TimeUnit.MILLISECONDS.toNanos(getMillisFromZonedDateTime(zDateTime))
+  public static GpsTime fromUtc(DateTime dateTime) {
+    return new GpsTime(
+        TimeUnit.MILLISECONDS.toNanos(dateTime.getMillis())
             + TimeUnit.SECONDS.toNanos(
-                GpsTime.getLeapSecond(zDateTime) - GPS_UTC_EPOCH_OFFSET_SECONDS));
+            GpsTime.getLeapSecond(dateTime) - GPS_UTC_EPOCH_OFFSET_SECONDS));
   }
 
   /**
    * Creates a GPS time based upon the current time.
    */
   public static GpsTime now() {
-    ZoneId zone = ZoneId.of("UTC");
-    ZonedDateTime current = ZonedDateTime.now(zone);
-    return fromUtc(current);
+    return fromUtc(DateTime.now(DateTimeZone.UTC));
   }
 
   /**
@@ -147,9 +131,8 @@ public class GpsTime implements Comparable<GpsTime> {
     Preconditions.checkArgument(yumaWeek < 1024);
 
     // Estimate the multiplier of current week.
-    ZoneId zone = ZoneId.of("UTC");
-    ZonedDateTime current = ZonedDateTime.now(zone);
-    GpsTime refTime = new GpsTime(current);
+    DateTime currentTime = DateTime.now(UTC_ZONE);
+    GpsTime refTime = new GpsTime(currentTime);
     Pair<Integer, Integer> refWeekSec = refTime.getGpsWeekSecond();
     int weekMultiplier = refWeekSec.first / 1024;
 
@@ -166,7 +149,7 @@ public class GpsTime implements Comparable<GpsTime> {
    * @param time
    * @return number of leap seconds since GPS epoch.
    */
-  public static int getLeapSecond(ZonedDateTime time) {
+  public static int getLeapSecond(DateTime time) {
     if (LEAP_SECOND_DATE_2017.compareTo(time) <= 0) {
       return 18;
     } else if (LEAP_SECOND_DATE_2015.compareTo(time) <= 0) {
@@ -217,16 +200,26 @@ public class GpsTime implements Comparable<GpsTime> {
     return Pair.create(week, tow23b);
   }
 
+  public long[] getBreakdownEpoch(TimeUnit... units) {
+    long nanos = this.gpsNanos;
+    long[] values = new long[units.length];
+    for (int idx = 0; idx < units.length; ++idx) {
+      TimeUnit unit = units[idx];
+      long value = unit.convert(nanos, TimeUnit.NANOSECONDS);
+      values[idx] = value;
+      nanos -= unit.toNanos(value);
+    }
+    return values;
+  }
+
   /**
    * @return Day of year in GPS time (GMT time)
    */
   public static int getCurrentDayOfYear() {
-    ZoneId zone = ZoneId.of("UTC");
-    ZonedDateTime current = ZonedDateTime.now(zone);
+    DateTime current = DateTime.now(DateTimeZone.UTC);
     // Since current is derived from UTC time, we need to add leap second here.
-    long gpsTimeMillis = getMillisFromZonedDateTime(current)
-        + TimeUnit.SECONDS.toMillis(getLeapSecond(current));
-    ZonedDateTime gpsCurrent = ZonedDateTime.ofInstant(Instant.ofEpochMilli(gpsTimeMillis), ZoneId.of("UTC"));
+    long gpsTimeMillis = current.getMillis() + getLeapSecond(current);
+    DateTime gpsCurrent = new DateTime(gpsTimeMillis, UTC_ZONE);
     return gpsCurrent.getDayOfYear();
   }
 
@@ -262,26 +255,24 @@ public class GpsTime implements Comparable<GpsTime> {
    * @return the GPS time in Calendar.
    */
   public Calendar getTimeInCalendar() {
-    return GregorianCalendar.from(getGpsDateTime());
+    return getGpsDateTime().toGregorianCalendar();
   }
 
   /**
-   * @return a ZonedDateTime with leap seconds considered.
+   * @return a DateTime with leap seconds considered.
    */
-  public ZonedDateTime getUtcDateTime() {
-    ZonedDateTime gpsDateTime = getGpsDateTime();
-    long gpsMillis = getMillisFromZonedDateTime(gpsDateTime)
-        - TimeUnit.SECONDS.toMillis(getLeapSecond(gpsDateTime));
-    return ZonedDateTime.ofInstant(Instant.ofEpochMilli(gpsMillis), ZoneId.of("UTC"));
-
+  public DateTime getUtcDateTime() {
+    DateTime gpsDateTime = getGpsDateTime();
+    return new DateTime(
+        gpsDateTime.getMillis() - TimeUnit.SECONDS.toMillis(getLeapSecond(gpsDateTime)), UTC_ZONE);
   }
 
   /**
-   * @return a ZonedDateTime based on the pure GPS time (without considering leap second).
+   * @return a DateTime based on the pure GPS time (without considering leap second).
    */
-  public ZonedDateTime getGpsDateTime() {
-    long gpsMillis = TimeUnit.NANOSECONDS.toMillis(gpsNanos + GPS_UTC_EPOCH_OFFSET_NANOS);
-    return ZonedDateTime.ofInstant(Instant.ofEpochMilli(gpsMillis), ZoneId.of("UTC"));
+  public DateTime getGpsDateTime() {
+    return new DateTime(TimeUnit.NANOSECONDS.toMillis(gpsNanos
+        + GPS_UTC_EPOCH_OFFSET_NANOS), UTC_ZONE);
   }
 
   /**
