@@ -21,18 +21,18 @@ https://github.com/google/gps-measurement-tools
 
         ~/gpstools/*
 
-    and include the directory '~/gpstools/opensource' in your matlab path:
+    and include the directory `~/gpstools/opensource` in your matlab path:
 
         addpath('~/gpstools/opensource');
 
-    (Note: the tilde '~' is a place holder, don't actually use it, fill in
+    (Note: the tilde `~` is a place holder, don't actually use it, fill in
     the actual complete path)
 
 2. Edit ProcessGnssMeasScript.m to add the demoFiles directory, as follows:
 
         dirName = '~/gpstools/opensource/demoFiles'
 
-    (again, replace tilde '~' with actual complete path)
+    (again, replace tilde `~` with actual complete path)
 
 3. Run ProcessGnssMeasScript.m, it will run with pre-recorded log files.
 
@@ -54,22 +54,22 @@ and GetNasaHourlyEphemeris.m will read it from there.
 
 ### For a summary of the open source GNSS Measurements Tools
 
-See  ~/gpstools/opensource/Contents.m or type 'help opensource' in matlab
+See `~/gpstools/opensource/Contents.m` or type 'help opensource' in matlab
 command window.
 
 ## Platform specific notes:
 
-For Windows: use '\' (backslash), instead of '/' for directories.
+For Windows: use `\` (backslash), instead of `/` for directories.
 
 For Mac: when installing MATLAB. 
-System Preferences --> Security & Privacy -->
-Allow Apps to be downloaded from: Mac App Store and identified developers
+`System Preferences` --> `Security & Privacy` -->
+`Allow Apps to be downloaded from: Mac App Store and identified developers`
 
 Uncompress/Unzip utility called from GetNasaHourlyEphemeris.m:
 The ephemeris on the Nasa ftp is Unix-compressed. GetNasaHourlyEphemeris will 
 automatically uncompress it, if you have the right uncompress function on your 
-computer. If you need to install an unzip utility, see http://www.gpzip.org
-Then search for 'uncompress' in the GetNasaHourlyEphemeris function to find and 
+computer. If you need to install an unzip utility, see http://www.gzip.org/
+Then search for `uncompress` in the GetNasaHourlyEphemeris function to find and 
 edit the name of the unzip utility:
 
     unzipCommand='uncompress';%edit if your platform uses something different 
