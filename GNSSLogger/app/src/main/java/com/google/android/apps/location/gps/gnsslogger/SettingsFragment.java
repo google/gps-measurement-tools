@@ -235,7 +235,8 @@ public class SettingsFragment extends Fragment {
               LayoutInflater inflater =
                   (LayoutInflater)
                       getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-              View layout = inflater.inflate(R.layout.pop_up_window, null);
+              View layout = inflater.inflate(R.layout.pop_up_window,
+                      (ViewGroup) getActivity().findViewById(R.id.pop));
 
               // Find UI elements in pop up window
               final Spinner residualSpinner = layout.findViewById(R.id.residual_spinner);

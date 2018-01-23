@@ -26,7 +26,8 @@
           android:layout_height="wrap_content"
           android:gravity="end"
           android:id="@+id/residual_spinner"
-          android:entries="@array/residual_options">
+          android:entries="@array/residual_options"
+          android:spinnerMode="dialog">
       </Spinner>
     </LinearLayout>
     <EditText
