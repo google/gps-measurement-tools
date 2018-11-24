@@ -155,7 +155,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
               mLastLocationMarkerRaw.setPosition(latLngRaw);
               mLastLocationMarkerDevice.setPosition(latLngDevice);
             }
-            if (mLastLocationMarkerRaw == null && mLastLocationMarkerDevice == null) {
+            if (mLastLocationMarkerRaw != null && mLastLocationMarkerDevice != null) {
               String formattedDate = DATE_SDF.format(new Date(timeMillis));
               mLastLocationMarkerRaw.setTitle("time: " + formattedDate);
               mLastLocationMarkerDevice.showInfoWindow();
