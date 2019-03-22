@@ -17,10 +17,10 @@
 package com.google.location.lbs.gnss.gps.pseudorange;
 
 /**
- * Calculate the troposheric delay based on the ENGOS Tropospheric model.
+ * Calculate the tropospheric delay based on the ENGOS Tropospheric model.
  *
  * <p>The tropospheric delay is modeled as a combined effect of the delay experienced due to
- * hyrostatic (dry) and wet components of the troposphere. Both delays experienced at zenith are
+ * hydrostatic (dry) and wet components of the troposphere. Both delays experienced at zenith are
  * scaled with a mapping function to get the delay at any specific elevation.
  *
  * <p>The tropospheric model algorithm of EGNOS model by Penna, N., A. Dodson and W. Chen (2001)
@@ -49,32 +49,32 @@ public class TroposphericModelEgnos {
   private static final int LATITUDE_15_DEGREES = 15;
   private static final int LATITUDE_75_DEGREES = 75;
   // Lookup Average parameters
-  // Troposphere average presssure mbar
+  // Troposphere average pressure mbar
   private static final double[] latDegreeToPressureMbarAvgMap =
     {1013.25,  1017.25, 1015.75, 1011.75, 1013.0};
   // Troposphere average temperature Kelvin
   private static final double[] latDegreeToTempKelvinAvgMap =
     {299.65, 294.15, 283.15, 272.15, 263.65};
-  // Troposphere average wator vapor pressure
+  // Troposphere average water vapor pressure
   private static final double[] latDegreeToWVPressureMbarAvgMap = {26.31, 21.79, 11.66, 6.78, 4.11};
   // Troposphere average temperature lapse rate K/m
   private static final double[] latDegreeToBetaAvgMapKPM =
     {6.30e-3, 6.05e-3, 5.58e-3, 5.39e-3, 4.53e-3};
   // Troposphere average water vapor lapse rate (dimensionless)
-  private static final double[] latDegreeToLampdaAvgMap = {2.77, 3.15, 2.57, 1.81, 1.55};
+  private static final double[] latDegreeToLambdaAvgMap = {2.77, 3.15, 2.57, 1.81, 1.55};
 
   // Lookup Amplitude parameters
-  // Troposphere amplitude presssure mbar
+  // Troposphere amplitude pressure mbar
   private static final double[] latDegreeToPressureMbarAmpMap = {0.0, -3.75, -2.25, -1.75, -0.5};
   // Troposphere amplitude temperature Kelvin
   private static final double[] latDegreeToTempKelvinAmpMap = {0.0, 7.0, 11.0, 15.0, 14.5};
-  // Troposphere amplitude wator vapor pressure
+  // Troposphere amplitude water vapor pressure
   private static final double[] latDegreeToWVPressureMbarAmpMap = {0.0, 8.85, 7.24, 5.36, 3.39};
   // Troposphere amplitude temperature lapse rate K/m
   private static final double[] latDegreeToBetaAmpMapKPM =
     {0.0, 0.25e-3, 0.32e-3, 0.81e-3, 0.62e-3};
   // Troposphere amplitude water vapor lapse rate (dimensionless)
-  private static final double[] latDegreeToLampdaAmpMap = {0.0, 0.33, 0.46, 0.74, 0.30};
+  private static final double[] latDegreeToLambdaAmpMap = {0.0, 0.33, 0.46, 0.74, 0.30};
   // Zenith delay dry constant K/mbar
   private static final double K1 = 77.604;
   // Zenith delay wet constant K^2/mbar
@@ -141,12 +141,12 @@ public class TroposphericModelEgnos {
     }
 
     // dry components mapping parameters
-    double aHidrostatic = (1.18972 - 0.026855 * heightMetersAboveSeaLevel / 1000.0 + 0.10664
+    double aHydrostatic = (1.18972 - 0.026855 * heightMetersAboveSeaLevel / 1000.0 + 0.10664
         * Math.cos(userLatitudeRadians)) / 1000.0;
 
 
-    double numeratorDry = 1.0 + (aHidrostatic / (1.0 + (B_HYDROSTATIC / (1.0 + C_HYDROSTATIC))));
-    double denominatorDry = Math.sin(satElevationRadians) + (aHidrostatic / (
+    double numeratorDry = 1.0 + (aHydrostatic / (1.0 + (B_HYDROSTATIC / (1.0 + C_HYDROSTATIC))));
+    double denominatorDry = Math.sin(satElevationRadians) + (aHydrostatic / (
         Math.sin(satElevationRadians)
         + (B_HYDROSTATIC / (Math.sin(satElevationRadians) + C_HYDROSTATIC))));
 
@@ -168,7 +168,7 @@ public class TroposphericModelEgnos {
   }
 
   /**
-   * Computes the combined effect of the delay at zenith experienced due to hyrostatic (dry) and wet
+   * Computes the combined effect of the delay at zenith experienced due to hydrostatic (dry) and wet
    * components of the troposphere. The function inputs are the user latitude in radians, user
    * orthometric height above sea level in meters and the day of the year (1-366). The function
    * returns a {@code DryAndWetZenithDelays} containing dry and wet delays at zenith.
@@ -178,7 +178,7 @@ public class TroposphericModelEgnos {
    *
    */
   private static DryAndWetZenithDelays calculateZenithDryAndWetDelaysSec(double userLatitudeRadians,
-      double heightMetersAboveSeaLevel, int dayOfyear1To366) {
+      double heightMetersAboveSeaLevel, int dayOfYear1To366) {
     // interpolated meteorological values
     double pressureMbar;
     double tempKelvin;
@@ -197,20 +197,20 @@ public class TroposphericModelEgnos {
       dmin = NORTHERN_HEMISPHERE_DMIN;
 
     }
-    double amplitudeScalefactor = Math.cos((2 * Math.PI * (dayOfyear1To366 - dmin))
+    double amplitudeScaleFactor = Math.cos((2 * Math.PI * (dayOfYear1To366 - dmin))
         / DAYS_PER_YEAR);
 
     if (absLatitudeDeg <= LATITUDE_15_DEGREES) {
       pressureMbar = latDegreeToPressureMbarAvgMap[INDEX_15_DEGREES]
-          - latDegreeToPressureMbarAmpMap[INDEX_15_DEGREES] * amplitudeScalefactor;
+          - latDegreeToPressureMbarAmpMap[INDEX_15_DEGREES] * amplitudeScaleFactor;
       tempKelvin = latDegreeToTempKelvinAvgMap[INDEX_15_DEGREES]
-          - latDegreeToTempKelvinAmpMap[INDEX_15_DEGREES] * amplitudeScalefactor;
+          - latDegreeToTempKelvinAmpMap[INDEX_15_DEGREES] * amplitudeScaleFactor;
       waterVaporPressureMbar = latDegreeToWVPressureMbarAvgMap[INDEX_15_DEGREES]
-          - latDegreeToWVPressureMbarAmpMap[INDEX_15_DEGREES] * amplitudeScalefactor;
+          - latDegreeToWVPressureMbarAmpMap[INDEX_15_DEGREES] * amplitudeScaleFactor;
       beta = latDegreeToBetaAvgMapKPM[INDEX_15_DEGREES] - latDegreeToBetaAmpMapKPM[INDEX_15_DEGREES]
-          * amplitudeScalefactor;
-      lambda = latDegreeToLampdaAmpMap[INDEX_15_DEGREES] - latDegreeToLampdaAmpMap[INDEX_15_DEGREES]
-          * amplitudeScalefactor;
+          * amplitudeScaleFactor;
+      lambda = latDegreeToLambdaAmpMap[INDEX_15_DEGREES] - latDegreeToLambdaAmpMap[INDEX_15_DEGREES]
+          * amplitudeScaleFactor;
     } else if (absLatitudeDeg > LATITUDE_15_DEGREES && absLatitudeDeg < LATITUDE_75_DEGREES) {
       int key = (int) (absLatitudeDeg / LATITUDE_15_DEGREES);
 
@@ -220,7 +220,7 @@ public class TroposphericModelEgnos {
       double amplitudePressureMbar = interpolate(key * LATITUDE_15_DEGREES,
           latDegreeToPressureMbarAmpMap[key - 1], (key + 1) * LATITUDE_15_DEGREES,
           latDegreeToPressureMbarAmpMap[key], absLatitudeDeg);
-      pressureMbar = averagePressureMbar - amplitudePressureMbar * amplitudeScalefactor;
+      pressureMbar = averagePressureMbar - amplitudePressureMbar * amplitudeScaleFactor;
 
       double averageTempKelvin = interpolate(key * LATITUDE_15_DEGREES,
           latDegreeToTempKelvinAvgMap[key - 1], (key + 1) * LATITUDE_15_DEGREES,
@@ -228,7 +228,7 @@ public class TroposphericModelEgnos {
       double amplitudeTempKelvin = interpolate(key * LATITUDE_15_DEGREES,
           latDegreeToTempKelvinAmpMap[key - 1], (key + 1) * LATITUDE_15_DEGREES,
           latDegreeToTempKelvinAmpMap[key], absLatitudeDeg);
-      tempKelvin = averageTempKelvin - amplitudeTempKelvin * amplitudeScalefactor;
+      tempKelvin = averageTempKelvin - amplitudeTempKelvin * amplitudeScaleFactor;
 
       double averageWaterVaporPressureMbar = interpolate(key * LATITUDE_15_DEGREES,
           latDegreeToWVPressureMbarAvgMap[key - 1], (key + 1) * LATITUDE_15_DEGREES,
@@ -237,33 +237,33 @@ public class TroposphericModelEgnos {
           latDegreeToWVPressureMbarAmpMap[key - 1], (key + 1) * LATITUDE_15_DEGREES,
           latDegreeToWVPressureMbarAmpMap[key], absLatitudeDeg);
       waterVaporPressureMbar =
-          averageWaterVaporPressureMbar - amplitudeWaterVaporPressureMbar * amplitudeScalefactor;
+          averageWaterVaporPressureMbar - amplitudeWaterVaporPressureMbar * amplitudeScaleFactor;
 
       double averageBeta = interpolate(key * LATITUDE_15_DEGREES, latDegreeToBetaAvgMapKPM[key - 1],
           (key + 1) * LATITUDE_15_DEGREES, latDegreeToBetaAvgMapKPM[key], absLatitudeDeg);
       double amplitudeBeta = interpolate(key * LATITUDE_15_DEGREES,
           latDegreeToBetaAmpMapKPM[key - 1], (key + 1) * LATITUDE_15_DEGREES,
           latDegreeToBetaAmpMapKPM[key], absLatitudeDeg);
-      beta = averageBeta - amplitudeBeta * amplitudeScalefactor;
+      beta = averageBeta - amplitudeBeta * amplitudeScaleFactor;
 
       double averageLambda = interpolate(key * LATITUDE_15_DEGREES,
-          latDegreeToLampdaAvgMap[key - 1], (key + 1) * LATITUDE_15_DEGREES,
-          latDegreeToLampdaAvgMap[key], absLatitudeDeg);
+          latDegreeToLambdaAvgMap[key - 1], (key + 1) * LATITUDE_15_DEGREES,
+          latDegreeToLambdaAvgMap[key], absLatitudeDeg);
       double amplitudeLambda = interpolate(key * LATITUDE_15_DEGREES,
-          latDegreeToLampdaAmpMap[key - 1], (key + 1) * LATITUDE_15_DEGREES,
-          latDegreeToLampdaAmpMap[key], absLatitudeDeg);
-      lambda = averageLambda - amplitudeLambda * amplitudeScalefactor;
+          latDegreeToLambdaAmpMap[key - 1], (key + 1) * LATITUDE_15_DEGREES,
+          latDegreeToLambdaAmpMap[key], absLatitudeDeg);
+      lambda = averageLambda - amplitudeLambda * amplitudeScaleFactor;
     } else {
       pressureMbar = latDegreeToPressureMbarAvgMap[INDEX_75_DEGREES]
-          - latDegreeToPressureMbarAmpMap[INDEX_75_DEGREES] * amplitudeScalefactor;
+          - latDegreeToPressureMbarAmpMap[INDEX_75_DEGREES] * amplitudeScaleFactor;
       tempKelvin = latDegreeToTempKelvinAvgMap[INDEX_75_DEGREES]
-          - latDegreeToTempKelvinAmpMap[INDEX_75_DEGREES] * amplitudeScalefactor;
+          - latDegreeToTempKelvinAmpMap[INDEX_75_DEGREES] * amplitudeScaleFactor;
       waterVaporPressureMbar = latDegreeToWVPressureMbarAvgMap[INDEX_75_DEGREES]
-          - latDegreeToWVPressureMbarAmpMap[INDEX_75_DEGREES] * amplitudeScalefactor;
+          - latDegreeToWVPressureMbarAmpMap[INDEX_75_DEGREES] * amplitudeScaleFactor;
       beta = latDegreeToBetaAvgMapKPM[INDEX_75_DEGREES] - latDegreeToBetaAmpMapKPM[INDEX_75_DEGREES]
-          * amplitudeScalefactor;
-      lambda = latDegreeToLampdaAmpMap[INDEX_75_DEGREES] - latDegreeToLampdaAmpMap[INDEX_75_DEGREES]
-          * amplitudeScalefactor;
+          * amplitudeScaleFactor;
+      lambda = latDegreeToLambdaAmpMap[INDEX_75_DEGREES] - latDegreeToLambdaAmpMap[INDEX_75_DEGREES]
+          * amplitudeScaleFactor;
     }
 
     double zenithDryDelayAtSeaLevelSeconds = (1.0e-6 * K1 * RD * pressureMbar) / GM;

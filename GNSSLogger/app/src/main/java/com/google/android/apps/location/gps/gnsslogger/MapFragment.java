@@ -110,7 +110,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     mPositionVelocityCalculator = value;
   }
 
-  public void updateMapViewWithPostions(
+  public void updateMapViewWithPositions(
       final double latDegRaw,
       final double lngDegRaw,
       final double latDegDevice,

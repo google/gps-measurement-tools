@@ -377,10 +377,10 @@ public class SettingsFragment extends Fragment {
       return null;
     }
 
-    String platfromVersionString = Build.VERSION.RELEASE;
-    swInfo.append("Platform: " + platfromVersionString + "\n");
-    int apiLivelInt = Build.VERSION.SDK_INT;
-    swInfo.append("Api Level: " + apiLivelInt);
+    String platformVersionString = Build.VERSION.RELEASE;
+    swInfo.append("Platform: " + platformVersionString + "\n");
+    int apiLevelInt = Build.VERSION.SDK_INT;
+    swInfo.append("Api Level: " + apiLevelInt);
 
     return view;
   }

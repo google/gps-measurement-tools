@@ -63,7 +63,7 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
   private int mCurrentColor = Color.rgb(0x4a, 0x5f, 0x70);
   private int mCurrentColorIndex = 0;
   private boolean mAllowShowingRawResults = false;
-  private MapFragment mMapFragement;
+  private MapFragment mMapFragment;
   private MainActivity mMainActivity;
   private PlotFragment mPlotFragment;
   private int[] mRgbColorArray = {
@@ -250,7 +250,7 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
                 }
                 logLocationEvent("onLocationChanged: " + location);
                 if (!Double.isNaN(posSolution[0])) {
-                  updateMapViewWithPostions(
+                  updateMapViewWithPositions(
                       posSolution[0],
                       posSolution[1],
                       location.getLatitude(),
@@ -267,16 +267,16 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
   }
 
   private void clearMapMarkers() {
-    mMapFragement.clearMarkers();
+    mMapFragment.clearMarkers();
   }
 
-  private void updateMapViewWithPostions(
+  private void updateMapViewWithPositions(
       double latDegRaw,
       double lngDegRaw,
       double latDegDevice,
       double lngDegDevice,
       long timeMillis) {
-    mMapFragement.updateMapViewWithPostions(
+    mMapFragment.updateMapViewWithPositions(
         latDegRaw, lngDegRaw, latDegDevice, lngDegDevice, timeMillis);
   }
 
@@ -479,8 +479,8 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
   /**
    * Sets {@link MapFragment} for receiving WLS location update
    */
-  public void setMapFragment(MapFragment mapFragement) {
-    this.mMapFragement = mapFragement;
+  public void setMapFragment(MapFragment mapFragment) {
+    this.mMapFragment = mapFragment;
   }
 
   /**

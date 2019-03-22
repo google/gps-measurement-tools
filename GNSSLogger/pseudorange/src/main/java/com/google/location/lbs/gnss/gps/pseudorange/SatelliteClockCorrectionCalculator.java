@@ -36,16 +36,16 @@ public class SatelliteClockCorrectionCalculator {
    * meters and Kepler Eccentric Anomaly in Radians.
    *
    * @param ephemerisProto parameters of the navigation message
-   * @param receiverGpsTowAtTimeOfTransmission Reciever estimate of GPS time of week when signal was
+   * @param receiverGpsTowAtTimeOfTransmission Receiver estimate of GPS time of week when signal was
    *        transmitted (seconds)
-   * @param receiverGpsWeekAtTimeOfTrasnmission Receiver estimate of GPS week when signal was
+   * @param receiverGpsWeekAtTimeOfTransmission Receiver estimate of GPS week when signal was
    *        transmitted (0-1024+)
    * @throws Exception
    */
 
   public static SatClockCorrection calculateSatClockCorrAndEccAnomAndTkIteratively(
           GpsEphemerisProto ephemerisProto, double receiverGpsTowAtTimeOfTransmission,
-          double receiverGpsWeekAtTimeOfTrasnmission) throws Exception {
+          double receiverGpsWeekAtTimeOfTransmission) throws Exception {
     // Units are not added in the variable names to have the same name as the ICD-GPS200
     // Mean anomaly (radians)
     double meanAnomalyRad;
@@ -60,13 +60,13 @@ public class SatelliteClockCorrectionCalculator {
     // In the following, Receiver GPS week and ephemeris GPS week are used to correct for week
     // rollover when calculating the time from clock reference epoch (tcSec)
     double timeOfTransmissionIncludingRxWeekSec =
-            receiverGpsWeekAtTimeOfTrasnmission * SECONDS_IN_WEEK + receiverGpsTowAtTimeOfTransmission;
+            receiverGpsWeekAtTimeOfTransmission * SECONDS_IN_WEEK + receiverGpsTowAtTimeOfTransmission;
     // time from clock reference epoch (seconds) page 88 ICD-GPS200
     double tcSec = timeOfTransmissionIncludingRxWeekSec
             - (ephemerisProto.week * SECONDS_IN_WEEK + ephemerisProto.toc);
     // Correction for week rollover
     tcSec = fixWeekRollover(tcSec);
-    double oldEcentricAnomalyRad = 0.0;
+    double oldEccentricAnomalyRad = 0.0;
     double newSatClockCorrectionSeconds = 0.0;
     double relativisticCorrection = 0.0;
     double changeInSatClockCorrection = 0.0;
@@ -92,7 +92,7 @@ public class SatelliteClockCorrectionCalculator {
       eccentricAnomalyRad = meanAnomalyRad;
       // Iteratively solve for Kepler's eccentric anomaly according to ICD-GPS200 page 99
       do {
-        oldEcentricAnomalyRad = eccentricAnomalyRad;
+        oldEccentricAnomalyRad = eccentricAnomalyRad;
         eccentricAnomalyRad =
                 meanAnomalyRad + ephemerisProto.e * Math.sin(eccentricAnomalyRad);
         eccentricAnomalyCounter++;
@@ -100,7 +100,7 @@ public class SatelliteClockCorrectionCalculator {
           throw new Exception("Kepler Eccentric Anomaly calculation did not converge in "
                   + MAX_ITERATIONS + " iterations");
         }
-      } while (Math.abs(oldEcentricAnomalyRad - eccentricAnomalyRad) > ACCURACY_TOLERANCE);
+      } while (Math.abs(oldEccentricAnomalyRad - eccentricAnomalyRad) > ACCURACY_TOLERANCE);
       // relativistic correction term (seconds)
       relativisticCorrection = RELATIVISTIC_CONSTANT_F * ephemerisProto.e
               * ephemerisProto.rootOfA * Math.sin(eccentricAnomalyRad);
@@ -132,13 +132,13 @@ public class SatelliteClockCorrectionCalculator {
    */
   public static double calculateSatClockCorrErrorRate(
       GpsEphemerisProto ephemerisProto, double receiverGpsTowAtTimeOfTransmissionSeconds,
-      double receiverGpsWeekAtTimeOfTrasnmission) throws Exception {
+      double receiverGpsWeekAtTimeOfTransmission) throws Exception {
     SatClockCorrection satClockCorrectionPlus = calculateSatClockCorrAndEccAnomAndTkIteratively(
         ephemerisProto, receiverGpsTowAtTimeOfTransmissionSeconds + 0.5,
-        receiverGpsWeekAtTimeOfTrasnmission);
+        receiverGpsWeekAtTimeOfTransmission);
     SatClockCorrection satClockCorrectionMinus = calculateSatClockCorrAndEccAnomAndTkIteratively(
         ephemerisProto, receiverGpsTowAtTimeOfTransmissionSeconds - 0.5,
-        receiverGpsWeekAtTimeOfTrasnmission);
+        receiverGpsWeekAtTimeOfTransmission);
     double satelliteClockErrorRate = satClockCorrectionPlus.satelliteClockCorrectionMeters
         - satClockCorrectionMinus.satelliteClockCorrectionMeters;
     return satelliteClockErrorRate;

@@ -28,7 +28,7 @@ public class Ecef2LlaConverter {
   // WGS84 Ellipsoid Parameters
   private static final double EARTH_SEMI_MAJOR_AXIS_METERS = 6378137.0;
   private static final double ECCENTRICITY = 8.1819190842622e-2;
-  private static final double INVERSE_FLATENNING = 298.257223563;
+  private static final double INVERSE_FLATTENING = 298.257223563;
   private static final double MIN_MAGNITUDE_METERS = 1.0e-22;
   private static final double MAX_ITERATIONS = 15;
   private static final double RESIDUAL_TOLERANCE = 1.0e-6;
@@ -119,19 +119,19 @@ public class Ecef2LlaConverter {
       double ecefZMetersResidual;
       // initial height (iterate next to improve accuracy)
       altMeters = xyzLengthMeters - EARTH_SEMI_MAJOR_AXIS_METERS
-          * (1 - sinPhi * sinPhi / INVERSE_FLATENNING);
+          * (1 - sinPhi * sinPhi / INVERSE_FLATTENING);
 
       for (int i = 1; i <= MAX_ITERATIONS; i++) {
         sinPhi = Math.sin(latRad);
 
         // calculate radius of curvature in prime vertical direction
-        ni = EARTH_SEMI_MAJOR_AXIS_METERS / Math.sqrt(1 - (2 - 1 / INVERSE_FLATENNING)
-            / INVERSE_FLATENNING * Math.sin(latRad) * Math.sin(latRad));
+        ni = EARTH_SEMI_MAJOR_AXIS_METERS / Math.sqrt(1 - (2 - 1 / INVERSE_FLATTENING)
+            / INVERSE_FLATTENING * Math.sin(latRad) * Math.sin(latRad));
 
         // calculate residuals in p and ecefZMeters
         pResidual = xyLengthMeters - (ni + altMeters) * Math.cos(latRad);
         ecefZMetersResidual = ecefZMeters
-            - (ni * (1 - (2 - 1 / INVERSE_FLATENNING) / INVERSE_FLATENNING) + altMeters)
+            - (ni * (1 - (2 - 1 / INVERSE_FLATTENING) / INVERSE_FLATTENING) + altMeters)
             * Math.sin(latRad);
 
         // update height and latitude

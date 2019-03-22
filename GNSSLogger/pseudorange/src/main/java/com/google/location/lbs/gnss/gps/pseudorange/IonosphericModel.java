@@ -35,9 +35,9 @@ public class IonosphericModel {
   public static final double L2_FREQ_HZ = 10.23 * 1e6 * 120;
   /** Center frequency of the L5 band in Hz. */
   public static final double L5_FREQ_HZ = 10.23 * 1e6 * 115;
-      
+
   private static final double SECONDS_PER_DAY = 86400.0;
-  private static final double PERIOD_OF_DELAY_TRHESHOLD_SECONDS = 72000.0;
+  private static final double PERIOD_OF_DELAY_THRESHOLD_SECONDS = 72000.0;
   private static final double IPP_LATITUDE_THRESHOLD_SEMI_CIRCLE = 0.416;
   private static final double DC_TERM = 5.0e-9;
   private static final double NORTH_GEOMAGNETIC_POLE_LONGITUDE_RADIANS = 5.08;
@@ -49,10 +49,10 @@ public class IonosphericModel {
   private static final int IONO_3_IDX = 3;
 
   /**
-   * Calculates the Ionospheric correction of the pseudorane in seconds using the Klobuchar
+   * Calculates the Ionospheric correction of the pseudorange in seconds using the Klobuchar
    * Ionospheric model.
    */
-  public static double ionoKloboucharCorrectionSeconds(
+  public static double ionoKlobucharCorrectionSeconds(
       double[] userPositionECEFMeters,
       double[] satellitePositionECEFMeters,
       double gpsTOWSeconds,
@@ -70,11 +70,11 @@ public class IonosphericModel {
     double longitudeUSemiCircle = latLngAlt.longitudeRadians / Math.PI;
 
     // earth's centered angle (semi-circles)
-    double earthCentredAngleSemiCirle = 0.0137 / (elevationSemiCircle + 0.11) - 0.022;
+    double earthCentredAngleSemiCircle = 0.0137 / (elevationSemiCircle + 0.11) - 0.022;
 
     // latitude of the Ionospheric Pierce Point (IPP) (semi-circles)
     double latitudeISemiCircle =
-        latitudeUSemiCircle + earthCentredAngleSemiCirle * Math.cos(azimuthSemiCircle * Math.PI);
+        latitudeUSemiCircle + earthCentredAngleSemiCircle * Math.cos(azimuthSemiCircle * Math.PI);
 
     if (latitudeISemiCircle > IPP_LATITUDE_THRESHOLD_SEMI_CIRCLE) {
       latitudeISemiCircle = IPP_LATITUDE_THRESHOLD_SEMI_CIRCLE;
@@ -83,7 +83,7 @@ public class IonosphericModel {
     }
 
     // geodetic longitude of the Ionospheric Pierce Point (IPP) (semi-circles)
-    double longitudeISemiCircle = longitudeUSemiCircle + earthCentredAngleSemiCirle
+    double longitudeISemiCircle = longitudeUSemiCircle + earthCentredAngleSemiCircle
         * Math.sin(azimuthSemiCircle * Math.PI) / Math.cos(latitudeISemiCircle * Math.PI);
 
     // geomagnetic latitude of the Ionospheric Pierce Point (IPP) (semi-circles)
@@ -109,8 +109,8 @@ public class IonosphericModel {
     double periodOfDelaySeconds = beta[IONO_0_IDX] + beta[IONO_1_IDX] * geomLatIPPSemiCircle
         + beta[IONO_2_IDX] * geomLatIPPSemiCircle * geomLatIPPSemiCircle + beta[IONO_3_IDX]
         * geomLatIPPSemiCircle * geomLatIPPSemiCircle * geomLatIPPSemiCircle;
-    if (periodOfDelaySeconds < PERIOD_OF_DELAY_TRHESHOLD_SECONDS) {
-      periodOfDelaySeconds = PERIOD_OF_DELAY_TRHESHOLD_SECONDS;
+    if (periodOfDelaySeconds < PERIOD_OF_DELAY_THRESHOLD_SECONDS) {
+      periodOfDelaySeconds = PERIOD_OF_DELAY_THRESHOLD_SECONDS;
     }
 
     // phase of ionospheric delay
@@ -130,8 +130,8 @@ public class IonosphericModel {
           + (1 - Math.pow(phaseOfDelayRadians, 2) / 2.0 + Math.pow(phaseOfDelayRadians, 4) / 24.0)
           * amplitudeOfDelaySeconds) * slantFactor;
     }
-    
-    // apply factor for frequency bands other than L1 
+
+    // apply factor for frequency bands other than L1
     ionoDelaySeconds *= (L1_FREQ_HZ * L1_FREQ_HZ) / (frequencyHz * frequencyHz);
 
     return ionoDelaySeconds;

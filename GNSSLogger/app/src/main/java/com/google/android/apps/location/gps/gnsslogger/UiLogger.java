@@ -89,7 +89,7 @@ public class UiLogger implements GnssListener {
     }
 
     builder.append("]");
-    logMeasurementEvent("onGnsssMeasurementsReceived: " + builder.toString());
+    logMeasurementEvent("onGnssMeasurementsReceived: " + builder.toString());
   }
 
   private String toStringClock(GnssClock gnssClock) {
@@ -220,7 +220,7 @@ public class UiLogger implements GnssListener {
     if (measurement.hasSnrInDb()) {
       builder.append(String.format(format, "SnrInDb", measurement.getSnrInDb()));
     }
-    
+
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       if (measurement.hasAutomaticGainControlLevelDb()) {
         builder.append(
@@ -230,7 +230,7 @@ public class UiLogger implements GnssListener {
         builder.append(String.format(format, "CarrierFreqHz", measurement.getCarrierFrequencyHz()));
       }
     }
-    
+
     return builder.toString();
   }
 

@@ -52,7 +52,7 @@ public class ResidualCorrectionCalculator {
    *     passed in from WLS
    * @param positionVelocitySolutionECEF position velocity solution passed in from WLS
    * @param groundTruthInputECEFMeters the reference position in ECEF meters
-   * @return an array contains the corrected pseusorange residual in meters for each satellite
+   * @return an array contains the corrected pseudorange residual in meters for each satellite
    */
   public static double[] calculateCorrectedResiduals(
       SatellitesPositionPseudorangesResidualAndCovarianceMatrix

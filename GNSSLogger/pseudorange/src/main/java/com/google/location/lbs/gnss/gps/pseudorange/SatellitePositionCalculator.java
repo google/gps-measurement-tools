@@ -37,7 +37,7 @@ public class SatellitePositionCalculator {
    * A {@code PositionAndVelocity} class is returned containing satellite position in meters
    * (x, y and z) and velocity in meters per second (x, y, z)
    *
-   * <p>Satelite position and velocity equations are obtained from:
+   * <p>Satellite position and velocity equations are obtained from:
    * http://www.gps.gov/technical/icwg/ICD-GPS-200C.pdf) pages 94 - 101 and
    * http://fenrir.naruoka.org/download/autopilot/note/080205_gps/gps_velocity.pdf
    *
@@ -100,7 +100,7 @@ public class SatellitePositionCalculator {
       RangeAndRangeRate userSatRangeAndRate, PositionAndVelocity satPosAndVel) throws Exception {
 
     // Calculate satellite clock correction (meters), Kepler Eccentric anomaly (radians) and time
-    // from ephemeris refrence epoch (tkSec) iteratively
+    // from ephemeris reference epoch (tkSec) iteratively
     SatClockCorrection satClockCorrectionValues =
         SatelliteClockCorrectionCalculator.calculateSatClockCorrAndEccAnomAndTkIteratively(
             ephemerisProto, receiverGpsTowAtTimeOfTransmissionCorrected,
@@ -176,26 +176,26 @@ public class SatellitePositionCalculator {
     double eccentricAnomalyDotRadPerSec =
             meanAnomalyDotRadPerSec / (1.0 - ephemerisProto.e * Math.cos(eccentricAnomalyRadians));
     // Derivative of true anomaly (radians/seconds)
-    double trueAnomalydotRadPerSec = Math.sin(eccentricAnomalyRadians)
+    double trueAnomalyDotRadPerSec = Math.sin(eccentricAnomalyRadians)
             * eccentricAnomalyDotRadPerSec
             * (1.0 + ephemerisProto.e * Math.cos(trueAnomalyRadians)) / (
             Math.sin(trueAnomalyRadians)
                     * (1.0 - ephemerisProto.e * Math.cos(eccentricAnomalyRadians)));
     // Derivative of argument of latitude (radians/seconds)
-    double argumentOfLatitudeDotRadPerSec = trueAnomalydotRadPerSec + 2.0 * (ephemerisProto.cus
+    double argumentOfLatitudeDotRadPerSec = trueAnomalyDotRadPerSec + 2.0 * (ephemerisProto.cus
             * Math.cos(2.0 * argumentOfLatitudeRadians) - ephemerisProto.cuc
-            * Math.sin(2.0 * argumentOfLatitudeRadians)) * trueAnomalydotRadPerSec;
+            * Math.sin(2.0 * argumentOfLatitudeRadians)) * trueAnomalyDotRadPerSec;
     // Derivative of radius of satellite orbit (m/s)
     double radiusOfSatelliteOrbitDotMPerSec = a * ephemerisProto.e
             * Math.sin(eccentricAnomalyRadians) * n
             / (1.0 - ephemerisProto.e * Math.cos(eccentricAnomalyRadians)) + 2.0 * (
             ephemerisProto.crs * Math.cos(2.0 * argumentOfLatitudeRadians)
                     - ephemerisProto.crc * Math.sin(2.0 * argumentOfLatitudeRadians))
-            * trueAnomalydotRadPerSec;
+            * trueAnomalyDotRadPerSec;
     // Derivative of the inclination (radians/seconds)
     double inclinationDotRadPerSec = ephemerisProto.iDot + (ephemerisProto.cis
             * Math.cos(2.0 * argumentOfLatitudeRadians) - ephemerisProto.cic
-            * Math.sin(2.0 * argumentOfLatitudeRadians)) * 2.0 * trueAnomalydotRadPerSec;
+            * Math.sin(2.0 * argumentOfLatitudeRadians)) * 2.0 * trueAnomalyDotRadPerSec;
 
     double xVelocityMPS = radiusOfSatelliteOrbitDotMPerSec * Math.cos(argumentOfLatitudeRadians)
             - yPositionMeters * argumentOfLatitudeDotRadPerSec;

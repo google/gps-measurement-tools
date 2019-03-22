@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.widget.NumberPicker;
 import java.util.concurrent.TimeUnit;
 
-/** A represetation of a time as "hours:minutes:seconds" */
+/** A representation of a time as "hours:minutes:seconds" */
 public class TimerValues {
   private static final String EMPTY = "N/A";
   private static final String HOURS = "hours";
