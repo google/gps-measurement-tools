@@ -349,8 +349,8 @@ public class GpsNavigationMessageStore {
     gpsEphemerisProto.omega = o * POW_2_NEG_31 * Math.PI;
 
     int odot = extractBits(ODOT_INDEX, ODOT_LENGTH, rawData);
-    odot = getTwoComplement(odot, ODOT_LENGTH);;
-    gpsEphemerisProto.omegaDot = o * POW_2_NEG_43 * Math.PI;
+    odot = getTwoComplement(odot, ODOT_LENGTH);
+    gpsEphemerisProto.omegaDot = odot * POW_2_NEG_43 * Math.PI;
 
     short cis = (short) extractBits(CIS_INDEX, CIS_LENGTH, rawData);
     gpsEphemerisProto.cis = cis * POW_2_NEG_29;
