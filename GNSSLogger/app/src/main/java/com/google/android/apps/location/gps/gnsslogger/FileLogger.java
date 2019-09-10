@@ -332,7 +332,7 @@ public class FileLogger implements GnssListener {
       if (mFileWriter == null) {
         return;
       }
-      String nmeaStream = String.format(Locale.US, "NMEA,%s,%d", s, timestamp);
+      String nmeaStream = String.format(Locale.US, "NMEA,%s,%d", s.trim(), timestamp);
       try {
         mFileWriter.write(nmeaStream);
         mFileWriter.newLine();
