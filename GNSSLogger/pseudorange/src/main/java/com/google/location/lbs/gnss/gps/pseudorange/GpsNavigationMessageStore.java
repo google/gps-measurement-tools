@@ -293,7 +293,7 @@ public class GpsNavigationMessageStore {
     gpsEphemerisProto.iode = iode;
 
     short crs = (short) extractBits(CRS_INDEX, CRS_LENGTH, rawData);
-    gpsEphemerisProto.crc = crs * POW_2_NEG_5;
+    gpsEphemerisProto.crs = crs * POW_2_NEG_5;
 
     short deltaN = (short) extractBits(DELTA_N_INDEX, DELTA_N_LENGTH, rawData);
     gpsEphemerisProto.deltaN = deltaN * POW_2_NEG_43 * Math.PI;
@@ -350,7 +350,7 @@ public class GpsNavigationMessageStore {
 
     int odot = extractBits(ODOT_INDEX, ODOT_LENGTH, rawData);
     odot = getTwoComplement(odot, ODOT_LENGTH);;
-    gpsEphemerisProto.omegaDot = o * POW_2_NEG_43 * Math.PI;
+    gpsEphemerisProto.omegaDot = odot * POW_2_NEG_43 * Math.PI;
 
     short cis = (short) extractBits(CIS_INDEX, CIS_LENGTH, rawData);
     gpsEphemerisProto.cis = cis * POW_2_NEG_29;
