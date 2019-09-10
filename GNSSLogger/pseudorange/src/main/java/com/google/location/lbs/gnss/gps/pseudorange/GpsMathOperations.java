@@ -29,12 +29,12 @@ public class GpsMathOperations {
    * Calculates the norm of a vector
    */
   public static double vectorNorm(double[] inputVector) {
-    double normSqured = 0;
+    double normSquared = 0;
     for (int i = 0; i < inputVector.length; i++) {
-      normSqured = Math.pow(inputVector[i], 2) + normSqured;
+      normSquared = Math.pow(inputVector[i], 2) + normSquared;
     }
 
-    return Math.sqrt(normSqured);
+    return Math.sqrt(normSquared);
   }
 
   /**

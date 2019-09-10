@@ -20,7 +20,7 @@ import com.google.location.lbs.gnss.gps.pseudorange.Ecef2LlaConverter.GeodeticLl
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
- * Transformations from ECEF coordiantes to Topocentric coordinates
+ * Transformations from ECEF coordinates to Topocentric coordinates
  */
 public class EcefToTopocentricConverter {
   private static final double MIN_DISTANCE_MAGNITUDE_METERS = 1.0e-22;
@@ -37,7 +37,7 @@ public class EcefToTopocentricConverter {
    * http://kom.aau.dk/~borre/life-l99/topocent.m
    *
    */
-  public static TopocentricAEDValues convertCartesianToTopocentericRadMeters(
+  public static TopocentricAEDValues convertCartesianToTopocentricRadMeters(
       final double[] originECEFMeters, final double[] inputVectorMeters) {
 
     GeodeticLlaValues latLngAlt = Ecef2LlaConverter.convertECEFToLLACloseForm(originECEFMeters[0],
@@ -81,7 +81,7 @@ public class EcefToTopocentricConverter {
   public static TopocentricAEDValues calculateElAzDistBetween2Points(
       double[] userPositionECEFMeters, double[] satPositionECEFMeters) {
 
-    return convertCartesianToTopocentericRadMeters(userPositionECEFMeters,
+    return convertCartesianToTopocentricRadMeters(userPositionECEFMeters,
         GpsMathOperations.subtractTwoVectors(satPositionECEFMeters, userPositionECEFMeters));
 
   }

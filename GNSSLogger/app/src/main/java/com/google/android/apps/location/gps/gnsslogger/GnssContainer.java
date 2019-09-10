@@ -46,7 +46,7 @@ public class GnssContainer {
   private boolean mLogStatuses = true;
   private boolean mLogNmeas = true;
   private long registrationTimeNanos = 0L;
-  private long firstLocatinTimeNanos = 0L;
+  private long firstLocationTimeNanos = 0L;
   private long ttff = 0L;
   private boolean firstTime = true;
 
@@ -85,8 +85,8 @@ public class GnssContainer {
           if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             if (mLogLocations) {
               for (GnssListener logger : mLoggers) {
-                firstLocatinTimeNanos = SystemClock.elapsedRealtimeNanos();
-                ttff = firstLocatinTimeNanos - registrationTimeNanos;
+                firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
+                ttff = firstLocationTimeNanos - registrationTimeNanos;
                 logger.onTTFFReceived(ttff);
               }
             }

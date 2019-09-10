@@ -197,7 +197,7 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
         // start with last known position and velocity of zero. Following the structure:
         // [X position, Y position, Z position, clock bias,
         //  X Velocity, Y Velocity, Z Velocity, clock bias rate]
-        double[] positionVeloctySolutionEcef = GpsMathOperations.createAndFillArray(8, 0);
+        double[] positionVelocitySolutionEcef = GpsMathOperations.createAndFillArray(8, 0);
         double[] positionVelocityUncertaintyEnu = GpsMathOperations.createAndFillArray(6, 0);
         double[] pseudorangeResidualMeters
             = GpsMathOperations.createAndFillArray(
@@ -211,15 +211,15 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
             mArrivalTimeSinceGPSWeekNs,
             mDayOfYear1To366,
             mGpsWeekNumber,
-            positionVeloctySolutionEcef,
+            positionVelocitySolutionEcef,
             positionVelocityUncertaintyEnu,
             pseudorangeResidualMeters);
         // convert the position solution from ECEF to latitude, longitude and altitude
         GeodeticLlaValues latLngAlt =
             Ecef2LlaConverter.convertECEFToLLACloseForm(
-                positionVeloctySolutionEcef[0],
-                positionVeloctySolutionEcef[1],
-                positionVeloctySolutionEcef[2]);
+                positionVelocitySolutionEcef[0],
+                positionVelocitySolutionEcef[1],
+                positionVelocitySolutionEcef[2]);
         mPositionSolutionLatLngDeg[0] = Math.toDegrees(latLngAlt.latitudeRadians);
         mPositionSolutionLatLngDeg[1] = Math.toDegrees(latLngAlt.longitudeRadians);
         mPositionSolutionLatLngDeg[2] = latLngAlt.altitudeMeters;
@@ -249,9 +249,9 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
                 + " "
                 + mPositionSolutionLatLngDeg[2]);
         EnuValues velocityEnu = Ecef2EnuConverter.convertEcefToEnu(
-            positionVeloctySolutionEcef[4],
-            positionVeloctySolutionEcef[5],
-            positionVeloctySolutionEcef[6],
+            positionVelocitySolutionEcef[4],
+            positionVelocitySolutionEcef[5],
+            positionVelocitySolutionEcef[6],
             latLngAlt.latitudeRadians,
             latLngAlt.longitudeRadians
         );
@@ -364,7 +364,7 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
             + positionVelocitySolutionEcef[5]
             + " "
             + positionVelocitySolutionEcef[6]);
-    Log.d(TAG, "Estimated Reciever clock offset rate in mps: " + positionVelocitySolutionEcef[7]);
+    Log.d(TAG, "Estimated Receiver clock offset rate in mps: " + positionVelocitySolutionEcef[7]);
   }
 
   /**

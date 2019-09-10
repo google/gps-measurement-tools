@@ -87,7 +87,7 @@ public class PlotFragment extends Fragment {
   /** The average of the average of strongest satellite signal strength over history */
   private double mAverageCn0 = 0;
 
-  /** Total number of {@link GnssMeasurementsEvent} has been recieved*/
+  /** Total number of {@link GnssMeasurementsEvent} has been received*/
   private int mMeasurementCount = 0;
   private double mInitialTimeSeconds = -1;
   private TextView mAnalysisView;
