@@ -71,7 +71,9 @@ eval(savestr);
 
 %% Plot google earth
 % path(path, 'C:\Users\daeda\Dropbox\MATLAB\SharkTag\CoarseTimePosition\utilities\plot_google_map')
-path(path, 'C:\Users\daeda\Documents\GitHub\gps-measurement-tools\Run Scripts')
+path(path, 'C:\Users\daeda\Documents\GitHub\gps-measurement-tools\Run Scripts\plot_google_map')
+path(path,dirName);
+
 % path(path, 'C:\Users\Sherman\Dropbox\MATLAB\SharkTag\CoarseTimePosition\utilities\plot_google_map')
 figure(100),
 plot(gpslon, gpslat,'x')
