@@ -31,9 +31,12 @@ dataFilter{1,2}   = 'FullBiasNanos ~= 0';
 % dataFilter{end+1,1} = 'Svid'; 
 % dataFilter{end,2}   = 'Svid==2';
 
+%limit to L1 only:
+% dataFilter{end+1,1} = 'CarrierFrequencyHz';
+% dataFilter{end,2}   = 'CarrierFrequencyHz == 1575420030';
 %limit to GPS only:
-% dataFilter{end+1,1} = 'ConstellationType'; 
-% dataFilter{end,2}   = 'ConstellationType==1'; 
+dataFilter{end+1,1} = 'ConstellationType'; 
+dataFilter{end,2}   = 'ConstellationType==1'; 
 % 
 % dataFilter{end+1,1} = 'ConstellationType'; 
 % dataFilter{end,2}   = 'ConstellationType==2'; 
