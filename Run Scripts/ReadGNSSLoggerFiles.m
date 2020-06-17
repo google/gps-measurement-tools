@@ -20,6 +20,7 @@ dirName = 'C:\Users\daeda\Documents\gnss_log'
 
 fileName    = ['gnss_log_2020_06_08_20_01_59.txt'];
 fileName    = ['gnss_log_2020_06_02_19_49_41.txt'];
+fileName    = ['gnss_log_2020_05_12_17_07_41.txt'];
 under_idx   = strfind(fileName, '_');
 datayear    = str2num(fileName(under_idx(2)+1:under_idx(3)-1));
 datamonth   = str2num(fileName(under_idx(3)+1:under_idx(4)-1));
@@ -59,10 +60,19 @@ gpsPvt = GpsWlsPvt(gnssMeas,allGpsEph)
 pause
 datedash = strfind(datefile,'_')
 
-gpslat = gpsPvt.allLlaDegDegM(:,1)
+gpslat = gpsPvt.allLlaDegDegM(:,1);
 gpslon = gpsPvt.allLlaDegDegM(:,2);
 gpsht  = gpsPvt.allLlaDegDegM(:,3);
-gpstime = gpsPvt.FctSeconds
+gpstime = gpsPvt.FctSeconds;
 
 savestr = ['save gpsproc' datefile ' gpslat gpslon gpsht gpstime'];
-eval(savestr)
+eval(savestr);
+
+
+%% Plot google earth
+% path(path, 'C:\Users\daeda\Dropbox\MATLAB\SharkTag\CoarseTimePosition\utilities\plot_google_map')
+path(path, 'C:\Users\daeda\Documents\GitHub\gps-measurement-tools\Run Scripts')
+% path(path, 'C:\Users\Sherman\Dropbox\MATLAB\SharkTag\CoarseTimePosition\utilities\plot_google_map')
+figure(100),
+plot(gpslon, gpslat,'x')
+plot_google_map('APIKey', 'AIzaSyBHzFFKC26AGOr0L2HuKzOqkt0duzCC-kk')
