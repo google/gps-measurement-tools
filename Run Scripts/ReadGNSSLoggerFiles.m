@@ -55,6 +55,8 @@ pause
 % pvt currently only works for GPS only
 gpsPvt = GpsWlsPvt(gnssMeas,allGpsEph)
 
+%%
+PlotSatvsTime; %(gnssRaw)
 
 %%
 pause
@@ -77,5 +79,5 @@ path(path,dirName);
 % path(path, 'C:\Users\Sherman\Dropbox\MATLAB\SharkTag\CoarseTimePosition\utilities\plot_google_map')
 figure(100),
 plot(gpslon, gpslat,'x')
-% plot_google_map_with_key
-plot_google_map('MapType', 'hybrid')
+plot_google_map_with_key
+% plot_google_map('MapType', 'hybrid')
