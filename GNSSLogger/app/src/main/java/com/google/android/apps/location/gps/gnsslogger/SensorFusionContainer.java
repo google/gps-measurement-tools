@@ -21,7 +21,6 @@ import android.location.GnssMeasurementsEvent;
 import android.location.GnssNavigationMessage;
 import android.location.GnssStatus;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.OnNmeaMessageListener;
 import android.os.Bundle;
@@ -29,11 +28,14 @@ import android.os.SystemClock;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 /**
  * A container for GPS related API calls, it binds the {@link LocationManager} with {@link UiLogger}
  */
-public class GnssContainer {
+public class SensorFusionContainer {
 
   public static final String TAG = "GnssLogger";
 
@@ -50,16 +52,17 @@ public class GnssContainer {
   private long ttff = 0L;
   private boolean firstTime = true;
 
-  private final List<GnssListener> mLoggers;
+  GoogleApiClient mGoogleApiClient;
+  private final List<SensorFusionListener> mLoggers;
 
   private final LocationManager mLocationManager;
-  private final LocationListener mLocationListener =
-      new LocationListener() {
+  private final android.location.LocationListener mLocationListener =
+      new android.location.LocationListener() {
 
         @Override
         public void onProviderEnabled(String provider) {
           if (mLogLocations) {
-            for (GnssListener logger : mLoggers) {
+            for (SensorFusionListener logger : mLoggers) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -71,7 +74,7 @@ public class GnssContainer {
         @Override
         public void onProviderDisabled(String provider) {
           if (mLogLocations) {
-            for (GnssListener logger : mLoggers) {
+            for (SensorFusionListener logger : mLoggers) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -84,7 +87,7 @@ public class GnssContainer {
         public void onLocationChanged(Location location) {
           if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             if (mLogLocations) {
-              for (GnssListener logger : mLoggers) {
+              for (SensorFusionListener logger : mLoggers) {
                 firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
                 ttff = firstLocationTimeNanos - registrationTimeNanos;
                 logger.onTTFFReceived(ttff);
@@ -93,7 +96,7 @@ public class GnssContainer {
             firstTime = false;
           }
           if (mLogLocations) {
-            for (GnssListener logger : mLoggers) {
+            for (SensorFusionListener logger : mLoggers) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -105,19 +108,45 @@ public class GnssContainer {
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
           if (mLogLocations) {
-            for (GnssListener logger : mLoggers) {
+            for (SensorFusionListener logger : mLoggers) {
               logger.onLocationStatusChanged(provider, status, extras);
             }
           }
         }
       };
 
+  private final com.google.android.gms.location.LocationListener mFusedLocationListener =
+      new com.google.android.gms.location.LocationListener() {
+
+        @Override
+        public void onLocationChanged(Location location) {
+          if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+            if (mLogLocations) {
+              for (SensorFusionListener logger : mLoggers) {
+                firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
+                ttff = firstLocationTimeNanos - registrationTimeNanos;
+                logger.onTTFFReceived(ttff);
+              }
+            }
+            firstTime = false;
+          }
+          if (mLogLocations) {
+            for (SensorFusionListener logger : mLoggers) {
+              if (logger instanceof AgnssUiLogger && !firstTime) {
+                continue;
+              }
+              logger.onLocationChanged(location);
+            }
+          }
+        }
+     };
+
   private final GnssMeasurementsEvent.Callback gnssMeasurementsEventListener =
       new GnssMeasurementsEvent.Callback() {
         @Override
         public void onGnssMeasurementsReceived(GnssMeasurementsEvent event) {
           if (mLogMeasurements) {
-            for (GnssListener logger : mLoggers) {
+            for (SensorFusionListener logger : mLoggers) {
               logger.onGnssMeasurementsReceived(event);
             }
           }
@@ -126,7 +155,7 @@ public class GnssContainer {
         @Override
         public void onStatusChanged(int status) {
           if (mLogMeasurements) {
-            for (GnssListener logger : mLoggers) {
+            for (SensorFusionListener logger : mLoggers) {
               logger.onGnssMeasurementsStatusChanged(status);
             }
           }
@@ -138,7 +167,7 @@ public class GnssContainer {
         @Override
         public void onGnssNavigationMessageReceived(GnssNavigationMessage event) {
           if (mLogNavigationMessages) {
-            for (GnssListener logger : mLoggers) {
+            for (SensorFusionListener logger : mLoggers) {
               logger.onGnssNavigationMessageReceived(event);
             }
           }
@@ -147,7 +176,7 @@ public class GnssContainer {
         @Override
         public void onStatusChanged(int status) {
           if (mLogNavigationMessages) {
-            for (GnssListener logger : mLoggers) {
+            for (SensorFusionListener logger : mLoggers) {
               logger.onGnssNavigationMessageStatusChanged(status);
             }
           }
@@ -167,7 +196,7 @@ public class GnssContainer {
 
         @Override
         public void onSatelliteStatusChanged(GnssStatus status) {
-          for (GnssListener logger : mLoggers) {
+          for (SensorFusionListener logger : mLoggers) {
             logger.onGnssStatusChanged(status);
           }
         }
@@ -178,16 +207,17 @@ public class GnssContainer {
         @Override
         public void onNmeaMessage(String s, long l) {
           if (mLogNmeas) {
-            for (GnssListener logger : mLoggers) {
+            for (SensorFusionListener logger : mLoggers) {
               logger.onNmeaReceived(l, s);
             }
           }
         }
       };
 
-  public GnssContainer(Context context, GnssListener... loggers) {
+  public SensorFusionContainer(Context context, GoogleApiClient client, SensorFusionListener... loggers) {
     this.mLoggers = Arrays.asList(loggers);
     mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    this.mGoogleApiClient = client;
   }
 
   public LocationManager getLocationManager() {
@@ -251,6 +281,24 @@ public class GnssContainer {
     logRegistration("LocationUpdates", isGpsProviderEnabled);
   }
 
+  public void unregisterLocation() {
+    mLocationManager.removeUpdates(mLocationListener);
+  }
+
+  public void registerFusedLocation() {
+    LocationRequest locationRequest = new LocationRequest();
+    locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    locationRequest.setInterval(1000);
+    locationRequest.setFastestInterval(100);
+    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, mFusedLocationListener);
+  }
+
+  public void unRegisterFusedLocation() {
+    if (mGoogleApiClient != null) {
+      LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, mFusedLocationListener);
+    }
+  }
+
   public void registerSingleNetworkLocation() {
     boolean isNetworkProviderEnabled =
         mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -269,10 +317,6 @@ public class GnssContainer {
       mLocationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mLocationListener, null);
     }
     logRegistration("LocationUpdates", isGpsProviderEnabled);
-  }
-
-  public void unregisterLocation() {
-    mLocationManager.removeUpdates(mLocationListener);
   }
 
   public void registerMeasurements() {
@@ -328,7 +372,7 @@ public class GnssContainer {
   }
 
   private void logRegistration(String listener, boolean result) {
-    for (GnssListener logger : mLoggers) {
+    for (SensorFusionListener logger : mLoggers) {
       if (logger instanceof AgnssUiLogger && !firstTime) {
         continue;
       }

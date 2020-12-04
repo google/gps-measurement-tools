@@ -52,6 +52,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.LocationServices;
 import java.util.Locale;
 
 /** The activity for the application. */
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity
   private static final int FRAGMENT_INDEX_PLOT = 5;
   private static final String TAG = "MainActivity";
 
-  private GnssContainer mGnssContainer;
+  private SensorFusionContainer mSensorFusionContainer;
   private UiLogger mUiLogger;
   private RealTimePositionVelocityCalculator mRealTimePositionVelocityCalculator;
   private FileLogger mFileLogger;
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   protected void onDestroy(){
-    mGnssContainer.unregisterAll();
+    mSensorFusionContainer.unregisterAll();
     super.onDestroy();
   }
 
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity
             .enableAutoManage(this, this)
             .addConnectionCallbacks(this)
             .addOnConnectionFailedListener(this)
-            .addApi(ActivityRecognition.API)
+            .addApi(ActivityRecognition.API).addApi(LocationServices.API)
             .build();
   }
 
@@ -257,16 +258,17 @@ public class MainActivity extends AppCompatActivity
 
     mFileLogger = new FileLogger(getApplicationContext());
     mAgnssUiLogger = new AgnssUiLogger();
-    mGnssContainer =
-        new GnssContainer(
+    mSensorFusionContainer =
+        new SensorFusionContainer(
             getApplicationContext(),
+            mGoogleApiClient,
             mUiLogger,
             mFileLogger,
             mRealTimePositionVelocityCalculator,
             mAgnssUiLogger);
     mFragments = new Fragment[NUMBER_OF_FRAGMENTS];
     SettingsFragment settingsFragment = new SettingsFragment();
-    settingsFragment.setGpsContainer(mGnssContainer);
+    settingsFragment.setGpsContainer(mSensorFusionContainer);
     settingsFragment.setRealTimePositionVelocityCalculator(mRealTimePositionVelocityCalculator);
     settingsFragment.setAutoModeSwitcher(this);
     mFragments[FRAGMENT_INDEX_SETTING] = settingsFragment;
@@ -285,7 +287,7 @@ public class MainActivity extends AppCompatActivity
     mFragments[FRAGMENT_INDEX_MAP] = mapFragment;
 
     AgnssFragment agnssFragment = new AgnssFragment();
-    agnssFragment.setGpsContainer(mGnssContainer);
+    agnssFragment.setGpsContainer(mSensorFusionContainer);
     agnssFragment.setUILogger(mAgnssUiLogger);
     mFragments[FRAGMENT_INDEX_AGNSS] = agnssFragment;
 
