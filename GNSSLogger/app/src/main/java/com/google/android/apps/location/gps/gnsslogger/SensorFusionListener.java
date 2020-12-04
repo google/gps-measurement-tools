@@ -25,7 +25,7 @@ import android.location.OnNmeaMessageListener;
 import android.os.Bundle;
 
 /**  A class representing an interface for logging GPS information. */
-public interface GnssListener {
+public interface SensorFusionListener {
 
   /** @see LocationListener#onProviderEnabled(String) */
   void onProviderEnabled(String provider);

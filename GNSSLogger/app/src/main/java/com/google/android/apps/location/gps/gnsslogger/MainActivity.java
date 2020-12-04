@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
   private static final int FRAGMENT_INDEX_PLOT = 5;
   private static final String TAG = "MainActivity";
 
-  private GnssContainer mGnssContainer;
+  private SensorFusionContainer mSensorFusionContainer;
   private UiLogger mUiLogger;
   private RealTimePositionVelocityCalculator mRealTimePositionVelocityCalculator;
   private FileLogger mFileLogger;
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   protected void onDestroy(){
-    mGnssContainer.unregisterAll();
+    mSensorFusionContainer.unregisterAll();
     super.onDestroy();
   }
 
@@ -257,8 +257,8 @@ public class MainActivity extends AppCompatActivity
 
     mFileLogger = new FileLogger(getApplicationContext());
     mAgnssUiLogger = new AgnssUiLogger();
-    mGnssContainer =
-        new GnssContainer(
+    mSensorFusionContainer =
+        new SensorFusionContainer(
             getApplicationContext(),
             mUiLogger,
             mFileLogger,
@@ -266,7 +266,7 @@ public class MainActivity extends AppCompatActivity
             mAgnssUiLogger);
     mFragments = new Fragment[NUMBER_OF_FRAGMENTS];
     SettingsFragment settingsFragment = new SettingsFragment();
-    settingsFragment.setGpsContainer(mGnssContainer);
+    settingsFragment.setGpsContainer(mSensorFusionContainer);
     settingsFragment.setRealTimePositionVelocityCalculator(mRealTimePositionVelocityCalculator);
     settingsFragment.setAutoModeSwitcher(this);
     mFragments[FRAGMENT_INDEX_SETTING] = settingsFragment;
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity
     mFragments[FRAGMENT_INDEX_MAP] = mapFragment;
 
     AgnssFragment agnssFragment = new AgnssFragment();
-    agnssFragment.setGpsContainer(mGnssContainer);
+    agnssFragment.setGpsContainer(mSensorFusionContainer);
     agnssFragment.setUILogger(mAgnssUiLogger);
     mFragments[FRAGMENT_INDEX_AGNSS] = agnssFragment;
 

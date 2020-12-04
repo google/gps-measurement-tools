@@ -56,6 +56,8 @@
         <xliff:g id="historyAverage">%s</xliff:g></string>
     <string name="satellite_number_sum_hint">Total Number of Visible Satellites:
         <xliff:g id="totalNumber">%d</xliff:g></string>
+    <string name="register_imu_label">register_imu_label</string>
+    <string name="imu_label">IMU</string>
     <string-array name="constellation_arrays">
         <item>All</item>
         <item>GPS</item>

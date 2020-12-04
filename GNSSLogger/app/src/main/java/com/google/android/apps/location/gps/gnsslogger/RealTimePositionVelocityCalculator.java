@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  * computed position and velocity solutions are passed to the {@link ResultFragment} to be
  * visualized.
  */
-public class RealTimePositionVelocityCalculator implements GnssListener {
+public class RealTimePositionVelocityCalculator implements SensorFusionListener {
   /** Residual analysis where user disabled residual plots */
   public static final int RESIDUAL_MODE_DISABLED = -1;
 
@@ -93,7 +93,7 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
                   new PseudorangePositionVelocityFromRealTimeEvents();
             } catch (Exception e) {
               Log.e(
-                  GnssContainer.TAG,
+                  SensorFusionContainer.TAG,
                   " Exception in constructing PseudorangePositionFromRealTimeEvents : ",
                   e);
             }
@@ -143,7 +143,7 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
                     (int) (location.getLongitude() * 1E7),
                     (int) (location.getAltitude() * 1E7));
               } catch (Exception e) {
-                Log.e(GnssContainer.TAG, " Exception setting reference location : ", e);
+                Log.e(SensorFusionContainer.TAG, " Exception setting reference location : ", e);
               }
             }
           };
@@ -368,7 +368,7 @@ public class RealTimePositionVelocityCalculator implements GnssListener {
   public void onListenerRegistration(String listener, boolean result) {}
 
   private void logEvent(String tag, String message, int color) {
-    String composedTag = GnssContainer.TAG + tag;
+    String composedTag = SensorFusionContainer.TAG + tag;
     Log.d(composedTag, message);
     logText(tag, message, color);
   }
