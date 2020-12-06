@@ -18,6 +18,7 @@ package com.google.android.apps.location.gps.gnsslogger;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.SensorEvent;
 import android.location.GnssClock;
 import android.location.GnssMeasurement;
 import android.location.GnssMeasurementsEvent;
@@ -64,6 +65,7 @@ public class FileLogger implements SensorFusionListener {
   private final Context mContext;
 
   private final Object mFileLock = new Object();
+  private final StringBuilder mStringBuilder = new StringBuilder();
   private BufferedWriter mFileWriter;
   private File mFile;
 
@@ -161,6 +163,31 @@ public class FileLogger implements SensorFusionListener {
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.write("Nav,Svid,Type,Status,MessageId,Sub-messageId,Data(Bytes)");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("accelerometer,timestamp,x,y,z");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("gyroscope,timestamp,x,y,z");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("magnetometer,timestamp,x,y,z");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("linear_acceleration,timestamp,x,y,z");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("rotation_vector,timestamp,x*sin(θ/2),y*sin(θ/2),z*sin(θ/2),cos(θ/2),accuracy");
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.newLine();
@@ -335,6 +362,25 @@ public class FileLogger implements SensorFusionListener {
       String nmeaStream = String.format(Locale.US, "NMEA,%s,%d", s.trim(), timestamp);
       try {
         mFileWriter.write(nmeaStream);
+        mFileWriter.newLine();
+      } catch (IOException e) {
+        logException(ERROR_WRITING_FILE, e);
+      }
+    }
+  }
+
+  @Override
+  public void onSensorChanged(SensorEvent event) {
+    synchronized (mFileLock) {
+      if(mFileWriter == null) {
+        return;
+      }
+      mStringBuilder.setLength(0);
+      mStringBuilder.append(event.sensor.getStringType().substring(event.sensor.getStringType().lastIndexOf('.') + 1)).append(RECORD_DELIMITER);
+      mStringBuilder.append(event.timestamp).append(RECORD_DELIMITER);
+      mStringBuilder.append(java.util.Arrays.toString(event.values).replaceAll("[] ]", "").replace("[", ""));
+      try {
+        mFileWriter.write(mStringBuilder.toString());
         mFileWriter.newLine();
       } catch (IOException e) {
         logException(ERROR_WRITING_FILE, e);

@@ -17,6 +17,7 @@
 package com.google.android.apps.location.gps.gnsslogger;
 
 import android.graphics.Color;
+import android.hardware.SensorEvent;
 import android.location.GnssMeasurementsEvent;
 import android.location.GnssNavigationMessage;
 import android.location.GnssStatus;
@@ -363,6 +364,10 @@ public class RealTimePositionVelocityCalculator implements SensorFusionListener 
 
   @Override
   public void onNmeaReceived(long l, String s) {}
+
+  @Override
+  public void onSensorChanged(SensorEvent event) {
+  }
 
   @Override
   public void onListenerRegistration(String listener, boolean result) {}
