@@ -213,8 +213,10 @@ public class SettingsFragment extends Fragment {
                   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                       if (isChecked) {
                           registerImuLabel.setText("Switch is ON");
+                          mSensorContainer.registerSensors();
                       } else {
                           registerImuLabel.setText("Switch is OFF");
+                          mSensorContainer.unregisterSensors();
                       }
                   }
               });
