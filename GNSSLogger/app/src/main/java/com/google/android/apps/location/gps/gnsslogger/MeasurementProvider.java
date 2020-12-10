@@ -33,11 +33,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 /**
- * A container for GPS related API calls, it binds the {@link LocationManager} with {@link UiLogger}
+ * A container for measurement-related API calls. It binds the measurement providers with the
+ * various {@link MeasurementListener} implementations.
  */
-public class SensorFusionContainer {
+public class MeasurementProvider {
 
-  public static final String TAG = "GnssLogger";
+  public static final String TAG = "MeasurementProvider";
 
   private static final long LOCATION_RATE_GPS_MS = TimeUnit.SECONDS.toMillis(1L);
   private static final long LOCATION_RATE_NETWORK_MS = TimeUnit.SECONDS.toMillis(60L);
@@ -53,7 +54,7 @@ public class SensorFusionContainer {
   private boolean firstTime = true;
 
   GoogleApiClient mGoogleApiClient;
-  private final List<SensorFusionListener> mLoggers;
+  private final List<MeasurementListener> mLoggers;
 
   private final LocationManager mLocationManager;
   private final android.location.LocationListener mLocationListener =
@@ -62,7 +63,7 @@ public class SensorFusionContainer {
         @Override
         public void onProviderEnabled(String provider) {
           if (mLogLocations) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -74,7 +75,7 @@ public class SensorFusionContainer {
         @Override
         public void onProviderDisabled(String provider) {
           if (mLogLocations) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -87,7 +88,7 @@ public class SensorFusionContainer {
         public void onLocationChanged(Location location) {
           if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             if (mLogLocations) {
-              for (SensorFusionListener logger : mLoggers) {
+              for (MeasurementListener logger : mLoggers) {
                 firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
                 ttff = firstLocationTimeNanos - registrationTimeNanos;
                 logger.onTTFFReceived(ttff);
@@ -96,7 +97,7 @@ public class SensorFusionContainer {
             firstTime = false;
           }
           if (mLogLocations) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -108,7 +109,7 @@ public class SensorFusionContainer {
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
           if (mLogLocations) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               logger.onLocationStatusChanged(provider, status, extras);
             }
           }
@@ -122,7 +123,7 @@ public class SensorFusionContainer {
         public void onLocationChanged(Location location) {
           if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             if (mLogLocations) {
-              for (SensorFusionListener logger : mLoggers) {
+              for (MeasurementListener logger : mLoggers) {
                 firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
                 ttff = firstLocationTimeNanos - registrationTimeNanos;
                 logger.onTTFFReceived(ttff);
@@ -131,7 +132,7 @@ public class SensorFusionContainer {
             firstTime = false;
           }
           if (mLogLocations) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -146,7 +147,7 @@ public class SensorFusionContainer {
         @Override
         public void onGnssMeasurementsReceived(GnssMeasurementsEvent event) {
           if (mLogMeasurements) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               logger.onGnssMeasurementsReceived(event);
             }
           }
@@ -155,7 +156,7 @@ public class SensorFusionContainer {
         @Override
         public void onStatusChanged(int status) {
           if (mLogMeasurements) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               logger.onGnssMeasurementsStatusChanged(status);
             }
           }
@@ -167,7 +168,7 @@ public class SensorFusionContainer {
         @Override
         public void onGnssNavigationMessageReceived(GnssNavigationMessage event) {
           if (mLogNavigationMessages) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               logger.onGnssNavigationMessageReceived(event);
             }
           }
@@ -176,7 +177,7 @@ public class SensorFusionContainer {
         @Override
         public void onStatusChanged(int status) {
           if (mLogNavigationMessages) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               logger.onGnssNavigationMessageStatusChanged(status);
             }
           }
@@ -196,7 +197,7 @@ public class SensorFusionContainer {
 
         @Override
         public void onSatelliteStatusChanged(GnssStatus status) {
-          for (SensorFusionListener logger : mLoggers) {
+          for (MeasurementListener logger : mLoggers) {
             logger.onGnssStatusChanged(status);
           }
         }
@@ -207,14 +208,14 @@ public class SensorFusionContainer {
         @Override
         public void onNmeaMessage(String s, long l) {
           if (mLogNmeas) {
-            for (SensorFusionListener logger : mLoggers) {
+            for (MeasurementListener logger : mLoggers) {
               logger.onNmeaReceived(l, s);
             }
           }
         }
       };
 
-  public SensorFusionContainer(Context context, GoogleApiClient client, SensorFusionListener... loggers) {
+  public MeasurementProvider(Context context, GoogleApiClient client, MeasurementListener... loggers) {
     this.mLoggers = Arrays.asList(loggers);
     mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     this.mGoogleApiClient = client;
@@ -372,7 +373,7 @@ public class SensorFusionContainer {
   }
 
   private void logRegistration(String listener, boolean result) {
-    for (SensorFusionListener logger : mLoggers) {
+    for (MeasurementListener logger : mLoggers) {
       if (logger instanceof AgnssUiLogger && !firstTime) {
         continue;
       }

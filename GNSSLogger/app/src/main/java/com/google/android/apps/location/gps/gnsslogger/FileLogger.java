@@ -24,7 +24,6 @@ import android.location.GnssMeasurementsEvent;
 import android.location.GnssNavigationMessage;
 import android.location.GnssStatus;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,7 +48,7 @@ import java.util.Locale;
 /**
  * A GNSS logger to store information to a file.
  */
-public class FileLogger implements SensorFusionListener {
+public class FileLogger implements MeasurementListener {
 
   private static final String TAG = "FileLogger";
   private static final String FILE_PREFIX = "gnss_log";
@@ -398,12 +397,12 @@ public class FileLogger implements SensorFusionListener {
   }
 
   private void logException(String errorMessage, Exception e) {
-    Log.e(SensorFusionContainer.TAG + TAG, errorMessage, e);
+    Log.e(MeasurementProvider.TAG + TAG, errorMessage, e);
     Toast.makeText(mContext, errorMessage, Toast.LENGTH_LONG).show();
   }
 
   private void logError(String errorMessage) {
-    Log.e(SensorFusionContainer.TAG + TAG, errorMessage);
+    Log.e(MeasurementProvider.TAG + TAG, errorMessage);
     Toast.makeText(mContext, errorMessage, Toast.LENGTH_LONG).show();
   }
 

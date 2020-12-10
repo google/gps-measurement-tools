@@ -56,7 +56,7 @@ public class SettingsFragment extends Fragment {
   /** Key in the {@link SharedPreferences} indicating whether auto-scroll has been enabled */
   protected static String PREFERENCE_KEY_AUTO_SCROLL =  "autoScroll";
 
-  private SensorFusionContainer mGpsContainer;
+  private MeasurementProvider mGpsContainer;
   private HelpDialog helpDialog;
 
   /**
@@ -73,7 +73,7 @@ public class SettingsFragment extends Fragment {
   /** {@link GroundTruthModeSwitcher} to receive update from AR result broadcast */
   private GroundTruthModeSwitcher mModeSwitcher;
 
-  public void setGpsContainer(SensorFusionContainer value) {
+  public void setGpsContainer(MeasurementProvider value) {
     mGpsContainer = value;
   }
 
@@ -388,7 +388,7 @@ public class SettingsFragment extends Fragment {
   }
 
   private void logException(String errorMessage, Exception e) {
-    Log.e(SensorFusionContainer.TAG + TAG, errorMessage, e);
+    Log.e(MeasurementProvider.TAG + TAG, errorMessage, e);
     Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
   }
 }

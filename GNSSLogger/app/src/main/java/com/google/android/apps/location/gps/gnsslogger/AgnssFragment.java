@@ -39,12 +39,12 @@ public class AgnssFragment extends Fragment {
   public static final String TAG = ":AgnssFragment";
   private TextView mLogView;
   private ScrollView mScrollView;
-  private SensorFusionContainer mGpsContainer;
+  private MeasurementProvider mGpsContainer;
   private AgnssUiLogger mUiLogger;
 
   private final AgnssUIFragmentComponent mUiComponent = new AgnssUIFragmentComponent();
 
-  public void setGpsContainer(SensorFusionContainer value) {
+  public void setGpsContainer(MeasurementProvider value) {
     mGpsContainer = value;
   }
 
@@ -68,11 +68,11 @@ public class AgnssFragment extends Fragment {
         new OnClickListener() {
           @Override
           public void onClick(View view) {
-            Log.i(SensorFusionContainer.TAG + TAG, "Clearing AGPS");
+            Log.i(MeasurementProvider.TAG + TAG, "Clearing AGPS");
             LocationManager locationManager = mGpsContainer.getLocationManager();
             locationManager.sendExtraCommand(
                 LocationManager.GPS_PROVIDER, "delete_aiding_data", null);
-            Log.i(SensorFusionContainer.TAG + TAG, "Clearing AGPS command sent");
+            Log.i(MeasurementProvider.TAG + TAG, "Clearing AGPS command sent");
           }
         });
 
@@ -81,11 +81,11 @@ public class AgnssFragment extends Fragment {
         new OnClickListener() {
           @Override
           public void onClick(View view) {
-            Log.i(SensorFusionContainer.TAG + TAG, "Fetching Extra data");
+            Log.i(MeasurementProvider.TAG + TAG, "Fetching Extra data");
             LocationManager locationManager = mGpsContainer.getLocationManager();
             Bundle bundle = new Bundle();
             locationManager.sendExtraCommand("gps", "force_xtra_injection", bundle);
-            Log.i(SensorFusionContainer.TAG + TAG, "Fetching Extra data Command sent");
+            Log.i(MeasurementProvider.TAG + TAG, "Fetching Extra data Command sent");
           }
         });
 
@@ -94,11 +94,11 @@ public class AgnssFragment extends Fragment {
         new OnClickListener() {
           @Override
           public void onClick(View view) {
-            Log.i(SensorFusionContainer.TAG + TAG, "Fetching Time data");
+            Log.i(MeasurementProvider.TAG + TAG, "Fetching Time data");
             LocationManager locationManager = mGpsContainer.getLocationManager();
             Bundle bundle = new Bundle();
             locationManager.sendExtraCommand("gps", "force_time_injection", bundle);
-            Log.i(SensorFusionContainer.TAG + TAG, "Fetching Time data Command sent");
+            Log.i(MeasurementProvider.TAG + TAG, "Fetching Time data Command sent");
           }
         });
 
@@ -107,9 +107,9 @@ public class AgnssFragment extends Fragment {
         new OnClickListener() {
           @Override
           public void onClick(View view) {
-            Log.i(SensorFusionContainer.TAG + TAG, "Requesting Single NLP Location");
+            Log.i(MeasurementProvider.TAG + TAG, "Requesting Single NLP Location");
             mGpsContainer.registerSingleNetworkLocation();
-            Log.i(SensorFusionContainer.TAG + TAG, "Single NLP Location Requested");
+            Log.i(MeasurementProvider.TAG + TAG, "Single NLP Location Requested");
           }
         });
 
@@ -118,9 +118,9 @@ public class AgnssFragment extends Fragment {
         new OnClickListener() {
           @Override
           public void onClick(View view) {
-            Log.i(SensorFusionContainer.TAG + TAG, "Requesting Single GPS Location");
+            Log.i(MeasurementProvider.TAG + TAG, "Requesting Single GPS Location");
             mGpsContainer.registerSingleGpsLocation();
-            Log.i(SensorFusionContainer.TAG + TAG, "Single GPS Location Requested");
+            Log.i(MeasurementProvider.TAG + TAG, "Single GPS Location Requested");
           }
         });
     Button clear = (Button) newView.findViewById(R.id.clear_log);
