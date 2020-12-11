@@ -54,7 +54,7 @@ public class MeasurementProvider {
   private boolean firstTime = true;
 
   GoogleApiClient mGoogleApiClient;
-  private final List<MeasurementListener> mLoggers;
+  private final List<MeasurementListener> mListeners;
 
   private final LocationManager mLocationManager;
   private final android.location.LocationListener mLocationListener =
@@ -63,11 +63,11 @@ public class MeasurementProvider {
         @Override
         public void onProviderEnabled(String provider) {
           if (mLogLocations) {
-            for (MeasurementListener logger : mLoggers) {
-              if (logger instanceof AgnssUiLogger && !firstTime) {
+            for (MeasurementListener listener : mListeners) {
+              if (listener instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
-              logger.onProviderEnabled(provider);
+              listener.onProviderEnabled(provider);
             }
           }
         }
@@ -75,7 +75,7 @@ public class MeasurementProvider {
         @Override
         public void onProviderDisabled(String provider) {
           if (mLogLocations) {
-            for (MeasurementListener logger : mLoggers) {
+            for (MeasurementListener logger : mListeners) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -88,7 +88,7 @@ public class MeasurementProvider {
         public void onLocationChanged(Location location) {
           if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             if (mLogLocations) {
-              for (MeasurementListener logger : mLoggers) {
+              for (MeasurementListener logger : mListeners) {
                 firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
                 ttff = firstLocationTimeNanos - registrationTimeNanos;
                 logger.onTTFFReceived(ttff);
@@ -97,7 +97,7 @@ public class MeasurementProvider {
             firstTime = false;
           }
           if (mLogLocations) {
-            for (MeasurementListener logger : mLoggers) {
+            for (MeasurementListener logger : mListeners) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -109,7 +109,7 @@ public class MeasurementProvider {
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
           if (mLogLocations) {
-            for (MeasurementListener logger : mLoggers) {
+            for (MeasurementListener logger : mListeners) {
               logger.onLocationStatusChanged(provider, status, extras);
             }
           }
@@ -123,7 +123,7 @@ public class MeasurementProvider {
         public void onLocationChanged(Location location) {
           if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             if (mLogLocations) {
-              for (MeasurementListener logger : mLoggers) {
+              for (MeasurementListener logger : mListeners) {
                 firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
                 ttff = firstLocationTimeNanos - registrationTimeNanos;
                 logger.onTTFFReceived(ttff);
@@ -132,7 +132,7 @@ public class MeasurementProvider {
             firstTime = false;
           }
           if (mLogLocations) {
-            for (MeasurementListener logger : mLoggers) {
+            for (MeasurementListener logger : mListeners) {
               if (logger instanceof AgnssUiLogger && !firstTime) {
                 continue;
               }
@@ -147,7 +147,7 @@ public class MeasurementProvider {
         @Override
         public void onGnssMeasurementsReceived(GnssMeasurementsEvent event) {
           if (mLogMeasurements) {
-            for (MeasurementListener logger : mLoggers) {
+            for (MeasurementListener logger : mListeners) {
               logger.onGnssMeasurementsReceived(event);
             }
           }
@@ -156,7 +156,7 @@ public class MeasurementProvider {
         @Override
         public void onStatusChanged(int status) {
           if (mLogMeasurements) {
-            for (MeasurementListener logger : mLoggers) {
+            for (MeasurementListener logger : mListeners) {
               logger.onGnssMeasurementsStatusChanged(status);
             }
           }
@@ -168,7 +168,7 @@ public class MeasurementProvider {
         @Override
         public void onGnssNavigationMessageReceived(GnssNavigationMessage event) {
           if (mLogNavigationMessages) {
-            for (MeasurementListener logger : mLoggers) {
+            for (MeasurementListener logger : mListeners) {
               logger.onGnssNavigationMessageReceived(event);
             }
           }
@@ -177,7 +177,7 @@ public class MeasurementProvider {
         @Override
         public void onStatusChanged(int status) {
           if (mLogNavigationMessages) {
-            for (MeasurementListener logger : mLoggers) {
+            for (MeasurementListener logger : mListeners) {
               logger.onGnssNavigationMessageStatusChanged(status);
             }
           }
@@ -197,7 +197,7 @@ public class MeasurementProvider {
 
         @Override
         public void onSatelliteStatusChanged(GnssStatus status) {
-          for (MeasurementListener logger : mLoggers) {
+          for (MeasurementListener logger : mListeners) {
             logger.onGnssStatusChanged(status);
           }
         }
@@ -208,7 +208,7 @@ public class MeasurementProvider {
         @Override
         public void onNmeaMessage(String s, long l) {
           if (mLogNmeas) {
-            for (MeasurementListener logger : mLoggers) {
+            for (MeasurementListener logger : mListeners) {
               logger.onNmeaReceived(l, s);
             }
           }
@@ -216,7 +216,7 @@ public class MeasurementProvider {
       };
 
   public MeasurementProvider(Context context, GoogleApiClient client, MeasurementListener... loggers) {
-    this.mLoggers = Arrays.asList(loggers);
+    this.mListeners = Arrays.asList(loggers);
     mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     this.mGoogleApiClient = client;
   }
@@ -373,7 +373,7 @@ public class MeasurementProvider {
   }
 
   private void logRegistration(String listener, boolean result) {
-    for (MeasurementListener logger : mLoggers) {
+    for (MeasurementListener logger : mListeners) {
       if (logger instanceof AgnssUiLogger && !firstTime) {
         continue;
       }

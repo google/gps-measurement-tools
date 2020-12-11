@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity
     mFragments[FRAGMENT_INDEX_MAP] = mapFragment;
 
     AgnssFragment agnssFragment = new AgnssFragment();
-    agnssFragment.setGpsContainer(mMeasurementProvider);
+    agnssFragment.setMeasurementProvider(mMeasurementProvider);
     agnssFragment.setUILogger(mAgnssUiLogger);
     mFragments[FRAGMENT_INDEX_AGNSS] = agnssFragment;
 

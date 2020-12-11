@@ -39,13 +39,13 @@ public class AgnssFragment extends Fragment {
   public static final String TAG = ":AgnssFragment";
   private TextView mLogView;
   private ScrollView mScrollView;
-  private MeasurementProvider mGpsContainer;
+  private MeasurementProvider mMeasurementProvider;
   private AgnssUiLogger mUiLogger;
 
   private final AgnssUIFragmentComponent mUiComponent = new AgnssUIFragmentComponent();
 
-  public void setGpsContainer(MeasurementProvider value) {
-    mGpsContainer = value;
+  public void setMeasurementProvider(MeasurementProvider value) {
+    mMeasurementProvider = value;
   }
 
   public void setUILogger(AgnssUiLogger value) {
@@ -69,7 +69,7 @@ public class AgnssFragment extends Fragment {
           @Override
           public void onClick(View view) {
             Log.i(MeasurementProvider.TAG + TAG, "Clearing AGPS");
-            LocationManager locationManager = mGpsContainer.getLocationManager();
+            LocationManager locationManager = mMeasurementProvider.getLocationManager();
             locationManager.sendExtraCommand(
                 LocationManager.GPS_PROVIDER, "delete_aiding_data", null);
             Log.i(MeasurementProvider.TAG + TAG, "Clearing AGPS command sent");
@@ -82,7 +82,7 @@ public class AgnssFragment extends Fragment {
           @Override
           public void onClick(View view) {
             Log.i(MeasurementProvider.TAG + TAG, "Fetching Extra data");
-            LocationManager locationManager = mGpsContainer.getLocationManager();
+            LocationManager locationManager = mMeasurementProvider.getLocationManager();
             Bundle bundle = new Bundle();
             locationManager.sendExtraCommand("gps", "force_xtra_injection", bundle);
             Log.i(MeasurementProvider.TAG + TAG, "Fetching Extra data Command sent");
@@ -95,7 +95,7 @@ public class AgnssFragment extends Fragment {
           @Override
           public void onClick(View view) {
             Log.i(MeasurementProvider.TAG + TAG, "Fetching Time data");
-            LocationManager locationManager = mGpsContainer.getLocationManager();
+            LocationManager locationManager = mMeasurementProvider.getLocationManager();
             Bundle bundle = new Bundle();
             locationManager.sendExtraCommand("gps", "force_time_injection", bundle);
             Log.i(MeasurementProvider.TAG + TAG, "Fetching Time data Command sent");
@@ -108,7 +108,7 @@ public class AgnssFragment extends Fragment {
           @Override
           public void onClick(View view) {
             Log.i(MeasurementProvider.TAG + TAG, "Requesting Single NLP Location");
-            mGpsContainer.registerSingleNetworkLocation();
+            mMeasurementProvider.registerSingleNetworkLocation();
             Log.i(MeasurementProvider.TAG + TAG, "Single NLP Location Requested");
           }
         });
@@ -119,7 +119,7 @@ public class AgnssFragment extends Fragment {
           @Override
           public void onClick(View view) {
             Log.i(MeasurementProvider.TAG + TAG, "Requesting Single GPS Location");
-            mGpsContainer.registerSingleGpsLocation();
+            mMeasurementProvider.registerSingleGpsLocation();
             Log.i(MeasurementProvider.TAG + TAG, "Single GPS Location Requested");
           }
         });
