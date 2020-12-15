@@ -24,7 +24,6 @@ import android.location.GnssMeasurementsEvent;
 import android.location.GnssNavigationMessage;
 import android.location.GnssStatus;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -49,7 +48,7 @@ import java.util.Locale;
 /**
  * A GNSS logger to store information to a file.
  */
-public class FileLogger implements GnssListener {
+public class FileLogger implements MeasurementListener {
 
   private static final String TAG = "FileLogger";
   private static final String FILE_PREFIX = "gnss_log";
@@ -238,28 +237,26 @@ public class FileLogger implements GnssListener {
 
   @Override
   public void onLocationChanged(Location location) {
-    if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-      synchronized (mFileLock) {
-        if (mFileWriter == null) {
-          return;
-        }
-        String locationStream =
-            String.format(
-                Locale.US,
-                "Fix,%s,%f,%f,%f,%f,%f,%d",
-                location.getProvider(),
-                location.getLatitude(),
-                location.getLongitude(),
-                location.getAltitude(),
-                location.getSpeed(),
-                location.getAccuracy(),
-                location.getTime());
-        try {
-          mFileWriter.write(locationStream);
-          mFileWriter.newLine();
-        } catch (IOException e) {
-          logException(ERROR_WRITING_FILE, e);
-        }
+    synchronized (mFileLock) {
+      if (mFileWriter == null) {
+        return;
+      }
+      String locationStream =
+          String.format(
+              Locale.US,
+              "Fix,%s,%f,%f,%f,%f,%f,%d",
+              location.getProvider(),
+              location.getLatitude(),
+              location.getLongitude(),
+              location.getAltitude(),
+              location.getSpeed(),
+              location.getAccuracy(),
+              location.getTime());
+      try {
+        mFileWriter.write(locationStream);
+        mFileWriter.newLine();
+      } catch (IOException e) {
+        logException(ERROR_WRITING_FILE, e);
       }
     }
   }
@@ -400,12 +397,12 @@ public class FileLogger implements GnssListener {
   }
 
   private void logException(String errorMessage, Exception e) {
-    Log.e(GnssContainer.TAG + TAG, errorMessage, e);
+    Log.e(MeasurementProvider.TAG + TAG, errorMessage, e);
     Toast.makeText(mContext, errorMessage, Toast.LENGTH_LONG).show();
   }
 
   private void logError(String errorMessage) {
-    Log.e(GnssContainer.TAG + TAG, errorMessage);
+    Log.e(MeasurementProvider.TAG + TAG, errorMessage);
     Toast.makeText(mContext, errorMessage, Toast.LENGTH_LONG).show();
   }
 

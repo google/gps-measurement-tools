@@ -90,7 +90,7 @@ public class ResultFragment extends Fragment {
   }
 
   /**
-   * A facade for UI and Activity related operations that are required for {@link GnssListener}s.
+   * A facade for UI and Activity related operations that are required for {@link MeasurementListener}s.
    */
   public class UIResultComponent {
 
