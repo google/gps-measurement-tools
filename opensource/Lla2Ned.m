@@ -11,21 +11,22 @@ function [nedM] = Lla2Ned(lla1DegDegM,lla2DegDegM)
 % Useful rules of thumb for quick conversions: 
 % 1e-5 (5th decimal place) of a degree of latitude approx= 1.1 meters
 % 1e-5 of a degree of longitude approx= cos(latitude) * 1.1 meters
+%
+% see also Pvt2Ned
 
 %Author: Frank van Diggelen
-%Open Source code for processing Android GNSS Measurements
+assert(nargin == 2, 'Not enough arguments provided, should never happen');
 
-if nargin<2, error('Two inputs arguments needed'),end
 [m1,n1]=size(lla1DegDegM);
 [m2,n2]=size(lla2DegDegM);
 if m2==1
   lla2DegDegM=ones(m1,1)*lla2DegDegM;
 else
-  if m1~=m2, 
-   error('Second input must have one row or same number of rows as first input')
-  end
+  assert(m1 == m2,...
+      'Inputs do not have the same number of rows, that should never happen when second input has more than one row');
 end
-if n1~=3 || n2~=3, error('Both input matrices must have 3 columns'),end
+assert(n1 == 3, 'First input does not have 3 columns, should never happen');
+assert(n2 == 3, 'Second input does not have 3 columns, should never happen');
 
 [xyz1M] = Lla2Xyz(lla1DegDegM);
 [xyz2M] = Lla2Xyz(lla2DegDegM);
@@ -45,18 +46,4 @@ nedM = [northM,eastM,downM];
 
 end %end of function Lla2Ned
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Copyright 2016 Google Inc.
-% 
-% Licensed under the Apache License, Version 2.0 (the "License");
-% you may not use this file except in compliance with the License.
-% You may obtain a copy of the License at
-% 
-%     http://www.apache.org/licenses/LICENSE-2.0
-% 
-% Unless required by applicable law or agreed to in writing, software
-% distributed under the License is distributed on an "AS IS" BASIS,
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-% See the License for the specific language governing permissions and
-% limitations under the License.
 

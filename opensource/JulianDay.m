@@ -13,21 +13,19 @@ function jDays = JulianDay(utcTime)
 % but we limit inputs to 1901 through 2099, because it's simpler
 
 %Author: Frank van Diggelen
-%Open Source code for processing Android GNSS Measurements
 
 % check inputs
-if size(utcTime,2)~=6
-  error('utcTime must have 6 columns')
-end
+assert(size(utcTime,2) == 6,...
+    'utcTime does not have 6 columns, should never happen');
+
 y = utcTime(:,1);
 m = utcTime(:,2);
 d = utcTime(:,3);
 h = utcTime(:,4) + utcTime(:,5)/60 + utcTime(:,6)/3600;
 
 %check that date is in valid range
-if ( any(y<1901) || any (y>2099) )
-  error('utcTime(:,1) not in allowed range: 1900 < year < 2100')
-end
+assert(all(y >= 1901) && all(y <= 2099),...
+    'utcTime(:,1) not in allowed range: 1900 < year < 2100, should never happen');
 
 i2 = m<=2; %index into months <=2
 m(i2) = m(i2)+12;
@@ -37,18 +35,4 @@ jDays = floor(365.25*y) + floor(30.6001*(m+1)) - 15 + 1720996.5 + d + h/24;
 
 end %end of function JulianDay
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Copyright 2016 Google Inc.
-% 
-% Licensed under the Apache License, Version 2.0 (the "License");
-% you may not use this file except in compliance with the License.
-% You may obtain a copy of the License at
-% 
-%     http://www.apache.org/licenses/LICENSE-2.0
-% 
-% Unless required by applicable law or agreed to in writing, software
-% distributed under the License is distributed on an "AS IS" BASIS,
-% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-% See the License for the specific language governing permissions and
-% limitations under the License.
 
