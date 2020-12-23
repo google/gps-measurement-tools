@@ -52,6 +52,23 @@ site (GetNasaHourlyEphemeris.m will tell you the correct url and filename),
 copy the file to the directory where your log file is, 
 and GetNasaHourlyEphemeris.m will read it from there.
 
+### To evaluate an NMEA file against another NMEA file:
+Use Nmea2RtkMetrics.m to compute position accuracy metrics from two NMEA files:
+
+        dir='./opensource/demoFiles/NmeaUtils-demo/';
+        refFileName='MTV.Local1.SPAN.20200206-181434.gga';
+        testFileName='MTV.Local1.ublox-F9K.20200206-181434.nmea';
+        Nmea2RtkMetrics(testFileName,refFileName,dir)
+
+This will lead to the following output:
+
+        50% (m), 95% (m), TT1M (s), TA1M (s), AA5S (m), AA10S (m), XTrack 50% (m), XTrack 95% (m)
+        0.49, 0.81, 0, 0.91, 786.00, 0.91, 0.09, 0.27
+
+Use Nmea2ErrorPlot.m to generate CDF of horizontal error:
+
+        Nmea2ErrorPlot(testFileName,refFileName,dir)
+
 ### For a summary of the open source GNSS Measurements Tools
 
 See `~/gpstools/opensource/Contents.m` or type 'help opensource' in matlab
