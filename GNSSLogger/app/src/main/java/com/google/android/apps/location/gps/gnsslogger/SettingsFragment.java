@@ -56,7 +56,7 @@ public class SettingsFragment extends Fragment {
   /** Key in the {@link SharedPreferences} indicating whether auto-scroll has been enabled */
   protected static String PREFERENCE_KEY_AUTO_SCROLL =  "autoScroll";
 
-  private MeasurementProvider mGpsContainer;
+  private MeasurementProvider mMeasurementProvider;
   private HelpDialog helpDialog;
 
   /**
@@ -74,7 +74,7 @@ public class SettingsFragment extends Fragment {
   private GroundTruthModeSwitcher mModeSwitcher;
 
   public void setGpsContainer(MeasurementProvider value) {
-    mGpsContainer = value;
+    mMeasurementProvider = value;
   }
 
   /** Set up {@link MainActivity} to receive update from AR result broadcast */
@@ -106,12 +106,12 @@ public class SettingsFragment extends Fragment {
           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
             if (isChecked) {
-              mGpsContainer.registerLocation();
-              mGpsContainer.registerFusedLocation();
+              mMeasurementProvider.registerLocation();
+              mMeasurementProvider.registerFusedLocation();
               registerLocationLabel.setText("Switch is ON");
             } else {
-              mGpsContainer.unregisterLocation();
-              mGpsContainer.unRegisterFusedLocation();
+              mMeasurementProvider.unregisterLocation();
+              mMeasurementProvider.unRegisterFusedLocation();
               registerLocationLabel.setText("Switch is OFF");
             }
           }
@@ -130,10 +130,10 @@ public class SettingsFragment extends Fragment {
           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
             if (isChecked) {
-              mGpsContainer.registerMeasurements();
+              mMeasurementProvider.registerMeasurements();
               registerMeasurementsLabel.setText("Switch is ON");
             } else {
-              mGpsContainer.unregisterMeasurements();
+              mMeasurementProvider.unregisterMeasurements();
               registerMeasurementsLabel.setText("Switch is OFF");
             }
           }
@@ -152,10 +152,10 @@ public class SettingsFragment extends Fragment {
           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
             if (isChecked) {
-              mGpsContainer.registerNavigation();
+              mMeasurementProvider.registerNavigation();
               registerNavigationLabel.setText("Switch is ON");
             } else {
-              mGpsContainer.unregisterNavigation();
+              mMeasurementProvider.unregisterNavigation();
               registerNavigationLabel.setText("Switch is OFF");
             }
           }
@@ -174,10 +174,10 @@ public class SettingsFragment extends Fragment {
           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
             if (isChecked) {
-              mGpsContainer.registerGnssStatus();
+              mMeasurementProvider.registerGnssStatus();
               registerGpsStatusLabel.setText("Switch is ON");
             } else {
-              mGpsContainer.unregisterGpsStatus();
+              mMeasurementProvider.unregisterGpsStatus();
               registerGpsStatusLabel.setText("Switch is OFF");
             }
           }
@@ -195,10 +195,10 @@ public class SettingsFragment extends Fragment {
           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
             if (isChecked) {
-              mGpsContainer.registerNmea();
+              mMeasurementProvider.registerNmea();
               registerNmeaLabel.setText("Switch is ON");
             } else {
-              mGpsContainer.unregisterNmea();
+              mMeasurementProvider.unregisterNmea();
               registerNmeaLabel.setText("Switch is OFF");
             }
           }
@@ -215,10 +215,10 @@ public class SettingsFragment extends Fragment {
                   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                       if (isChecked) {
                           registerImuLabel.setText("Switch is ON");
-                          mGpsContainer.registerSensors();
+                          mMeasurementProvider.registerSensors();
                       } else {
                           registerImuLabel.setText("Switch is OFF");
-                          mGpsContainer.unregisterSensors();
+                          mMeasurementProvider.unregisterSensors();
                       }
                   }
               });
@@ -379,7 +379,7 @@ public class SettingsFragment extends Fragment {
     TextView swInfo = (TextView) view.findViewById(R.id.sw_info);
 
     java.lang.reflect.Method method;
-    LocationManager locationManager = mGpsContainer.getLocationManager();
+    LocationManager locationManager = mMeasurementProvider.getLocationManager();
     try {
       method = locationManager.getClass().getMethod("getGnssYearOfHardware");
       int hwYear = (int) method.invoke(locationManager);

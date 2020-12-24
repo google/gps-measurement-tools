@@ -153,7 +153,8 @@ public class MainActivity extends AppCompatActivity
             .enableAutoManage(this, this)
             .addConnectionCallbacks(this)
             .addOnConnectionFailedListener(this)
-            .addApi(ActivityRecognition.API).addApi(LocationServices.API)
+            .addApi(ActivityRecognition.API)
+            .addApi(LocationServices.API)
             .build();
   }
 

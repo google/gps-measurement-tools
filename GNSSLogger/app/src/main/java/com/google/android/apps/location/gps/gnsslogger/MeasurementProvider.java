@@ -66,8 +66,8 @@ public class MeasurementProvider {
 
             @Override
             public void onSensorChanged(SensorEvent event) {
-              for (MeasurementListener logger : mListeners) {
-                logger.onSensorChanged(event);
+              for (MeasurementListener listener : mListeners) {
+                listener.onSensorChanged(event);
               }
             }
 
