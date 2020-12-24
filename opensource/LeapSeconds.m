@@ -31,9 +31,10 @@ function [leapSecs] = LeapSeconds(utcTime)
 %Open Source code for processing Android GNSS Measurements
 
 [m,n] = size(utcTime);
-assert(n == 6,...
-    'utcTime input does not have 6 columns, should never happen');
-
+if n~=6
+    error('utcTime input must have 6 columns');
+end
+                             
 % UTC table contains UTC times (in the form of [year,month,day,hours,mins,secs])
 % At each of these times a leap second had just occurred
 utcTable = [1982 1 1 0 0 0;
@@ -57,19 +58,15 @@ utcTable = [1982 1 1 0 0 0;
          ];
 %when a new leap second is announced in IERS Bulletin C
 %update the table with the UTC time right after the new leap second
-% Latest from IERS Bulletin C (as of November 2019):
-% "NO leap second will be introduced at the end of December 2019"
 
-GPSEPOCHJD = 2444244.5; %GPS Epoch in Julian Days
-tableJDays = JulianDay(utcTable) - GPSEPOCHJD; %days since GPS Epoch
-%tableSeconds = tableJDays*GnssConstants.DAYSEC + utcTable(:,4:6)*[3600;60;1];
+tableJDays = JulianDay(utcTable) - GpsConstants.GPSEPOCHJD; %days since GPS Epoch
+%tableSeconds = tableJDays*GpsConstants.DAYSEC + utcTable(:,4:6)*[3600;60;1];
 %NOTE: JulianDay returns a realed value number, corresponding to days and 
 % fractions thereof, so we multiply it by DAYSEC to get the full time in seconds
-DAYSEC = 86400; %number of seconds in a day
-tableSeconds = tableJDays*DAYSEC;
-jDays = JulianDay(utcTime)- GPSEPOCHJD; %days since GPS Epoch
-%timeSeconds = jDays*GnssConstants.DAYSEC + utcTime(:,4:6)*[3600;60;1];
-timeSeconds = jDays*DAYSEC;
+tableSeconds = tableJDays*GpsConstants.DAYSEC;
+jDays = JulianDay(utcTime)- GpsConstants.GPSEPOCHJD; %days since GPS Epoch
+%timeSeconds = jDays*GpsConstants.DAYSEC + utcTime(:,4:6)*[3600;60;1];
+timeSeconds = jDays*GpsConstants.DAYSEC;
 % tableSeconds and timeSeconds now contain number of seconds since the GPS epoch
 
 leapSecs=zeros(m,1);
@@ -80,4 +77,18 @@ end
 
 end %end of function LeapSeconds
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Copyright 2016 Google Inc.
+% 
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+% 
+%     http://www.apache.org/licenses/LICENSE-2.0
+% 
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and
+% limitations under the License.
 

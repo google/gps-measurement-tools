@@ -12,9 +12,9 @@ function [llaDegDegM] = Xyz2Lla(xyzM)
 %Open Source code for processing Android GNSS Measurements
 
 % check inputs
-assert(size(xyzM,2) == 3,...
-    'Input xyzM does not have three columns, should never happen');
-
+if size(xyzM,2)~=3
+    error('Input xyzM must have three columns');
+end
 % algorithm: Hoffman-Wellenhof, Lichtenegger & Collins "GPS Theory & Practice"
 R2D = 180/pi;
 
@@ -24,13 +24,11 @@ xyzM(iZero,:) = NaN; %set to NaN, so lla will also be NaN
 
 xM = xyzM(:,1); yM = xyzM(:,2); zM = xyzM(:,3);
 %following algorithm from Hoffman-Wellenhof, et al. "GPS Theory & Practice":
-EARTHECCEN2 = 6.69437999014e-3; %WGS 84 (Earth eccentricity)^2 (m^2)
-EARTHSEMIMAJOR = 6378137; %WGS 84 Earth semi-major axis (m)
-a = EARTHSEMIMAJOR;
+a = GpsConstants.EARTHSEMIMAJOR;
 a2 = a^2;
-b2 = a2*(1-EARTHECCEN2);
+b2 = a2*(1-GpsConstants.EARTHECCEN2);
 b = sqrt(b2);
-e2 = EARTHECCEN2;
+e2 = GpsConstants.EARTHECCEN2;
 ep2 = (a2-b2)/b2;
 p=sqrt(xM.^2 + yM.^2);
 
@@ -66,4 +64,19 @@ llaDegDegM = [latDeg, lonDeg,altM];
 
 end %end of function Xyz2Lla
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Copyright 2016 Google Inc.
+% 
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+% 
+%     http://www.apache.org/licenses/LICENSE-2.0
+% 
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and
+% limitations under the License.
 
