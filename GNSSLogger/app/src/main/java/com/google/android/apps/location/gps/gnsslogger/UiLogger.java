@@ -34,7 +34,7 @@ import java.text.DecimalFormat;
  * A class representing a UI logger for the application. Its responsibility is show information in
  * the UI.
  */
-public class UiLogger implements SensorFusionListener {
+public class UiLogger implements MeasurementListener {
 
   private static final int USED_COLOR = Color.rgb(0x4a, 0x5f, 0x70);
 
@@ -286,7 +286,7 @@ public class UiLogger implements SensorFusionListener {
   }
 
   private void logEvent(String tag, String message, int color) {
-    String composedTag = SensorFusionContainer.TAG + tag;
+    String composedTag = MeasurementProvider.TAG + tag;
     Log.d(composedTag, message);
     logText(tag, message, color);
   }

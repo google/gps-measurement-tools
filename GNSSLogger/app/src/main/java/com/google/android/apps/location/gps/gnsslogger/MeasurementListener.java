@@ -25,8 +25,9 @@ import android.location.OnNmeaMessageListener;
 import android.hardware.SensorEvent;
 import android.os.Bundle;
 
-/**  A class representing an interface for logging GPS information. */
-public interface SensorFusionListener {
+/**  A class representing an interface for logging a measurement. */
+
+public interface MeasurementListener {
 
   /** @see LocationListener#onProviderEnabled(String) */
   void onProviderEnabled(String provider);
