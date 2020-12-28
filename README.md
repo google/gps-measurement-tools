@@ -55,7 +55,7 @@ and GetNasaHourlyEphemeris.m will read it from there.
 ### To evaluate an NMEA file against another NMEA file:
 Use Nmea2RtkMetrics.m to compute position accuracy metrics from two NMEA files:
 
-        dir='./opensource/demoFiles/NmeaUtils-demo/';
+        dir='./NmeaUtils/example/';
         refFileName='MTV.Local1.SPAN.20200206-181434.gga';
         testFileName='MTV.Local1.ublox-F9K.20200206-181434.nmea';
         Nmea2RtkMetrics(testFileName,refFileName,dir)
