@@ -148,7 +148,7 @@ public class FileLogger implements MeasurementListener {
                 + "AccumulatedDeltaRangeState,AccumulatedDeltaRangeMeters,"
                 + "AccumulatedDeltaRangeUncertaintyMeters,CarrierFrequencyHz,CarrierCycles,"
                 + "CarrierPhase,CarrierPhaseUncertainty,MultipathIndicator,SnrInDb,"
-                + "ConstellationType,AgcDb,CarrierFrequencyHz");
+                + "ConstellationType,AgcDb");
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.newLine();
@@ -366,7 +366,7 @@ public class FileLogger implements MeasurementListener {
 
     String measurementStream =
         String.format(
-            "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+            "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
             measurement.getSvid(),
             measurement.getTimeOffsetNanos(),
             measurement.getState(),
@@ -390,8 +390,7 @@ public class FileLogger implements MeasurementListener {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
             && measurement.hasAutomaticGainControlLevelDb()
                 ? measurement.getAutomaticGainControlLevelDb()
-                : "",
-            measurement.hasCarrierFrequencyHz() ? measurement.getCarrierFrequencyHz() : "");
+                : "");
     mFileWriter.write(measurementStream);
     mFileWriter.newLine();
   }
