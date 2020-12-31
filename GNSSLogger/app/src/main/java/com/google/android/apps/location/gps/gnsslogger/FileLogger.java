@@ -366,6 +366,9 @@ public class FileLogger implements MeasurementListener {
     }
   }
 
+  /**
+   * Write sensor measurement to log file.
+   */
   @Override
   public void onSensorChanged(SensorEvent event) {
     synchronized (mFileLock) {
