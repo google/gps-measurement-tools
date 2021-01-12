@@ -18,6 +18,7 @@ package com.google.android.apps.location.gps.gnsslogger;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.location.GnssClock;
 import android.location.GnssMeasurement;
@@ -64,7 +65,6 @@ public class FileLogger implements MeasurementListener {
   private final Context mContext;
 
   private final Object mFileLock = new Object();
-  private final StringBuilder mStringBuilder = new StringBuilder();
   private BufferedWriter mFileWriter;
   private File mFile;
 
@@ -380,17 +380,70 @@ public class FileLogger implements MeasurementListener {
       if(mFileWriter == null) {
         return;
       }
-      mStringBuilder.setLength(0);
-      mStringBuilder.append(event.sensor.getStringType().substring(event.sensor.getStringType().lastIndexOf('.') + 1)).append(RECORD_DELIMITER);
-      mStringBuilder.append(event.timestamp).append(RECORD_DELIMITER);
-      mStringBuilder.append(java.util.Arrays.toString(event.values).replaceAll("[] ]", "").replace("[", ""));
+      String measurementStream = formatSensorEvent(event);
       try {
-        mFileWriter.write(mStringBuilder.toString());
+        mFileWriter.write(measurementStream);
         mFileWriter.newLine();
       } catch (IOException e) {
         logException(ERROR_WRITING_FILE, e);
       }
     }
+  }
+
+  /**
+   * Format sensor event into string based on sensor type.
+   */
+  private String formatSensorEvent(SensorEvent event) {
+    String measurementStream;
+    if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER_UNCALIBRATED) {
+      measurementStream = String.format("UncalAccel,%s,%s,%s,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2],
+              event.values[3],
+              event.values[4],
+              event.values[5]);
+    } else if(event.sensor.getType() == Sensor.TYPE_GYROSCOPE_UNCALIBRATED) {
+      measurementStream = String.format("UncalGyro,%s,%s,%s,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2],
+              event.values[3],
+              event.values[4],
+              event.values[5]);
+    } else if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
+      measurementStream = String.format("UncalMag,%s,%s,%s,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2],
+              event.values[3],
+              event.values[4],
+              event.values[5]);
+    } else if(event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+      measurementStream = String.format("LinearAcceleration,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2]);
+    } else if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+      measurementStream = String.format("RotationVector,%s,%s,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2],
+              event.values[3],
+              event.values[4]);
+    } else if(event.sensor.getType() == Sensor.TYPE_PRESSURE) {
+      measurementStream = String.format("Pressure,%s,%s",
+              event.timestamp,
+              event.values[0]);
+    } else {
+      measurementStream = "";
+    }
+    return measurementStream;
   }
 
   @Override
