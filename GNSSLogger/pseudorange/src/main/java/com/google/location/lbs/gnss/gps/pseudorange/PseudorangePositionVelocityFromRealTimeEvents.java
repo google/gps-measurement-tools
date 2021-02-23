@@ -48,7 +48,6 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
   private static final double SECONDS_PER_NANO = 1.0e-9;
   private static final int TOW_DECODED_MEASUREMENT_STATE_BIT = 3;
   /** Average signal travel time from GPS satellite and earth */
-  private static final int VALID_ACCUMULATED_DELTA_RANGE_STATE = 1;
   private static final int MINIMUM_NUMBER_OF_USEFUL_SATELLITES = 4;
   private static final int C_TO_N0_THRESHOLD_DB_HZ = 18;
 
@@ -139,7 +138,7 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
             new GpsMeasurement(
                 (long) mArrivalTimeSinceGPSWeekNs,
                 measurement.getAccumulatedDeltaRangeMeters(),
-                measurement.getAccumulatedDeltaRangeState() == VALID_ACCUMULATED_DELTA_RANGE_STATE,
+                isAccumulatedDeltaRangeStateValid(measurement.getAccumulatedDeltaRangeState()),
                 measurement.getPseudorangeRateMetersPerSecond(),
                 measurement.getCn0DbHz(),
                 measurement.getAccumulatedDeltaRangeUncertaintyMeters(),
@@ -415,6 +414,19 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
       }
     }
     return useNavMessageFromSupl;
+  }
+
+  /**
+   * Returns the result of the GnssMeasurement.ADR_STATE_VALID bitmask being applied to the
+   * AccumulatedDeltaRangeState from a GnssMeasurement - true if the ADR state is valid,
+   * false if it is not
+   * @param accumulatedDeltaRangeState accumulatedDeltaRangeState from GnssMeasurement
+   * @return the result of the GnssMeasurement.ADR_STATE_VALID bitmask being applied to the
+   *      * AccumulatedDeltaRangeState of the given GnssMeasurement - true if the ADR state is valid,
+   *      * false if it is not
+   */
+  private static boolean isAccumulatedDeltaRangeStateValid(int accumulatedDeltaRangeState) {
+    return (GnssMeasurement.ADR_STATE_VALID & accumulatedDeltaRangeState) == GnssMeasurement.ADR_STATE_VALID;
   }
 
   /**

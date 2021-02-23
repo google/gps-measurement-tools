@@ -178,7 +178,7 @@ public class UiLogger implements MeasurementListener {
             "PseudorangeRateUncertaintyMetersPerSeconds",
             numberFormat.format(measurement.getPseudorangeRateUncertaintyMetersPerSecond())));
 
-    if (measurement.getAccumulatedDeltaRangeState() != 0) {
+    if (measurement.getAccumulatedDeltaRangeState() != GnssMeasurement.ADR_STATE_UNKNOWN) {
       builder.append(
           String.format(
               format, "AccumulatedDeltaRangeState", measurement.getAccumulatedDeltaRangeState()));
