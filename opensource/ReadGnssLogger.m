@@ -187,7 +187,6 @@ end %end of function MakeCsv
 
 function [header,C] = ReadRawCsv(rawCsvFile)
 %% read data from csv file into a numerical matrix 'S' and cell array 'header'
-S = csvread(rawCsvFile,1,0);%read numerical data from second row onwards
 %Note csvread fills ,, with zero, so we will need a lower level read function to
 %tell the difference between empty fields and valid zeros
 %T = readtable(csvFileName,'FileType','text'); %use this to debug
@@ -206,21 +205,18 @@ header=textscan(headerString,'%s','Delimiter',',');
 header = header{1}; %this makes header a numFieldsx1 cell array
 numFields = size(header,1);
 
-%check that numFields == size(S,2)
-[~,M] = size(S); %M = number of columns
-assert(numFields==M,...
- '# of header names is different from # of columns of numerical data')
-
 %read lines using formatSpec so we get TimeNanos and FullBiasNanos as
 %int64, everything else as doubles, and empty values as NaN
 formatSpec='';
-for i=1:M
+for i=1:numFields
     %lotsa || here, because we are comparing a vector, 'header'
     %to a specific string each time. Not sure how to do this another way
     %and still be able to easily read and debug. Better safe than too clever.
     
     %longs
-    if i == find(strcmp(header,'TimeNanos')) || ...
+    if any(i == find(strcmp(header,'CodeType')))
+        formatSpec = append(formatSpec, ' %s');
+    elseif i == find(strcmp(header,'TimeNanos')) || ...
             i == find(strcmp(header,'FullBiasNanos')) || ...
             i == find(strcmp(header,'ReceivedSvTimeNanos')) || ...
             i == find(strcmp(header,'ReceivedSvTimeUncertaintyNanos')) || ...
@@ -236,8 +232,12 @@ for i=1:M
         formatSpec = sprintf('%s %%f',formatSpec);
     end
 end
-%for empty fields, enter 'NaN' into csv
+%Replace empty string fields with 'NaN'
 C = textscan(fid,formatSpec,'Delimiter',',','EmptyValue',NaN);
+%Replace CodeType string fields with 'NaN'
+codeTypeHeaderIndex = find(strcmp(header,'CodeType'));
+numberOfLogs = size(C{1},1);
+C(codeTypeHeaderIndex) = {nan(numberOfLogs, 1)};
 fclose(fid);
 
 end% of function ReadRawCsv
