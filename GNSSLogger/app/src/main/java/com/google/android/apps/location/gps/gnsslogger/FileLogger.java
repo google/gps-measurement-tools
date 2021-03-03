@@ -18,6 +18,8 @@ package com.google.android.apps.location.gps.gnsslogger;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.location.GnssClock;
 import android.location.GnssMeasurement;
 import android.location.GnssMeasurementsEvent;
@@ -160,6 +162,36 @@ public class FileLogger implements MeasurementListener {
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.write("Nav,Svid,Type,Status,MessageId,Sub-messageId,Data(Bytes)");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("UncalAccel,TimeNanos,UncalAccelXMps2,UncalAccelYMps2,UncalAccelZMps2,BiasXMps2,BiasYMps2,BiasZMps2");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("UncalGyro,TimeNanos,UncalGyroXRadPerSec,UncalGyroYRadPerSec,UncalGyroZRadPerSec,DriftXRadPerSec,DriftYRadPerSec,DriftZRadPerSec");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("UncalMag,TimeNanos,UncalMagXMicroT,UncalMagYMicroT,UncalMagZMicroT,BiasXMicroT,BiasYMicroT,BiasZMicroT");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("LinearAcceleration,TimeNanos,XMps2,YMps2,ZMps2");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("RotationVector,TimeNanos,Xsin(θ/2),Ysin(θ/2),Zsin(θ/2),cos(θ/2),AccuracyRadians");
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.newLine();
+        currentFileWriter.write(COMMENT_START);
+        currentFileWriter.write("Pressure,TimeNanos,PressureHPa");
         currentFileWriter.newLine();
         currentFileWriter.write(COMMENT_START);
         currentFileWriter.newLine();
@@ -337,6 +369,81 @@ public class FileLogger implements MeasurementListener {
         logException(ERROR_WRITING_FILE, e);
       }
     }
+  }
+
+  /**
+   * Write sensor measurement to log file.
+   */
+  @Override
+  public void onSensorChanged(SensorEvent event) {
+    synchronized (mFileLock) {
+      if(mFileWriter == null) {
+        return;
+      }
+      String measurementStream = formatSensorEvent(event);
+      try {
+        mFileWriter.write(measurementStream);
+        mFileWriter.newLine();
+      } catch (IOException e) {
+        logException(ERROR_WRITING_FILE, e);
+      }
+    }
+  }
+
+  /**
+   * Format sensor event into string based on sensor type.
+   */
+  private String formatSensorEvent(SensorEvent event) {
+    String measurementStream;
+    if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER_UNCALIBRATED) {
+      measurementStream = String.format("UncalAccel,%s,%s,%s,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2],
+              event.values[3],
+              event.values[4],
+              event.values[5]);
+    } else if(event.sensor.getType() == Sensor.TYPE_GYROSCOPE_UNCALIBRATED) {
+      measurementStream = String.format("UncalGyro,%s,%s,%s,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2],
+              event.values[3],
+              event.values[4],
+              event.values[5]);
+    } else if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED) {
+      measurementStream = String.format("UncalMag,%s,%s,%s,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2],
+              event.values[3],
+              event.values[4],
+              event.values[5]);
+    } else if(event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+      measurementStream = String.format("LinearAcceleration,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2]);
+    } else if(event.sensor.getType() == Sensor.TYPE_ROTATION_VECTOR) {
+      measurementStream = String.format("RotationVector,%s,%s,%s,%s,%s,%s",
+              event.timestamp,
+              event.values[0],
+              event.values[1],
+              event.values[2],
+              event.values[3],
+              event.values[4]);
+    } else if(event.sensor.getType() == Sensor.TYPE_PRESSURE) {
+      measurementStream = String.format("Pressure,%s,%s",
+              event.timestamp,
+              event.values[0]);
+    } else {
+      measurementStream = "";
+    }
+    return measurementStream;
   }
 
   @Override

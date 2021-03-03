@@ -24,6 +24,7 @@ import android.location.GnssNavigationMessage;
 import android.location.GnssStatus;
 import android.location.Location;
 import android.location.LocationProvider;
+import android.hardware.SensorEvent;
 import android.os.Bundle;
 import android.util.Log;
 import com.google.android.apps.location.gps.gnsslogger.LoggerFragment.UIFragmentComponent;
@@ -257,6 +258,10 @@ public class UiLogger implements MeasurementListener {
   @Override
   public void onNmeaReceived(long timestamp, String s) {
     logNmeaEvent(String.format("onNmeaReceived: timestamp=%d, %s", timestamp, s));
+  }
+
+  @Override
+  public void onSensorChanged(SensorEvent event) {
   }
 
   @Override

@@ -32,23 +32,25 @@
   </LinearLayout>
 
   <LinearLayout
-      android:orientation="horizontal"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
     <TextView
+        android:id="@+id/register_measurement_label"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:layout_marginTop="15dp"
-        android:id="@+id/register_measurement_label" />
+        android:layout_weight="1"
+        android:textStyle="bold" />
+
     <Switch
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
         android:id="@+id/register_measurements"
-        android:singleLine="true"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:layout_weight="1"
+        android:singleLine="true"
         android:text="@string/measurements_label" />
   </LinearLayout>
 
@@ -114,6 +116,30 @@
         android:singleLine="true"
         android:layout_marginTop="15dp"
         android:text="@string/nmea_label" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/register_imu_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_weight="1"
+        android:text="@string/register_imu_label"
+        android:textStyle="bold" />
+
+    <Switch
+        android:id="@+id/register_imu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_weight="1"
+        android:singleLine="true"
+        android:text="@string/imu_label" />
   </LinearLayout>
 
   <LinearLayout

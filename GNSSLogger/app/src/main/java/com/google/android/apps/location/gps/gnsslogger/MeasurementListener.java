@@ -22,6 +22,7 @@ import android.location.GnssStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.OnNmeaMessageListener;
+import android.hardware.SensorEvent;
 import android.os.Bundle;
 
 /**  A class representing an interface for logging a measurement. */
@@ -50,6 +51,7 @@ public interface MeasurementListener {
   /** @see GnssStatus.Callback#onSatelliteStatusChanged(GnssStatus) */
   void onGnssStatusChanged(GnssStatus gnssStatus);
   /** Called when the listener is registered to listen to GNSS events */
+  void onSensorChanged(SensorEvent event);
   void onListenerRegistration(String listener, boolean result);
   /** @see OnNmeaMessageListener#onNmeaMessage(String, long) */
   void onNmeaReceived(long l, String s);
