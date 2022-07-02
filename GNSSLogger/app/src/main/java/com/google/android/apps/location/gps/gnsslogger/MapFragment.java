@@ -16,13 +16,18 @@
 
 package com.google.android.apps.location.gps.gnsslogger;
 
+import android.Manifest;
 import android.app.Activity;
-import android.app.Fragment;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -32,6 +37,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -58,7 +64,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.map_fragment, container, false);
     mMapView = ((MapView) rootView.findViewById(R.id.map));
     mMapView.onCreate(savedInstanceState);
@@ -66,7 +72,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     MapsInitializer.initialize(getActivity());
 
     RealTimePositionVelocityCalculator currentPositionVelocityCalculator =
-        mPositionVelocityCalculator;
+            mPositionVelocityCalculator;
     if (currentPositionVelocityCalculator != null) {
       currentPositionVelocityCalculator.setMapFragment(this);
     }
@@ -100,7 +106,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onMapReady(GoogleMap googleMap) {
     mMap = googleMap;
-    mMap.setMyLocationEnabled(false);
+    try {
+      mMap.setMyLocationEnabled(false);
+    } catch (SecurityException e) {
+      // TODO(adaext): implement the permission check properly.
+      //    ActivityCompat#requestPermissions
+      // here to request the missing permissions, and then overriding
+      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+      //                                          int[] grantResults)
+      // to handle the case where the user grants the permission. See the documentation
+      // for ActivityCompat#requestPermissions for more details.
+    }
     mMap.getUiSettings().setZoomControlsEnabled(true);
     mMap.getUiSettings().setZoomGesturesEnabled(true);
     mMap.getUiSettings().setMapToolbarEnabled(false);

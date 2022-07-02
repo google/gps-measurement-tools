@@ -18,8 +18,13 @@ package com.google.android.apps.location.gps.gnsslogger;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
+
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -34,17 +39,14 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
-import android.support.design.widget.TabLayout.TabLayoutOnPageChangeListener;
-import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v13.app.FragmentStatePagerAdapter;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.viewpager.widget.ViewPager;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -53,14 +55,16 @@ import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.tabs.TabLayout;
+
 import java.util.Locale;
 
 /** The activity for the application. */
 public class MainActivity extends AppCompatActivity
-    implements OnConnectionFailedListener, ConnectionCallbacks, GroundTruthModeSwitcher {
+        implements OnConnectionFailedListener, ConnectionCallbacks, GroundTruthModeSwitcher {
   private static final int LOCATION_REQUEST_ID = 1;
   private static final String[] REQUIRED_PERMISSIONS = {
-    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE
+          Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE
   };
   private static final int NUMBER_OF_FRAGMENTS = 6;
   private static final int FRAGMENT_INDEX_SETTING = 0;
@@ -80,20 +84,20 @@ public class MainActivity extends AppCompatActivity
   private GoogleApiClient mGoogleApiClient;
   private boolean mAutoSwitchGroundTruthMode;
   private final ActivityDetectionBroadcastReceiver mBroadcastReceiver =
-      new ActivityDetectionBroadcastReceiver();
+          new ActivityDetectionBroadcastReceiver();
 
   private ServiceConnection mConnection =
-      new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-          // Empty
-        }
+          new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+              // Empty
+            }
 
-        @Override
-        public void onServiceDisconnected(ComponentName className) {
-          // Empty
-        }
-      };
+            @Override
+            public void onServiceDisconnected(ComponentName className) {
+              // Empty
+            }
+          };
 
   @Override
   protected void onStart() {
@@ -106,9 +110,9 @@ public class MainActivity extends AppCompatActivity
   protected void onResume() {
     super.onResume();
     LocalBroadcastManager.getInstance(this)
-        .registerReceiver(
-            mBroadcastReceiver, new IntentFilter(
-                DetectedActivitiesIntentReceiver.AR_RESULT_BROADCAST_ACTION));
+            .registerReceiver(
+                    mBroadcastReceiver, new IntentFilter(
+                            DetectedActivitiesIntentReceiver.AR_RESULT_BROADCAST_ACTION));
   }
 
   @Override
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  protected void onDestroy(){
+  protected void onDestroy() {
     mMeasurementProvider.unregisterAll();
     super.onDestroy();
   }
@@ -132,7 +136,7 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     SharedPreferences sharedPreferences = PreferenceManager.
-        getDefaultSharedPreferences(this);
+            getDefaultSharedPreferences(this);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putBoolean(SettingsFragment.PREFERENCE_KEY_AUTO_SCROLL, false);
     editor.commit();
@@ -149,18 +153,18 @@ public class MainActivity extends AppCompatActivity
 
   private synchronized void buildGoogleApiClient() {
     mGoogleApiClient =
-        new GoogleApiClient.Builder(this)
-            .enableAutoManage(this, this)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .addApi(ActivityRecognition.API).addApi(LocationServices.API)
-            .build();
+            new GoogleApiClient.Builder(this)
+                    .enableAutoManage(this, this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(ActivityRecognition.API).addApi(LocationServices.API)
+                    .build();
   }
 
   @Override
   public void onConnectionFailed(@NonNull ConnectionResult result) {
-    if (Log.isLoggable(TAG, Log.INFO)){
-      Log.i(TAG,  "Connection failed: ErrorCode = " + result.getErrorCode());
+    if (Log.isLoggable(TAG, Log.INFO)) {
+      Log.i(TAG, "Connection failed: ErrorCode = " + result.getErrorCode());
     }
   }
 
@@ -169,8 +173,13 @@ public class MainActivity extends AppCompatActivity
     if (Log.isLoggable(TAG, Log.INFO)) {
       Log.i(TAG, "Connected to GoogleApiClient");
     }
-    ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-        mGoogleApiClient, 0, createActivityDetectionPendingIntent());
+    try {
+      ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
+              mGoogleApiClient, 0, createActivityDetectionPendingIntent());
+    } catch (SecurityException e) {
+      // TODO(adaext)
+      //    ActivityCompat#requestPermissions
+    }
   }
 
   @Override
@@ -191,7 +200,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public Fragment getItem(int position) {
+    public androidx.fragment.app.Fragment getItem(int position) {
       switch (position) {
         case FRAGMENT_INDEX_SETTING:
           return mFragments[FRAGMENT_INDEX_SETTING];
@@ -241,6 +250,8 @@ public class MainActivity extends AppCompatActivity
   @Override
   public void onRequestPermissionsResult(
       int requestCode, String[] permissions, int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     if (requestCode == LOCATION_REQUEST_ID) {
       // If request is cancelled, the result arrays are empty.
       if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -299,7 +310,7 @@ public class MainActivity extends AppCompatActivity
     // The viewpager that will host the section contents.
     ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
     viewPager.setOffscreenPageLimit(5);
-    ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
+    ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
     viewPager.setAdapter(adapter);
 
     TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
@@ -311,7 +322,7 @@ public class MainActivity extends AppCompatActivity
 
     // Use a TabLayout.TabLayoutOnPageChangeListener to forward the scroll and selection changes to
     // this layout
-    viewPager.addOnPageChangeListener(new TabLayoutOnPageChangeListener(tabLayout));
+    viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
   }
 
   private boolean hasPermissions(Activity activity) {

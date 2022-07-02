@@ -20,7 +20,8 @@ import com.google.common.base.Preconditions;
 import android.location.cts.nano.Ephemeris.GpsEphemerisProto;
 import android.location.cts.nano.Ephemeris.GpsNavMessageProto;
 import android.location.cts.nano.Ephemeris.IonosphericModelProto;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;

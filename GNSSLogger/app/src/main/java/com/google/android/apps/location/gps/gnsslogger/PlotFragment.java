@@ -16,7 +16,6 @@
 
 package com.google.android.apps.location.gps.gnsslogger;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint.Align;
@@ -24,7 +23,6 @@ import android.location.GnssMeasurement;
 import android.location.GnssMeasurementsEvent;
 import android.location.GnssStatus;
 import android.os.Bundle;
-import android.support.v4.util.ArrayMap;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -36,6 +34,10 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.collection.ArrayMap;
+import androidx.fragment.app.Fragment;
+
 import com.google.location.lbs.gnss.gps.pseudorange.GpsNavigationMessageStore;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;

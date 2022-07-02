@@ -16,7 +16,9 @@
 
 package com.google.android.apps.location.gps.gnsslogger;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.GnssMeasurementsEvent;
 import android.location.GnssNavigationMessage;
 import android.location.GnssStatus;
@@ -25,9 +27,13 @@ import android.location.LocationManager;
 import android.location.OnNmeaMessageListener;
 import android.os.Bundle;
 import android.os.SystemClock;
+
+import androidx.core.app.ActivityCompat;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -58,162 +64,165 @@ public class MeasurementProvider {
 
   private final LocationManager mLocationManager;
   private final android.location.LocationListener mLocationListener =
-      new android.location.LocationListener() {
+          new android.location.LocationListener() {
 
-        @Override
-        public void onProviderEnabled(String provider) {
-          if (mLogLocations) {
-            for (MeasurementListener listener : mListeners) {
-              if (listener instanceof AgnssUiLogger && !firstTime) {
-                continue;
-              }
-              listener.onProviderEnabled(provider);
-            }
-          }
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-          if (mLogLocations) {
-            for (MeasurementListener logger : mListeners) {
-              if (logger instanceof AgnssUiLogger && !firstTime) {
-                continue;
-              }
-              logger.onProviderDisabled(provider);
-            }
-          }
-        }
-
-        @Override
-        public void onLocationChanged(Location location) {
-          if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-            if (mLogLocations) {
-              for (MeasurementListener logger : mListeners) {
-                firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
-                ttff = firstLocationTimeNanos - registrationTimeNanos;
-                logger.onTTFFReceived(ttff);
+            @Override
+            public void onProviderEnabled(String provider) {
+              if (mLogLocations) {
+                for (MeasurementListener listener : mListeners) {
+                  if (listener instanceof AgnssUiLogger && !firstTime) {
+                    continue;
+                  }
+                  listener.onProviderEnabled(provider);
+                }
               }
             }
-            firstTime = false;
-          }
-          if (mLogLocations) {
-            for (MeasurementListener logger : mListeners) {
-              if (logger instanceof AgnssUiLogger && !firstTime) {
-                continue;
-              }
-              logger.onLocationChanged(location);
-            }
-          }
-        }
 
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-          if (mLogLocations) {
-            for (MeasurementListener logger : mListeners) {
-              logger.onLocationStatusChanged(provider, status, extras);
+            @Override
+            public void onProviderDisabled(String provider) {
+              if (mLogLocations) {
+                for (MeasurementListener logger : mListeners) {
+                  if (logger instanceof AgnssUiLogger && !firstTime) {
+                    continue;
+                  }
+                  logger.onProviderDisabled(provider);
+                }
+              }
             }
-          }
-        }
-      };
+
+            @Override
+            public void onLocationChanged(Location location) {
+              if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+                if (mLogLocations) {
+                  for (MeasurementListener logger : mListeners) {
+                    firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
+                    ttff = firstLocationTimeNanos - registrationTimeNanos;
+                    logger.onTTFFReceived(ttff);
+                  }
+                }
+                firstTime = false;
+              }
+              if (mLogLocations) {
+                for (MeasurementListener logger : mListeners) {
+                  if (logger instanceof AgnssUiLogger && !firstTime) {
+                    continue;
+                  }
+                  logger.onLocationChanged(location);
+                }
+              }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+              if (mLogLocations) {
+                for (MeasurementListener logger : mListeners) {
+                  logger.onLocationStatusChanged(provider, status, extras);
+                }
+              }
+            }
+          };
 
   private final com.google.android.gms.location.LocationListener mFusedLocationListener =
-      new com.google.android.gms.location.LocationListener() {
+          new com.google.android.gms.location.LocationListener() {
 
-        @Override
-        public void onLocationChanged(Location location) {
-          if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-            if (mLogLocations) {
-              for (MeasurementListener logger : mListeners) {
-                firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
-                ttff = firstLocationTimeNanos - registrationTimeNanos;
-                logger.onTTFFReceived(ttff);
+            @Override
+            public void onLocationChanged(Location location) {
+              if (firstTime && location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+                if (mLogLocations) {
+                  for (MeasurementListener logger : mListeners) {
+                    firstLocationTimeNanos = SystemClock.elapsedRealtimeNanos();
+                    ttff = firstLocationTimeNanos - registrationTimeNanos;
+                    logger.onTTFFReceived(ttff);
+                  }
+                }
+                firstTime = false;
+              }
+              if (mLogLocations) {
+                for (MeasurementListener logger : mListeners) {
+                  if (logger instanceof AgnssUiLogger && !firstTime) {
+                    continue;
+                  }
+                  logger.onLocationChanged(location);
+                }
               }
             }
-            firstTime = false;
-          }
-          if (mLogLocations) {
-            for (MeasurementListener logger : mListeners) {
-              if (logger instanceof AgnssUiLogger && !firstTime) {
-                continue;
-              }
-              logger.onLocationChanged(location);
-            }
-          }
-        }
-     };
+          };
 
   private final GnssMeasurementsEvent.Callback gnssMeasurementsEventListener =
-      new GnssMeasurementsEvent.Callback() {
-        @Override
-        public void onGnssMeasurementsReceived(GnssMeasurementsEvent event) {
-          if (mLogMeasurements) {
-            for (MeasurementListener logger : mListeners) {
-              logger.onGnssMeasurementsReceived(event);
+          new GnssMeasurementsEvent.Callback() {
+            @Override
+            public void onGnssMeasurementsReceived(GnssMeasurementsEvent event) {
+              if (mLogMeasurements) {
+                for (MeasurementListener logger : mListeners) {
+                  logger.onGnssMeasurementsReceived(event);
+                }
+              }
             }
-          }
-        }
 
-        @Override
-        public void onStatusChanged(int status) {
-          if (mLogMeasurements) {
-            for (MeasurementListener logger : mListeners) {
-              logger.onGnssMeasurementsStatusChanged(status);
+            @Override
+            public void onStatusChanged(int status) {
+              if (mLogMeasurements) {
+                for (MeasurementListener logger : mListeners) {
+                  logger.onGnssMeasurementsStatusChanged(status);
+                }
+              }
             }
-          }
-        }
-      };
+          };
 
   private final GnssNavigationMessage.Callback gnssNavigationMessageListener =
-      new GnssNavigationMessage.Callback() {
-        @Override
-        public void onGnssNavigationMessageReceived(GnssNavigationMessage event) {
-          if (mLogNavigationMessages) {
-            for (MeasurementListener logger : mListeners) {
-              logger.onGnssNavigationMessageReceived(event);
+          new GnssNavigationMessage.Callback() {
+            @Override
+            public void onGnssNavigationMessageReceived(GnssNavigationMessage event) {
+              if (mLogNavigationMessages) {
+                for (MeasurementListener logger : mListeners) {
+                  logger.onGnssNavigationMessageReceived(event);
+                }
+              }
             }
-          }
-        }
 
-        @Override
-        public void onStatusChanged(int status) {
-          if (mLogNavigationMessages) {
-            for (MeasurementListener logger : mListeners) {
-              logger.onGnssNavigationMessageStatusChanged(status);
+            @Override
+            public void onStatusChanged(int status) {
+              if (mLogNavigationMessages) {
+                for (MeasurementListener logger : mListeners) {
+                  logger.onGnssNavigationMessageStatusChanged(status);
+                }
+              }
             }
-          }
-        }
-      };
+          };
 
   private final GnssStatus.Callback gnssStatusListener =
-      new GnssStatus.Callback() {
-        @Override
-        public void onStarted() {}
+          new GnssStatus.Callback() {
+            @Override
+            public void onStarted() {
+            }
 
-        @Override
-        public void onStopped() {}
+            @Override
+            public void onStopped() {
+            }
 
-        @Override
-        public void onFirstFix(int ttff) {}
+            @Override
+            public void onFirstFix(int ttff) {
+            }
 
-        @Override
-        public void onSatelliteStatusChanged(GnssStatus status) {
-          for (MeasurementListener logger : mListeners) {
-            logger.onGnssStatusChanged(status);
-          }
-        }
-      };
+            @Override
+            public void onSatelliteStatusChanged(GnssStatus status) {
+              for (MeasurementListener logger : mListeners) {
+                logger.onGnssStatusChanged(status);
+              }
+            }
+          };
 
   private final OnNmeaMessageListener nmeaListener =
-      new OnNmeaMessageListener() {
-        @Override
-        public void onNmeaMessage(String s, long l) {
-          if (mLogNmeas) {
-            for (MeasurementListener logger : mListeners) {
-              logger.onNmeaReceived(l, s);
+          new OnNmeaMessageListener() {
+            @Override
+            public void onNmeaMessage(String s, long l) {
+              if (mLogNmeas) {
+                for (MeasurementListener logger : mListeners) {
+                  logger.onNmeaReceived(l, s);
+                }
+              }
             }
-          }
-        }
-      };
+          };
 
   public MeasurementProvider(Context context, GoogleApiClient client, MeasurementListener... loggers) {
     this.mListeners = Arrays.asList(loggers);
@@ -268,16 +277,26 @@ public class MeasurementProvider {
   public void registerLocation() {
     boolean isGpsProviderEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     if (isGpsProviderEnabled) {
-      mLocationManager.requestLocationUpdates(
-          LocationManager.NETWORK_PROVIDER,
-          LOCATION_RATE_NETWORK_MS,
-          0.0f /* minDistance */,
-          mLocationListener);
-      mLocationManager.requestLocationUpdates(
-          LocationManager.GPS_PROVIDER,
-          LOCATION_RATE_GPS_MS,
-          0.0f /* minDistance */,
-          mLocationListener);
+      try {
+        mLocationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                LOCATION_RATE_NETWORK_MS,
+                0.0f /* minDistance */,
+                mLocationListener);
+        mLocationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                LOCATION_RATE_GPS_MS,
+                0.0f /* minDistance */,
+                mLocationListener);
+      } catch (SecurityException e) {
+        // TODO(adaext)
+        //    ActivityCompat#requestPermissions
+        // here to request the missing permissions, and then overriding
+        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        //                                          int[] grantResults)
+        // to handle the case where the user grants the permission. See the documentation
+        // for ActivityCompat#requestPermissions for more details.
+      }
     }
     logRegistration("LocationUpdates", isGpsProviderEnabled);
   }
@@ -291,7 +310,17 @@ public class MeasurementProvider {
     locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     locationRequest.setInterval(1000);
     locationRequest.setFastestInterval(100);
-    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, mFusedLocationListener);
+    try {
+      LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, mFusedLocationListener);
+    } catch (SecurityException e) {
+      // TODO(adaext):
+      //    ActivityCompat#requestPermissions
+      // here to request the missing permissions, and then overriding
+      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+      //                                          int[] grantResults)
+      // to handle the case where the user grants the permission. See the documentation
+      // for ActivityCompat#requestPermissions for more details.
+    }
   }
 
   public void unRegisterFusedLocation() {
@@ -302,10 +331,20 @@ public class MeasurementProvider {
 
   public void registerSingleNetworkLocation() {
     boolean isNetworkProviderEnabled =
-        mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     if (isNetworkProviderEnabled) {
-      mLocationManager.requestSingleUpdate(
-          LocationManager.NETWORK_PROVIDER, mLocationListener, null);
+      try {
+        mLocationManager.requestSingleUpdate(
+                LocationManager.NETWORK_PROVIDER, mLocationListener, null);
+      } catch (SecurityException e) {
+        // TODO(adaext):
+        //    ActivityCompat#requestPermissions
+        // here to request the missing permissions, and then overriding
+        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        //                                          int[] grantResults)
+        // to handle the case where the user grants the permission. See the documentation
+        // for ActivityCompat#requestPermissions for more details.
+      }
     }
     logRegistration("LocationUpdates", isNetworkProviderEnabled);
   }
@@ -315,15 +354,35 @@ public class MeasurementProvider {
     if (isGpsProviderEnabled) {
       this.firstTime = true;
       registrationTimeNanos = SystemClock.elapsedRealtimeNanos();
-      mLocationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mLocationListener, null);
+      try {
+        mLocationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, mLocationListener, null);
+      } catch (SecurityException e) {
+        // TODO(adaext):
+        //    ActivityCompat#requestPermissions
+        // here to request the missing permissions, and then overriding
+        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        //                                          int[] grantResults)
+        // to handle the case where the user grants the permission. See the documentation
+        // for ActivityCompat#requestPermissions for more details.
+      }
     }
     logRegistration("LocationUpdates", isGpsProviderEnabled);
   }
 
   public void registerMeasurements() {
-    logRegistration(
-        "GnssMeasurements",
-        mLocationManager.registerGnssMeasurementsCallback(gnssMeasurementsEventListener));
+    try {
+      logRegistration(
+              "GnssMeasurements",
+              mLocationManager.registerGnssMeasurementsCallback(gnssMeasurementsEventListener));
+    } catch (SecurityException e) {
+      // TODO(adaext):
+      //    ActivityCompat#requestPermissions
+      // here to request the missing permissions, and then overriding
+      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+      //                                          int[] grantResults)
+      // to handle the case where the user grants the permission. See the documentation
+      // for ActivityCompat#requestPermissions for more details.
+    }
   }
 
   public void unregisterMeasurements() {
@@ -332,8 +391,8 @@ public class MeasurementProvider {
 
   public void registerNavigation() {
     logRegistration(
-        "GpsNavigationMessage",
-        mLocationManager.registerGnssNavigationMessageCallback(gnssNavigationMessageListener));
+            "GpsNavigationMessage",
+            mLocationManager.registerGnssNavigationMessageCallback(gnssNavigationMessageListener));
   }
 
   public void unregisterNavigation() {
@@ -341,7 +400,17 @@ public class MeasurementProvider {
   }
 
   public void registerGnssStatus() {
-    logRegistration("GnssStatus", mLocationManager.registerGnssStatusCallback(gnssStatusListener));
+    try {
+      logRegistration("GnssStatus", mLocationManager.registerGnssStatusCallback(gnssStatusListener));
+    } catch (SecurityException e) {
+      // TODO(adaext):
+      //    ActivityCompat#requestPermissions
+      // here to request the missing permissions, and then overriding
+      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+      //                                          int[] grantResults)
+      // to handle the case where the user grants the permission. See the documentation
+      // for ActivityCompat#requestPermissions for more details.
+    }
   }
 
   public void unregisterGpsStatus() {
@@ -349,7 +418,17 @@ public class MeasurementProvider {
   }
 
   public void registerNmea() {
-    logRegistration("Nmea", mLocationManager.addNmeaListener(nmeaListener));
+    try {
+      logRegistration("Nmea", mLocationManager.addNmeaListener(nmeaListener));
+    } catch (SecurityException e) {
+      // TODO(adaext):
+      //    ActivityCompat#requestPermissions
+      // here to request the missing permissions, and then overriding
+      //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+      //                                          int[] grantResults)
+      // to handle the case where the user grants the permission. See the documentation
+      // for ActivityCompat#requestPermissions for more details.
+    }
   }
 
   public void unregisterNmea() {
