@@ -30,6 +30,8 @@
     <string name="ttff">TTFF</string>
 
     <string name="timer_service_name">GNSS Logger timer</string>
+    <string name="timer_service_notification_channel_name">name</string>
+    <string name="timer_service_notification_channel_description">description</string>
     <string name="timer_title">Timer Settings</string>
     <string name="timer_hours">Hours</string>
     <string name="timer_minutes">Minutes</string>
