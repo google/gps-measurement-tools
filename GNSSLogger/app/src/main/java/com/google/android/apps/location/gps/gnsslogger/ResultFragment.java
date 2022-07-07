@@ -17,7 +17,6 @@
 package com.google.android.apps.location.gps.gnsslogger;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -32,6 +31,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 /** The UI fragment that hosts a logging view. */
 public class ResultFragment extends Fragment {

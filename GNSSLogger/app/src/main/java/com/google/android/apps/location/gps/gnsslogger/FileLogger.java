@@ -29,10 +29,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
-import android.support.v4.BuildConfig;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.core.content.FileProvider;
+
 import com.google.android.apps.location.gps.gnsslogger.LoggerFragment.UIFragmentComponent;
 import java.io.BufferedWriter;
 import java.io.File;

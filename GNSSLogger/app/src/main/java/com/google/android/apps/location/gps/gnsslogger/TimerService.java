@@ -17,12 +17,18 @@
 package com.google.android.apps.location.gps.gnsslogger;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
+
+import androidx.core.app.NotificationChannelCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.util.concurrent.TimeUnit;
 
 /** A {@link Service} to be bound to that exposes a timer. */
@@ -36,6 +42,7 @@ public class TimerService extends Service {
   static final byte TYPE_FINISH = 1;
   static final int NOTIFICATION_ID = 7777;
 
+  private static final String NOTIFICATION_CHANNEL_ID = "gnss-logger-notification-channel";
   private final IBinder mBinder = new TimerBinder();
   private CountDownTimer mCountDownTimer;
   private boolean mTimerStarted;
@@ -64,8 +71,11 @@ public class TimerService extends Service {
 
   @Override
   public IBinder onBind(Intent intent) {
-    Notification notification = new Notification();
-    startForeground(NOTIFICATION_ID, notification);
+    NotificationChannelCompat channel = new NotificationChannelCompat.Builder(NOTIFICATION_CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT).setName(getResources().getString(R.string.timer_service_notification_channel_name)).setDescription(getResources().getString(R.string.timer_service_notification_channel_description)).build();
+    NotificationManagerCompat manager = NotificationManagerCompat.from(this);
+    manager.createNotificationChannel(channel);
+    Notification notification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).build();
+    startForeground(NOTIFICATION_ID,notification);
     return mBinder;
   }
 

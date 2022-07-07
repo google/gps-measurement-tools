@@ -19,7 +19,7 @@ package com.google.android.apps.location.gps.gnsslogger;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
  * A {@link BroadcastReceiver} that receives and broadcasts the result of

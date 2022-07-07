@@ -16,7 +16,6 @@
 
 package com.google.android.apps.location.gps.gnsslogger;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -41,6 +40,9 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**

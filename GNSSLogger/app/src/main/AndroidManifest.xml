@@ -1,40 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.google.android.apps.location.gps.gnsslogger" >
 
-    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="25" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.WRITE_GSERVICES"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-         <meta-data
-          android:name="com.google.android.gms.version"
-          android:value="@integer/google_play_services_version" />
-    <meta-data
-          android:name="com.google.android.maps.v2.API_KEY"
-          android:value="AIzaSyCorxBDtMQzz87fmuDRLb8hdUTsNg2rWS4" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCorxBDtMQzz87fmuDRLb8hdUTsNg2rWS4" />
         <activity
             android:name="com.google.android.apps.location.gps.gnsslogger.MainActivity"
             android:screenOrientation="portrait"
             android:alwaysRetainTaskState="true"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-         <provider
-            android:name="android.support.v4.content.FileProvider"
+        <provider
+            android:name="androidx.core.content.FileProvider"
             android:authorities="android.support.v4.provider"
             android:exported="false"
             android:grantUriPermissions="true">
