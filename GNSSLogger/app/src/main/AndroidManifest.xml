@@ -25,7 +25,7 @@
         <!-- Please add your own API key below -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="" />
+            android:value="${MAPS_API_KEY}" />
         <activity
             android:name="com.google.android.apps.location.gps.gnsslogger.MainActivity"
             android:screenOrientation="portrait"
