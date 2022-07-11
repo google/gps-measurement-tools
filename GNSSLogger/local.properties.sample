@@ -8,4 +8,4 @@
 # For customization when using a Version Control System, please read the
 # header note.
 sdk.dir=C\:\\Users\\username\\AppData\\Local\\Android\\Sdk
-MAPS_API_KEY=Google Maps API key
+MAPS_API_KEY=GoogleMapsApiKey
