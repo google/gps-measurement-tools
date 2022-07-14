@@ -21,13 +21,10 @@ import java.util.Arrays;
 /**
  * Helper class containing the basic vector and matrix operations used for calculating the position
  * solution from pseudoranges
- *
  */
 public class GpsMathOperations {
 
-  /**
-   * Calculates the norm of a vector
-   */
+  /** Calculates the norm of a vector */
   public static double vectorNorm(double[] inputVector) {
     double normSquared = 0;
     for (int i = 0; i < inputVector.length; i++) {
@@ -56,9 +53,9 @@ public class GpsMathOperations {
   }
 
   /**
-   * Multiply a matrix {@code matrix} by a column vector {@code vector}
-   * ({@code matrix} * {@code vector}) and return the resulting vector {@resultVector}.
-   * {@code matrix} and {@resultVector} dimensions must match.
+   * Multiply a matrix {@code matrix} by a column vector {@code vector} ({@code matrix} * {@code
+   * vector}) and return the resulting vector {@resultVector}. {@code matrix} and {@resultVector}
+   * dimensions must match.
    */
   public static double[] matrixByColVectMultiplication(double[][] matrix, double[] resultVector)
       throws ArithmeticException {
@@ -79,8 +76,8 @@ public class GpsMathOperations {
   }
 
   /**
-   * Dot product of a raw vector {@code firstVector} and a column vector {@code secondVector}.
-   * Both vectors should be of the same length.
+   * Dot product of a raw vector {@code firstVector} and a column vector {@code secondVector}. Both
+   * vectors should be of the same length.
    */
   public static double dotProduct(double[] firstVector, double[] secondVector)
       throws ArithmeticException {
@@ -95,8 +92,8 @@ public class GpsMathOperations {
   }
 
   /**
-   * Finds the index of max value in a vector {@code vector} filtering out NaNs, return -1 if
-   * the vector is empty or only contain NaNs.
+   * Finds the index of max value in a vector {@code vector} filtering out NaNs, return -1 if the
+   * vector is empty or only contain NaNs.
    */
   public static int maxIndexOfVector(double[] vector) {
     double max = Double.NEGATIVE_INFINITY;
@@ -116,7 +113,7 @@ public class GpsMathOperations {
 
   /**
    * Subtracts every element in a vector {@code vector} by a scalar {@code scalar}. We do not need
-   *  to filter out NaN in this case because NaN subtract by a real number will still be NaN.
+   * to filter out NaN in this case because NaN subtract by a real number will still be NaN.
    */
   public static double[] subtractByScalar(double[] vector, double scalar) {
     double[] result = new double[vector.length];

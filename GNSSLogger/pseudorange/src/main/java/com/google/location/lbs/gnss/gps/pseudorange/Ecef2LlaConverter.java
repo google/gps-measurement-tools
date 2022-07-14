@@ -17,13 +17,12 @@
 package com.google.location.lbs.gnss.gps.pseudorange;
 
 /**
- * Converts ECEF (Earth Centered Earth Fixed) Cartesian coordinates to LLA (latitude, longitude,
- * and altitude).
+ * Converts ECEF (Earth Centered Earth Fixed) Cartesian coordinates to LLA (latitude, longitude, and
+ * altitude).
  *
- * <p> Source: reference from Mathworks: https://microem.ru/files/2012/08/GPS.G1-X-00006.pdf
+ * <p>Source: reference from Mathworks: https://microem.ru/files/2012/08/GPS.G1-X-00006.pdf
  * http://www.mathworks.com/help/aeroblks/ecefpositiontolla.html
  */
-
 public class Ecef2LlaConverter {
   // WGS84 Ellipsoid Parameters
   private static final double EARTH_SEMI_MAJOR_AXIS_METERS = 6378137.0;
@@ -34,22 +33,23 @@ public class Ecef2LlaConverter {
   private static final double RESIDUAL_TOLERANCE = 1.0e-6;
   private static final double SEMI_MINOR_AXIS_METERS =
       Math.sqrt(Math.pow(EARTH_SEMI_MAJOR_AXIS_METERS, 2) * (1 - Math.pow(ECCENTRICITY, 2)));
-  private static final double SECOND_ECCENTRICITY = Math.sqrt(
-      (Math.pow(EARTH_SEMI_MAJOR_AXIS_METERS, 2) - Math.pow(SEMI_MINOR_AXIS_METERS, 2))
-      / Math.pow(SEMI_MINOR_AXIS_METERS, 2));
+  private static final double SECOND_ECCENTRICITY =
+      Math.sqrt(
+          (Math.pow(EARTH_SEMI_MAJOR_AXIS_METERS, 2) - Math.pow(SEMI_MINOR_AXIS_METERS, 2))
+              / Math.pow(SEMI_MINOR_AXIS_METERS, 2));
   private static final double ECEF_NEAR_POLE_THRESHOLD_METERS = 1.0;
 
   /**
-  * Converts ECEF (Earth Centered Earth Fixed) Cartesian coordinates to LLA (latitude,
-  * longitude, and altitude) using the close form approach
-  *
-  * <p>Inputs are cartesian coordinates x,y,z
-  *
-  * <p>Output is GeodeticLlaValues class containing geodetic latitude (radians), geodetic longitude
-  * (radians), height above WGS84 ellipsoid (m)}
-  */
-  public static GeodeticLlaValues convertECEFToLLACloseForm(double ecefXMeters, double ecefYMeters,
-      double ecefZMeters) {
+   * Converts ECEF (Earth Centered Earth Fixed) Cartesian coordinates to LLA (latitude, longitude,
+   * and altitude) using the close form approach
+   *
+   * <p>Inputs are cartesian coordinates x,y,z
+   *
+   * <p>Output is GeodeticLlaValues class containing geodetic latitude (radians), geodetic longitude
+   * (radians), height above WGS84 ellipsoid (m)}
+   */
+  public static GeodeticLlaValues convertECEFToLLACloseForm(
+      double ecefXMeters, double ecefYMeters, double ecefZMeters) {
 
     // Auxiliary parameters
     double pMeters = Math.sqrt(Math.pow(ecefXMeters, 2) + Math.pow(ecefYMeters, 2));
@@ -62,37 +62,41 @@ public class Ecef2LlaConverter {
 
     final double sinTheta = Math.sin(thetaRadians);
     final double cosTheta = Math.cos(thetaRadians);
-    final double tempY = ecefZMeters
-        + Math.pow(SECOND_ECCENTRICITY, 2) * SEMI_MINOR_AXIS_METERS * Math.pow(sinTheta, 3);
-    final double tempX = pMeters
-        - Math.pow(ECCENTRICITY, 2) * EARTH_SEMI_MAJOR_AXIS_METERS * (Math.pow(cosTheta, 3));
+    final double tempY =
+        ecefZMeters
+            + Math.pow(SECOND_ECCENTRICITY, 2) * SEMI_MINOR_AXIS_METERS * Math.pow(sinTheta, 3);
+    final double tempX =
+        pMeters
+            - Math.pow(ECCENTRICITY, 2) * EARTH_SEMI_MAJOR_AXIS_METERS * (Math.pow(cosTheta, 3));
     double latRadians = Math.atan2(tempY, tempX);
     // Radius of curvature in the vertical prime
-    double curvatureRadius = EARTH_SEMI_MAJOR_AXIS_METERS
-        / Math.sqrt(1 - Math.pow(ECCENTRICITY, 2) * (Math.pow(Math.sin(latRadians), 2)));
+    double curvatureRadius =
+        EARTH_SEMI_MAJOR_AXIS_METERS
+            / Math.sqrt(1 - Math.pow(ECCENTRICITY, 2) * (Math.pow(Math.sin(latRadians), 2)));
     double altMeters = (pMeters / Math.cos(latRadians)) - curvatureRadius;
 
     // Correct for numerical instability in altitude near poles
-    boolean polesCheck = Math.abs(ecefXMeters) < ECEF_NEAR_POLE_THRESHOLD_METERS
-        && Math.abs(ecefYMeters) < ECEF_NEAR_POLE_THRESHOLD_METERS;
+    boolean polesCheck =
+        Math.abs(ecefXMeters) < ECEF_NEAR_POLE_THRESHOLD_METERS
+            && Math.abs(ecefYMeters) < ECEF_NEAR_POLE_THRESHOLD_METERS;
     if (polesCheck) {
       altMeters = Math.abs(ecefZMeters) - SEMI_MINOR_AXIS_METERS;
     }
 
-    return  new GeodeticLlaValues(latRadians, lngRadians, altMeters);
+    return new GeodeticLlaValues(latRadians, lngRadians, altMeters);
   }
 
-   /**
-   * Converts ECEF (Earth Centered Earth Fixed) Cartesian coordinates to LLA (latitude,
-   * longitude, and altitude) using iteration approach
+  /**
+   * Converts ECEF (Earth Centered Earth Fixed) Cartesian coordinates to LLA (latitude, longitude,
+   * and altitude) using iteration approach
    *
    * <p>Inputs are cartesian coordinates x,y,z.
    *
    * <p>Outputs is GeodeticLlaValues containing geodetic latitude (radians), geodetic longitude
    * (radians), height above WGS84 ellipsoid (m)}
    */
-  public static GeodeticLlaValues convertECEFToLLAByIterations(double ecefXMeters,
-      double ecefYMeters, double ecefZMeters) {
+  public static GeodeticLlaValues convertECEFToLLAByIterations(
+      double ecefXMeters, double ecefYMeters, double ecefZMeters) {
 
     double xyLengthMeters = Math.sqrt(Math.pow(ecefXMeters, 2) + Math.pow(ecefYMeters, 2));
     double xyzLengthMeters = Math.sqrt(Math.pow(xyLengthMeters, 2) + Math.pow(ecefZMeters, 2));
@@ -118,26 +122,35 @@ public class Ecef2LlaConverter {
       double pResidual;
       double ecefZMetersResidual;
       // initial height (iterate next to improve accuracy)
-      altMeters = xyzLengthMeters - EARTH_SEMI_MAJOR_AXIS_METERS
-          * (1 - sinPhi * sinPhi / INVERSE_FLATTENING);
+      altMeters =
+          xyzLengthMeters
+              - EARTH_SEMI_MAJOR_AXIS_METERS * (1 - sinPhi * sinPhi / INVERSE_FLATTENING);
 
       for (int i = 1; i <= MAX_ITERATIONS; i++) {
         sinPhi = Math.sin(latRad);
 
         // calculate radius of curvature in prime vertical direction
-        ni = EARTH_SEMI_MAJOR_AXIS_METERS / Math.sqrt(1 - (2 - 1 / INVERSE_FLATTENING)
-            / INVERSE_FLATTENING * Math.sin(latRad) * Math.sin(latRad));
+        ni =
+            EARTH_SEMI_MAJOR_AXIS_METERS
+                / Math.sqrt(
+                    1
+                        - (2 - 1 / INVERSE_FLATTENING)
+                            / INVERSE_FLATTENING
+                            * Math.sin(latRad)
+                            * Math.sin(latRad));
 
         // calculate residuals in p and ecefZMeters
         pResidual = xyLengthMeters - (ni + altMeters) * Math.cos(latRad);
-        ecefZMetersResidual = ecefZMeters
-            - (ni * (1 - (2 - 1 / INVERSE_FLATTENING) / INVERSE_FLATTENING) + altMeters)
-            * Math.sin(latRad);
+        ecefZMetersResidual =
+            ecefZMeters
+                - (ni * (1 - (2 - 1 / INVERSE_FLATTENING) / INVERSE_FLATTENING) + altMeters)
+                    * Math.sin(latRad);
 
         // update height and latitude
         altMeters += Math.sin(latRad) * ecefZMetersResidual + Math.cos(latRad) * pResidual;
-        latRad += (Math.cos(latRad) * ecefZMetersResidual - Math.sin(latRad) * pResidual)
-            / (ni + altMeters);
+        latRad +=
+            (Math.cos(latRad) * ecefZMetersResidual - Math.sin(latRad) * pResidual)
+                / (ni + altMeters);
 
         if (Math.sqrt((pResidual * pResidual + ecefZMetersResidual * ecefZMetersResidual))
             < RESIDUAL_TOLERANCE) {
@@ -156,9 +169,8 @@ public class Ecef2LlaConverter {
   }
 
   /**
-   *
-   * Class containing geodetic coordinates: latitude in radians, geodetic longitude in radians
-   *  and altitude in meters
+   * Class containing geodetic coordinates: latitude in radians, geodetic longitude in radians and
+   * altitude in meters
    */
   public static class GeodeticLlaValues {
 
@@ -166,12 +178,11 @@ public class Ecef2LlaConverter {
     public final double longitudeRadians;
     public final double altitudeMeters;
 
-    public GeodeticLlaValues(double latitudeRadians,
-        double longitudeRadians, double altitudeMeters) {
+    public GeodeticLlaValues(
+        double latitudeRadians, double longitudeRadians, double altitudeMeters) {
       this.latitudeRadians = latitudeRadians;
       this.longitudeRadians = longitudeRadians;
       this.altitudeMeters = altitudeMeters;
     }
   }
-
 }

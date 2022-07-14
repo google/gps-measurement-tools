@@ -16,12 +16,8 @@
 
 package com.google.android.apps.location.gps.gnsslogger;
 
-/**
- * A class representing the interface toggling auto ground truth mode switch
- */
+/** A class representing the interface toggling auto ground truth mode switch */
 public interface GroundTruthModeSwitcher {
-  /**
-   * Gets called to enable auto switch ground truth mode
-   */
+  /** Gets called to enable auto switch ground truth mode */
   void setAutoSwitchGroundTruthModeEnabled(boolean enabled);
 }

@@ -24,8 +24,7 @@ import android.location.LocationListener;
 import android.location.OnNmeaMessageListener;
 import android.os.Bundle;
 
-/**  A class representing an interface for logging a measurement. */
-
+/** A class representing an interface for logging a measurement. */
 public interface MeasurementListener {
 
   /** @see LocationListener#onProviderEnabled(String) */
@@ -36,10 +35,7 @@ public interface MeasurementListener {
   void onLocationChanged(Location location);
   /** @see LocationListener#onStatusChanged(String, int, Bundle) */
   void onLocationStatusChanged(String provider, int status, Bundle extras);
-  /**
-   * @see GnssMeasurementsEvent.Callback#
-   *     onGnssMeasurementsReceived(GnssMeasurementsEvent)
-   */
+  /** @see GnssMeasurementsEvent.Callback# onGnssMeasurementsReceived(GnssMeasurementsEvent) */
   void onGnssMeasurementsReceived(GnssMeasurementsEvent event);
   /** @see GnssMeasurementsEvent.Callback#onStatusChanged(int) */
   void onGnssMeasurementsStatusChanged(int status);
@@ -53,5 +49,6 @@ public interface MeasurementListener {
   void onListenerRegistration(String listener, boolean result);
   /** @see OnNmeaMessageListener#onNmeaMessage(String, long) */
   void onNmeaReceived(long l, String s);
+
   void onTTFFReceived(long l);
 }

@@ -19,13 +19,6 @@ package com.google.android.apps.location.gps.gnsslogger;
 
 import android.Manifest;
 import android.app.Activity;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -40,13 +33,15 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -56,15 +51,14 @@ import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.tabs.TabLayout;
-
 import java.util.Locale;
 
 /** The activity for the application. */
 public class MainActivity extends AppCompatActivity
-        implements OnConnectionFailedListener, ConnectionCallbacks, GroundTruthModeSwitcher {
+    implements OnConnectionFailedListener, ConnectionCallbacks, GroundTruthModeSwitcher {
   private static final int LOCATION_REQUEST_ID = 1;
   private static final String[] REQUIRED_PERMISSIONS = {
-          Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE
+    Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE
   };
   private static final int NUMBER_OF_FRAGMENTS = 6;
   private static final int FRAGMENT_INDEX_SETTING = 0;
@@ -84,20 +78,20 @@ public class MainActivity extends AppCompatActivity
   private GoogleApiClient mGoogleApiClient;
   private boolean mAutoSwitchGroundTruthMode;
   private final ActivityDetectionBroadcastReceiver mBroadcastReceiver =
-          new ActivityDetectionBroadcastReceiver();
+      new ActivityDetectionBroadcastReceiver();
 
   private ServiceConnection mConnection =
-          new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-              // Empty
-            }
+      new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+          // Empty
+        }
 
-            @Override
-            public void onServiceDisconnected(ComponentName className) {
-              // Empty
-            }
-          };
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+          // Empty
+        }
+      };
 
   @Override
   protected void onStart() {
@@ -110,9 +104,9 @@ public class MainActivity extends AppCompatActivity
   protected void onResume() {
     super.onResume();
     LocalBroadcastManager.getInstance(this)
-            .registerReceiver(
-                    mBroadcastReceiver, new IntentFilter(
-                            DetectedActivitiesIntentReceiver.AR_RESULT_BROADCAST_ACTION));
+        .registerReceiver(
+            mBroadcastReceiver,
+            new IntentFilter(DetectedActivitiesIntentReceiver.AR_RESULT_BROADCAST_ACTION));
   }
 
   @Override
@@ -135,8 +129,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    SharedPreferences sharedPreferences = PreferenceManager.
-            getDefaultSharedPreferences(this);
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     editor.putBoolean(SettingsFragment.PREFERENCE_KEY_AUTO_SCROLL, false);
     editor.commit();
@@ -158,12 +151,13 @@ public class MainActivity extends AppCompatActivity
 
   private synchronized void buildGoogleApiClient() {
     mGoogleApiClient =
-            new GoogleApiClient.Builder(this)
-                    .enableAutoManage(this, this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(ActivityRecognition.API).addApi(LocationServices.API)
-                    .build();
+        new GoogleApiClient.Builder(this)
+            .enableAutoManage(this, this)
+            .addConnectionCallbacks(this)
+            .addOnConnectionFailedListener(this)
+            .addApi(ActivityRecognition.API)
+            .addApi(LocationServices.API)
+            .build();
   }
 
   @Override
@@ -180,7 +174,7 @@ public class MainActivity extends AppCompatActivity
     }
     try {
       ActivityRecognition.ActivityRecognitionApi.requestActivityUpdates(
-              mGoogleApiClient, 0, createActivityDetectionPendingIntent());
+          mGoogleApiClient, 0, createActivityDetectionPendingIntent());
     } catch (SecurityException e) {
       // TODO(adaext)
       //    ActivityCompat#requestPermissions
@@ -311,7 +305,6 @@ public class MainActivity extends AppCompatActivity
     mFragments[FRAGMENT_INDEX_PLOT] = plotFragment;
     mRealTimePositionVelocityCalculator.setPlotFragment(plotFragment);
 
-
     // The viewpager that will host the section contents.
     ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
     viewPager.setOffscreenPageLimit(5);
@@ -351,16 +344,14 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
-  /**
-   * Toggles the flag to allow Activity Recognition updates to change ground truth mode
-   */
+  /** Toggles the flag to allow Activity Recognition updates to change ground truth mode */
   public void setAutoSwitchGroundTruthModeEnabled(boolean enabled) {
     mAutoSwitchGroundTruthMode = enabled;
   }
 
   /**
-   * A receiver for result of
-   * {@link ActivityRecognition#ActivityRecognitionApi#requestActivityUpdates()} broadcast by {@link
+   * A receiver for result of {@link
+   * ActivityRecognition#ActivityRecognitionApi#requestActivityUpdates()} broadcast by {@link
    * DetectedActivitiesIntentReceiver}
    */
   public class ActivityDetectionBroadcastReceiver extends BroadcastReceiver {
@@ -378,15 +369,15 @@ public class MainActivity extends AppCompatActivity
 
   /**
    * Sets up the ground truth mode of {@link RealTimePositionVelocityCalculator} given an result
-   * from Activity Recognition update. For activities other than {@link DetectedActivity#STILL}
-   * and {@link DetectedActivity#TILTING}, we conservatively assume the user is moving and use the
-   * last WLS position solution as ground truth for corrected residual computation.
+   * from Activity Recognition update. For activities other than {@link DetectedActivity#STILL} and
+   * {@link DetectedActivity#TILTING}, we conservatively assume the user is moving and use the last
+   * WLS position solution as ground truth for corrected residual computation.
    */
-  private void setGroundTruthModeOnResult(ActivityRecognitionResult result){
-    if (result != null){
+  private void setGroundTruthModeOnResult(ActivityRecognitionResult result) {
+    if (result != null) {
       int detectedActivityType = result.getMostProbableActivity().getType();
       if (detectedActivityType == DetectedActivity.STILL
-          || detectedActivityType == DetectedActivity.TILTING){
+          || detectedActivityType == DetectedActivity.TILTING) {
         mRealTimePositionVelocityCalculator.setResidualPlotMode(
             RealTimePositionVelocityCalculator.RESIDUAL_MODE_STILL, null);
       } else {

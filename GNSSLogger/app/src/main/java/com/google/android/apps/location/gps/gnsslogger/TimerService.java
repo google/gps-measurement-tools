@@ -23,12 +23,10 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.CountDownTimer;
 import android.os.IBinder;
-
 import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import java.util.concurrent.TimeUnit;
 
 /** A {@link Service} to be bound to that exposes a timer. */
@@ -71,11 +69,18 @@ public class TimerService extends Service {
 
   @Override
   public IBinder onBind(Intent intent) {
-    NotificationChannelCompat channel = new NotificationChannelCompat.Builder(NOTIFICATION_CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT).setName(getResources().getString(R.string.timer_service_notification_channel_name)).setDescription(getResources().getString(R.string.timer_service_notification_channel_description)).build();
+    NotificationChannelCompat channel =
+        new NotificationChannelCompat.Builder(
+                NOTIFICATION_CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT)
+            .setName(getResources().getString(R.string.timer_service_notification_channel_name))
+            .setDescription(
+                getResources().getString(R.string.timer_service_notification_channel_description))
+            .build();
     NotificationManagerCompat manager = NotificationManagerCompat.from(this);
     manager.createNotificationChannel(channel);
-    Notification notification = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).build();
-    startForeground(NOTIFICATION_ID,notification);
+    Notification notification =
+        new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).build();
+    startForeground(NOTIFICATION_ID, notification);
     return mBinder;
   }
 

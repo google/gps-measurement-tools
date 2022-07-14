@@ -21,12 +21,12 @@ import android.location.GnssMeasurement;
 import android.location.GnssMeasurementsEvent;
 import android.location.GnssNavigationMessage;
 import android.location.GnssStatus;
-import android.util.Log;
-import com.google.location.lbs.gnss.gps.pseudorange.Ecef2EnuConverter.EnuValues;
-import com.google.location.lbs.gnss.gps.pseudorange.Ecef2LlaConverter.GeodeticLlaValues;
 import android.location.cts.nano.Ephemeris.GpsEphemerisProto;
 import android.location.cts.nano.Ephemeris.GpsNavMessageProto;
 import android.location.cts.suplClient.SuplRrlpController;
+import android.util.Log;
+import com.google.location.lbs.gnss.gps.pseudorange.Ecef2EnuConverter.EnuValues;
+import com.google.location.lbs.gnss.gps.pseudorange.Ecef2LlaConverter.GeodeticLlaValues;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -40,7 +40,6 @@ import java.util.concurrent.TimeUnit;
  * Helper class for calculating Gps position and velocity solution using weighted least squares
  * where the raw Gps measurements are parsed as a {@link BufferedReader} with the option to apply
  * doppler smoothing, carrier phase smoothing or no smoothing.
- *
  */
 public class PseudorangePositionVelocityFromRealTimeEvents {
 
@@ -49,6 +48,7 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
   private static final int TOW_DECODED_MEASUREMENT_STATE_BIT = 3;
   /** Average signal travel time from GPS satellite and earth */
   private static final int MINIMUM_NUMBER_OF_USEFUL_SATELLITES = 4;
+
   private static final int C_TO_N0_THRESHOLD_DB_HZ = 18;
 
   private static final String SUPL_SERVER_NAME = "supl.google.com";
@@ -60,12 +60,11 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
   private GpsNavigationMessageStore mGpsNavigationMessageStore = new GpsNavigationMessageStore();
   private double[] mPositionSolutionLatLngDeg = GpsMathOperations.createAndFillArray(3, Double.NaN);
   private double[] mVelocitySolutionEnuMps = GpsMathOperations.createAndFillArray(3, Double.NaN);
-  private final double[] mPositionVelocityUncertaintyEnu
-      = GpsMathOperations.createAndFillArray(6, Double.NaN);
+  private final double[] mPositionVelocityUncertaintyEnu =
+      GpsMathOperations.createAndFillArray(6, Double.NaN);
   private double[] mPseudorangeResidualsMeters =
       GpsMathOperations.createAndFillArray(
-          GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN
-      );
+          GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN);
   private boolean mFirstUsefulMeasurementSet = true;
   private int[] mReferenceLocation = null;
   private long mLastReceivedSuplMessageTimeMillis = 0;
@@ -198,10 +197,9 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
         //  X Velocity, Y Velocity, Z Velocity, clock bias rate]
         double[] positionVelocitySolutionEcef = GpsMathOperations.createAndFillArray(8, 0);
         double[] positionVelocityUncertaintyEnu = GpsMathOperations.createAndFillArray(6, 0);
-        double[] pseudorangeResidualMeters
-            = GpsMathOperations.createAndFillArray(
-                GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN
-        );
+        double[] pseudorangeResidualMeters =
+            GpsMathOperations.createAndFillArray(
+                GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN);
         performPositionVelocityComputationEcef(
             mUserPositionVelocityLeastSquareCalculator,
             mUsefulSatellitesToReceiverMeasurements,
@@ -230,9 +228,9 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
             0 /*source starting pos*/,
             mPseudorangeResidualsMeters,
             0 /*destination starting pos*/,
-            GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES /*length of elements*/
-            );
-        Log.d(TAG,
+            GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES /*length of elements*/);
+        Log.d(
+            TAG,
             "Position Uncertainty ENU Meters :"
                 + mPositionVelocityUncertaintyEnu[0]
                 + " "
@@ -247,13 +245,13 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
                 + mPositionSolutionLatLngDeg[1]
                 + " "
                 + mPositionSolutionLatLngDeg[2]);
-        EnuValues velocityEnu = Ecef2EnuConverter.convertEcefToEnu(
-            positionVelocitySolutionEcef[4],
-            positionVelocitySolutionEcef[5],
-            positionVelocitySolutionEcef[6],
-            latLngAlt.latitudeRadians,
-            latLngAlt.longitudeRadians
-        );
+        EnuValues velocityEnu =
+            Ecef2EnuConverter.convertEcefToEnu(
+                positionVelocitySolutionEcef[4],
+                positionVelocitySolutionEcef[5],
+                positionVelocitySolutionEcef[6],
+                latLngAlt.latitudeRadians,
+                latLngAlt.longitudeRadians);
 
         mVelocitySolutionEnuMps[0] = velocityEnu.enuEast;
         mVelocitySolutionEnuMps[1] = velocityEnu.enuNorth;
@@ -269,7 +267,8 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
         mPositionVelocityUncertaintyEnu[3] = positionVelocityUncertaintyEnu[3];
         mPositionVelocityUncertaintyEnu[4] = positionVelocityUncertaintyEnu[4];
         mPositionVelocityUncertaintyEnu[5] = positionVelocityUncertaintyEnu[5];
-        Log.d(TAG,
+        Log.d(
+            TAG,
             "Velocity Uncertainty ENU Mps :"
                 + mPositionVelocityUncertaintyEnu[3]
                 + " "
@@ -288,20 +287,19 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
       mVelocitySolutionEnuMps = GpsMathOperations.createAndFillArray(3, Double.NaN);
       mPseudorangeResidualsMeters =
           GpsMathOperations.createAndFillArray(
-              GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN
-          );
+              GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN);
     }
   }
 
   private boolean isEmptyNavMessage(GpsNavMessageProto navMessageProto) {
-    if(navMessageProto.iono == null)return true;
-    if(navMessageProto.ephemerids.length ==0)return true;
-    return  false;
+    if (navMessageProto.iono == null) return true;
+    if (navMessageProto.ephemerids.length == 0) return true;
+    return false;
   }
 
   private boolean navMessageProtoContainsSvid(GpsNavMessageProto navMessageProto, int svid) {
     List<GpsEphemerisProto> ephemeridesList =
-            new ArrayList<GpsEphemerisProto>(Arrays.asList(navMessageProto.ephemerids));
+        new ArrayList<GpsEphemerisProto>(Arrays.asList(navMessageProto.ephemerids));
     for (GpsEphemerisProto ephProtoFromList : ephemeridesList) {
       if (ephProtoFromList.prn == svid) {
         return true;
@@ -389,12 +387,12 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
    * the receiver has all the visible satellite ephemerides, return false, otherwise, return true.
    */
   private static boolean continueUsingNavMessageFromSupl(
-          GpsMeasurement[] usefulSatellitesToReceiverMeasurements,
-          GpsNavMessageProto hardwareGpsNavMessageProto) {
+      GpsMeasurement[] usefulSatellitesToReceiverMeasurements,
+      GpsNavMessageProto hardwareGpsNavMessageProto) {
     boolean useNavMessageFromSupl = true;
     if (hardwareGpsNavMessageProto != null) {
-      ArrayList<GpsEphemerisProto> hardwareEphemeridesList=
-              new ArrayList<GpsEphemerisProto>(Arrays.asList(hardwareGpsNavMessageProto.ephemerids));
+      ArrayList<GpsEphemerisProto> hardwareEphemeridesList =
+          new ArrayList<GpsEphemerisProto>(Arrays.asList(hardwareGpsNavMessageProto.ephemerids));
       if (hardwareGpsNavMessageProto.iono != null) {
         for (int i = 0; i < GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES; i++) {
           if (usefulSatellitesToReceiverMeasurements[i] != null) {
@@ -418,15 +416,17 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
 
   /**
    * Returns the result of the GnssMeasurement.ADR_STATE_VALID bitmask being applied to the
-   * AccumulatedDeltaRangeState from a GnssMeasurement - true if the ADR state is valid,
-   * false if it is not
+   * AccumulatedDeltaRangeState from a GnssMeasurement - true if the ADR state is valid, false if it
+   * is not
+   *
    * @param accumulatedDeltaRangeState accumulatedDeltaRangeState from GnssMeasurement
-   * @return the result of the GnssMeasurement.ADR_STATE_VALID bitmask being applied to the
-   *      * AccumulatedDeltaRangeState of the given GnssMeasurement - true if the ADR state is valid,
-   *      * false if it is not
+   * @return the result of the GnssMeasurement.ADR_STATE_VALID bitmask being applied to the *
+   *     AccumulatedDeltaRangeState of the given GnssMeasurement - true if the ADR state is valid, *
+   *     false if it is not
    */
   private static boolean isAccumulatedDeltaRangeStateValid(int accumulatedDeltaRangeState) {
-    return (GnssMeasurement.ADR_STATE_VALID & accumulatedDeltaRangeState) == GnssMeasurement.ADR_STATE_VALID;
+    return (GnssMeasurement.ADR_STATE_VALID & accumulatedDeltaRangeState)
+        == GnssMeasurement.ADR_STATE_VALID;
   }
 
   /**
@@ -445,7 +445,6 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
           messagePrn, messageType, (short) subMessageId, messageRawData);
       mHardwareGpsNavMessageProto = mGpsNavigationMessageStore.createDecodedNavMessage();
     }
-
   }
 
   /** Sets a rough location of the receiver that can be used to request SUPL assistance data */
@@ -459,17 +458,16 @@ public class PseudorangePositionVelocityFromRealTimeEvents {
   }
 
   /**
-   * Converts the input from LLA coordinates to ECEF and set up the reference position of
-   * {@code mUserPositionVelocityLeastSquareCalculator} to calculate a corrected residual.
+   * Converts the input from LLA coordinates to ECEF and set up the reference position of {@code
+   * mUserPositionVelocityLeastSquareCalculator} to calculate a corrected residual.
    *
-   * <p> Based on this input ground truth, true residuals can be computed. This is done by using
-   * the high elevation satellites to compute the true user clock error and with the knowledge of
-   * the satellite positions.
+   * <p>Based on this input ground truth, true residuals can be computed. This is done by using the
+   * high elevation satellites to compute the true user clock error and with the knowledge of the
+   * satellite positions.
    *
-   * <p> If no ground truth is set, no residual analysis will be performed.
+   * <p>If no ground truth is set, no residual analysis will be performed.
    */
-  public void setCorrectedResidualComputationTruthLocationLla
-  (double[] groundTruthLocationLla) {
+  public void setCorrectedResidualComputationTruthLocationLla(double[] groundTruthLocationLla) {
     if (groundTruthLocationLla == null) {
       mUserPositionVelocityLeastSquareCalculator
           .setTruthLocationForCorrectedResidualComputationEcef(null);

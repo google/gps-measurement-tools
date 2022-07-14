@@ -22,8 +22,8 @@ import java.util.List;
 /**
  * An implementation of {@link PseudorangeSmoother} that performs no smoothing.
  *
- * <p> A new list of {@link GpsMeasurementWithRangeAndUncertainty} instances is filled with a copy
- * of the input list.
+ * <p>A new list of {@link GpsMeasurementWithRangeAndUncertainty} instances is filled with a copy of
+ * the input list.
  */
 class PseudorangeNoSmoothingSmoother implements PseudorangeSmoother {
 
@@ -32,5 +32,4 @@ class PseudorangeNoSmoothingSmoother implements PseudorangeSmoother {
       List<GpsMeasurementWithRangeAndUncertainty> usefulSatellitesToGPSReceiverMeasurements) {
     return Collections.unmodifiableList(usefulSatellitesToGPSReceiverMeasurements);
   }
-
 }

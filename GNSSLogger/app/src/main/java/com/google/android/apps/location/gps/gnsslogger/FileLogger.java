@@ -31,9 +31,7 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.core.content.FileProvider;
-
 import com.google.android.apps.location.gps.gnsslogger.LoggerFragment.UIFragmentComponent;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -46,9 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * A GNSS logger to store information to a file.
- */
+/** A GNSS logger to store information to a file. */
 public class FileLogger implements MeasurementListener {
 
   private static final String TAG = "FileLogger";
@@ -81,9 +77,7 @@ public class FileLogger implements MeasurementListener {
     this.mContext = context;
   }
 
-  /**
-   * Start a new file logging process.
-   */
+  /** Start a new file logging process. */
   public void startNewLog() {
     synchronized (mFileLock) {
       File baseDirectory;
@@ -389,7 +383,7 @@ public class FileLogger implements MeasurementListener {
             measurement.hasSnrInDb() ? measurement.getSnrInDb() : "",
             measurement.getConstellationType(),
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-            && measurement.hasAutomaticGainControlLevelDb()
+                    && measurement.hasAutomaticGainControlLevelDb()
                 ? measurement.getAutomaticGainControlLevelDb()
                 : "");
     mFileWriter.write(measurementStream);
@@ -407,8 +401,8 @@ public class FileLogger implements MeasurementListener {
   }
 
   /**
-   * Implements a {@link FileFilter} to delete files that are not in the
-   * {@link FileToDeleteFilter#mRetainedFiles}.
+   * Implements a {@link FileFilter} to delete files that are not in the {@link
+   * FileToDeleteFilter#mRetainedFiles}.
    */
   private static class FileToDeleteFilter implements FileFilter {
     private final List<File> mRetainedFiles;

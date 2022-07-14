@@ -30,13 +30,12 @@ import java.net.URL;
  * level at a given location (lat, lng). An Elevation API key is required for getting elevation
  * above sea level from Google server.
  *
- * <p> For more information please see:
+ * <p>For more information please see:
  * https://developers.google.com/maps/documentation/elevation/start
  *
- * <p> A key can be conveniently acquired from:
- *  https://developers.google.com/maps/documentation/elevation/get-api-key
+ * <p>A key can be conveniently acquired from:
+ * https://developers.google.com/maps/documentation/elevation/get-api-key
  */
-
 public class ElevationApiHelper {
 
   private static final String ELEVATION_XML_STRING = "<elevation>";
@@ -45,31 +44,31 @@ public class ElevationApiHelper {
   private String elevationApiKey = "";
 
   /**
-   * A constructor that passes the {@code elevationApiKey}. If the user pass an empty string for
-   * API Key, an {@code IllegalArgumentException} will be thrown.
+   * A constructor that passes the {@code elevationApiKey}. If the user pass an empty string for API
+   * Key, an {@code IllegalArgumentException} will be thrown.
    */
-  public ElevationApiHelper(String elevationApiKey){
+  public ElevationApiHelper(String elevationApiKey) {
     // An Elevation API key must be provided for getting elevation from Google Server.
     Preconditions.checkArgument(!elevationApiKey.isEmpty());
     this.elevationApiKey = elevationApiKey;
   }
 
   /**
-   *  Calculates the geoid height by subtracting the elevation above sea level from the ellipsoid
-   *  height in altitude meters.
+   * Calculates the geoid height by subtracting the elevation above sea level from the ellipsoid
+   * height in altitude meters.
    */
-  public static double calculateGeoidHeightMeters(double altitudeMeters,
-      double elevationAboveSeaLevelMeters){
+  public static double calculateGeoidHeightMeters(
+      double altitudeMeters, double elevationAboveSeaLevelMeters) {
     return altitudeMeters - elevationAboveSeaLevelMeters;
   }
 
   /**
-   * Gets elevation (height above sea level) via the Google elevation API by requesting
-   * elevation for a given latitude and longitude. Longitude and latitude should be in decimal
-   * degrees and the returned elevation will be in meters.
+   * Gets elevation (height above sea level) via the Google elevation API by requesting elevation
+   * for a given latitude and longitude. Longitude and latitude should be in decimal degrees and the
+   * returned elevation will be in meters.
    */
-  public double getElevationAboveSeaLevelMeters(double latitudeDegrees,
-      double longitudeDegrees) throws Exception{
+  public double getElevationAboveSeaLevelMeters(double latitudeDegrees, double longitudeDegrees)
+      throws Exception {
 
     String url =
         GOOGLE_ELEVATION_API_HTTP_ADDRESS
@@ -96,5 +95,4 @@ public class ElevationApiHelper {
     }
     return Double.parseDouble(elevationMeters);
   }
-
 }

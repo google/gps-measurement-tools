@@ -22,10 +22,9 @@ import android.content.Intent;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 /**
- * A {@link BroadcastReceiver} that receives and broadcasts the result of
- * {@link com.google.android.gms.location.ActivityRecognition
- * #ActivityRecognitionApi#requestActivityUpdates()}
- * to {@link MainActivity} to be further analyzed.
+ * A {@link BroadcastReceiver} that receives and broadcasts the result of {@link
+ * com.google.android.gms.location.ActivityRecognition
+ * #ActivityRecognitionApi#requestActivityUpdates()} to {@link MainActivity} to be further analyzed.
  */
 public class DetectedActivitiesIntentReceiver extends BroadcastReceiver {
   public static String AR_RESULT_BROADCAST_ACTION =
@@ -33,12 +32,11 @@ public class DetectedActivitiesIntentReceiver extends BroadcastReceiver {
 
   /**
    * Gets called when the result of {@link com.google.android.gms.location.ActivityRecognition
-   * #ActivityRecognitionApi#requestActivityUpdates()} is available and handles
-   * incoming intents.
+   * #ActivityRecognitionApi#requestActivityUpdates()} is available and handles incoming intents.
    *
-   * @param intent The Intent is provided (inside a {@link android.app.PendingIntent})
-   *         when {@link com.google.android.gms.location.ActivityRecognition
-   *         #ActivityRecognitionApi#requestActivityUpdates()} is called.
+   * @param intent The Intent is provided (inside a {@link android.app.PendingIntent}) when {@link
+   *     com.google.android.gms.location.ActivityRecognition
+   *     #ActivityRecognitionApi#requestActivityUpdates()} is called.
    */
   public void onReceive(Context context, Intent intent) {
 
