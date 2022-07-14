@@ -16,6 +16,8 @@
 
 package com.google.android.apps.location.gps.gnsslogger;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+
 import android.Manifest;
 import android.app.Activity;
 
@@ -148,7 +150,12 @@ public class MainActivity extends AppCompatActivity
 
   protected PendingIntent createActivityDetectionPendingIntent() {
     Intent intent = new Intent(this, DetectedActivitiesIntentReceiver.class);
-    return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    /* Missing mutability is only broken on S+, but immutable is available on M+, so it is good for M+ to set this property. */
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+      return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE);
+    } else {
+      return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
   }
 
   private synchronized void buildGoogleApiClient() {
