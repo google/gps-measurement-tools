@@ -40,10 +40,8 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.google.android.apps.location.gps.gnsslogger.TimerService.TimerBinder;
 import com.google.android.apps.location.gps.gnsslogger.TimerService.TimerListener;
 
@@ -263,7 +261,8 @@ public class LoggerFragment extends Fragment implements TimerListener {
   }
 
   /**
-   * A facade for UI and Activity related operations that are required for {@link MeasurementListener}s.
+   * A facade for UI and Activity related operations that are required for {@link
+   * MeasurementListener}s.
    */
   public class UIFragmentComponent {
 
@@ -288,21 +287,22 @@ public class LoggerFragment extends Fragment implements TimerListener {
             @Override
             public void run() {
               mLogView.append(builder);
-              SharedPreferences sharedPreferences = PreferenceManager.
-                  getDefaultSharedPreferences(getActivity());
+              SharedPreferences sharedPreferences =
+                  PreferenceManager.getDefaultSharedPreferences(getActivity());
               Editable editable = mLogView.getEditableText();
               int length = editable.length();
               if (length > MAX_LENGTH) {
                 editable.delete(0, length - LOWER_THRESHOLD);
               }
-              if (sharedPreferences.getBoolean(SettingsFragment.PREFERENCE_KEY_AUTO_SCROLL,
-                  false /*default return value*/)){
-                mScrollView.post(new Runnable() {
-                  @Override
-                  public void run() {
-                    mScrollView.fullScroll(View.FOCUS_DOWN);
-                  }
-                });
+              if (sharedPreferences.getBoolean(
+                  SettingsFragment.PREFERENCE_KEY_AUTO_SCROLL, false /*default return value*/)) {
+                mScrollView.post(
+                    new Runnable() {
+                      @Override
+                      public void run() {
+                        mScrollView.fullScroll(View.FOCUS_DOWN);
+                      }
+                    });
               }
             }
           });

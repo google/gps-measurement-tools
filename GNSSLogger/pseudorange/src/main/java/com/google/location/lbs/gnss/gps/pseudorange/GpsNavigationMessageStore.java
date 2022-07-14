@@ -16,13 +16,11 @@
 
 package com.google.location.lbs.gnss.gps.pseudorange;
 
-import com.google.common.base.Preconditions;
 import android.location.cts.nano.Ephemeris.GpsEphemerisProto;
 import android.location.cts.nano.Ephemeris.GpsNavMessageProto;
 import android.location.cts.nano.Ephemeris.IonosphericModelProto;
-
 import androidx.annotation.NonNull;
-
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -30,16 +28,14 @@ import java.util.concurrent.TimeUnit;
  * A class to extract the fields of the GPS navigation message from the raw bytes received from the
  * GPS receiver.
  *
- * <p>Raw bytes are passed by calling the method
- * {@link #onNavMessageReported(byte, byte, short, byte[])}
+ * <p>Raw bytes are passed by calling the method {@link #onNavMessageReported(byte, byte, short,
+ * byte[])}
  *
  * <p>A {@link GpsNavMessageProto} containing the extracted field is obtained by calling the method
  * {@link #createDecodedNavMessage()}
  *
- * <p>References:
- * http://www.gps.gov/technical/icwg/IS-GPS-200D.pdf and
+ * <p>References: http://www.gps.gov/technical/icwg/IS-GPS-200D.pdf and
  * http://www.gps.gov/technical/ps/1995-SPS-signal-specification.pdf
- *
  */
 public class GpsNavigationMessageStore {
 
@@ -167,7 +163,6 @@ public class GpsNavigationMessageStore {
   private final IntermediateEphemeris[] fullyDecodedIntermediateEphemerides =
       new IntermediateEphemeris[MAX_NUMBER_OF_SATELLITES];
 
-
   private IonosphericModelProto decodedIonosphericObj;
 
   /**
@@ -176,7 +171,8 @@ public class GpsNavigationMessageStore {
    */
   @NonNull
   public GpsNavMessageProto createDecodedNavMessage() {
-    synchronized (fullyDecodedIntermediateEphemerides) {;
+    synchronized (fullyDecodedIntermediateEphemerides) {
+      ;
       GpsNavMessageProto gpsNavMessageProto = new GpsNavMessageProto();
       ArrayList<GpsEphemerisProto> gpsEphemerisProtoList = new ArrayList<>();
       for (int i = 0; i < MAX_NUMBER_OF_SATELLITES; i++) {
@@ -193,9 +189,7 @@ public class GpsNavigationMessageStore {
     }
   }
 
-  /**
-   * Handles a fresh Navigation Message. The message is in its raw format.
-   */
+  /** Handles a fresh Navigation Message. The message is in its raw format. */
   public void onNavMessageReported(byte prn, byte type, short id, byte[] rawData) {
     Preconditions.checkArgument(type == 1, "Unsupported NavigationMessage Type: " + type);
     Preconditions.checkArgument(
@@ -242,7 +236,6 @@ public class GpsNavigationMessageStore {
     GpsEphemerisProto gpsEphemerisProto = intermediateEphemeris.getEphemerisObj();
     gpsEphemerisProto.iodc = iodc;
 
-
     // the navigation message contains a modulo-1023 week number
     int week = extractBits(WEEK_INDEX, WEEK_LENGTH, rawData);
     week = getGpsWeekWithRollover(week);
@@ -276,9 +269,7 @@ public class GpsNavigationMessageStore {
     updateDecodedState(prn, SUBFRAME_1, intermediateEphemeris);
   }
 
-  /**
-   * Handles the second navigation message subframe which contains satellite ephemeris
-   */
+  /** Handles the second navigation message subframe which contains satellite ephemeris */
   private void handleSecondSubframe(byte prn, byte[] rawData) {
     int iode = extractBits(IODE1_INDEX, IODE_LENGTH, rawData);
 
@@ -323,9 +314,7 @@ public class GpsNavigationMessageStore {
     updateDecodedState(prn, SUBFRAME_2, intermediateEphemeris);
   }
 
-  /**
-   * Handles the third navigation message subframe which contains satellite ephemeris
-   */
+  /** Handles the third navigation message subframe which contains satellite ephemeris */
   private void handleThirdSubframe(byte prn, byte[] rawData) {
 
     int iode = extractBits(IODE2_INDEX, IODE_LENGTH, rawData);
@@ -350,7 +339,8 @@ public class GpsNavigationMessageStore {
     gpsEphemerisProto.omega = o * POW_2_NEG_31 * Math.PI;
 
     int odot = extractBits(ODOT_INDEX, ODOT_LENGTH, rawData);
-    odot = getTwoComplement(odot, ODOT_LENGTH);;
+    odot = getTwoComplement(odot, ODOT_LENGTH);
+    ;
     gpsEphemerisProto.omegaDot = odot * POW_2_NEG_43 * Math.PI;
 
     short cis = (short) extractBits(CIS_INDEX, CIS_LENGTH, rawData);
@@ -361,7 +351,6 @@ public class GpsNavigationMessageStore {
 
     short crc = (short) extractBits(CRC_INDEX, CRC_LENGTH, rawData);
     gpsEphemerisProto.crc = crc * POW_2_NEG_5;
-
 
     // a 14-bit two's complement number
     int idot = extractBits(IDOT_INDEX, IDOT_LENGTH, rawData);
@@ -408,7 +397,6 @@ public class GpsNavigationMessageStore {
     beta[3] = b3 * POW_2_16;
     ionosphericModelProto.beta = beta;
 
-
     double a0UTC =
         buildSigned32BitsWordFrom8And24WordsWith8bitslsb(I0UTC_INDEX8, I0UTC_INDEX24, rawData)
             * Math.pow(2, -30);
@@ -432,11 +420,11 @@ public class GpsNavigationMessageStore {
 
   /**
    * Updates the {@link IntermediateEphemeris} with the decoded status of the current subframe.
-   * Moreover, update the {@code partiallyDecodedIntermediateEphemerides} list and
-   * {@code fullyDecodedIntermediateEphemerides} list
+   * Moreover, update the {@code partiallyDecodedIntermediateEphemerides} list and {@code
+   * fullyDecodedIntermediateEphemerides} list
    */
-  private void updateDecodedState(byte prn, int decodedSubframeNumber,
-      IntermediateEphemeris intermediateEphemeris) {
+  private void updateDecodedState(
+      byte prn, int decodedSubframeNumber, IntermediateEphemeris intermediateEphemeris) {
     intermediateEphemeris.reportDecodedSubframe(decodedSubframeNumber);
     if (intermediateEphemeris.isFullyDecoded()) {
       partiallyDecodedIntermediateEphemerides[prn - 1] = null;
@@ -452,7 +440,6 @@ public class GpsNavigationMessageStore {
    * @param index Zero-based index of the first bit to extract.
    * @param length The length of the stream of bits to extract.
    * @param rawData The stream to extract data from.
-   *
    * @return The bits requested always shifted to the least significant positions.
    */
   private static int extractBits(int index, int length, byte[] rawData) {
@@ -486,11 +473,10 @@ public class GpsNavigationMessageStore {
    * @param index8 The index of the first 8 bits used.
    * @param index24 The index of the last 24 bits used.
    * @param rawData The stream to extract data from.
-   *
    * @return The bits requested represented as a long and stored in the least significant positions.
    */
-  private static long buildUnsigned32BitsWordFrom8And24Words(int index8, int index24,
-      byte[] rawData) {
+  private static long buildUnsigned32BitsWordFrom8And24Words(
+      int index8, int index24, byte[] rawData) {
     long result = (long) extractBits(index8, 8, rawData) << 24;
     result |= extractBits(index24, 24, rawData);
     return result;
@@ -516,7 +502,6 @@ public class GpsNavigationMessageStore {
    *
    * @param value The set of bits to translate.
    * @param bits The number of bits to consider.
-   *
    * @return The calculated 2s complement.
    */
   private static int getTwoComplement(int value, int bits) {
@@ -537,7 +522,6 @@ public class GpsNavigationMessageStore {
    * epoch (January 6, 1980).
    *
    * @param gpsWeek The modulo-1024 GPS week.
-   *
    * @return The absolute GPS week.
    */
   private static int getGpsWeekWithRollover(int gpsWeek) {
@@ -553,7 +537,6 @@ public class GpsNavigationMessageStore {
    * http://www.gps.gov/technical/icwg/IS-GPS-200D.pdf, section '20.3.3.3.1.3 Sv Accuracy'.
    *
    * @param uraIndex The URA Index
-   *
    * @return A computed nominal Sv accuracy.
    */
   private static double computeNominalSvAccuracy(int uraIndex) {
@@ -579,25 +562,30 @@ public class GpsNavigationMessageStore {
   /**
    * Finds an {@link IntermediateEphemeris} that can be updated by the given data. The pseudocode is
    * as follows:
+   *
    * <p>if a fully decoded message is available and matches, there is no need to update
+   *
    * <p>if a partially decoded message is available and matches, there is no need to update
+   *
    * <p>if the provided issueOfData matches intermediate partially decoded state, update in place
+   *
    * <p>otherwise, start a new decoding 'session' for the prn
    *
    * @param prn The prn to update
    * @param subframe The subframe available to update
    * @param issueOfData The issueOfData associated with the given subframe
    * @return a {@link IntermediateEphemeris} to update with the available data, {@code null} if
-   * there is no need to update a {@link IntermediateEphemeris}.
+   *     there is no need to update a {@link IntermediateEphemeris}.
    */
-  private IntermediateEphemeris findIntermediateEphemerisToUpdate(byte prn, int subframe,
-      int issueOfData) {
+  private IntermediateEphemeris findIntermediateEphemerisToUpdate(
+      byte prn, int subframe, int issueOfData) {
     // find out if we have fully decoded up-to-date ephemeris first
     IntermediateEphemeris fullyDecodedIntermediateEphemeris =
         this.fullyDecodedIntermediateEphemerides[prn - 1];
     if (fullyDecodedIntermediateEphemeris != null
-        && fullyDecodedIntermediateEphemeris.findSubframeInfo(prn, subframe, issueOfData)
-        .isSubframeDecoded()) {
+        && fullyDecodedIntermediateEphemeris
+            .findSubframeInfo(prn, subframe, issueOfData)
+            .isSubframeDecoded()) {
       return null;
     }
 
@@ -608,8 +596,8 @@ public class GpsNavigationMessageStore {
       // no intermediate partially decoded state, we need to start a decoding 'session'
       return new IntermediateEphemeris(prn);
     }
-    SubframeCheckResult subframeCheckResult = partiallyDecodedIntermediateEphemeris
-        .findSubframeInfo(prn, subframe, issueOfData);
+    SubframeCheckResult subframeCheckResult =
+        partiallyDecodedIntermediateEphemeris.findSubframeInfo(prn, subframe, issueOfData);
     if (subframeCheckResult.isSubframeDecoded()) {
       return null;
     }
@@ -683,7 +671,8 @@ public class GpsNavigationMessageStore {
     }
 
     public boolean isFullyDecoded() {
-      return hasDecodedSubframe(SUBFRAME_1) && hasDecodedSubframe(SUBFRAME_2)
+      return hasDecodedSubframe(SUBFRAME_1)
+          && hasDecodedSubframe(SUBFRAME_2)
           && hasDecodedSubframe(SUBFRAME_3);
     }
 
@@ -699,7 +688,6 @@ public class GpsNavigationMessageStore {
      * @param prn The expected prn.
      * @param subframe The expected subframe.
      * @param issueOfData The issueOfData for the given subframe.
-     *
      * @return {@link SubframeCheckResult} representing the state found.
      */
     public SubframeCheckResult findSubframeInfo(byte prn, int subframe, int issueOfData) {
@@ -735,9 +723,7 @@ public class GpsNavigationMessageStore {
    */
   private static class SubframeCheckResult {
 
-    /**
-     * The intermediate {@link IntermediateEphemeris} has the requested subframe.
-     */
+    /** The intermediate {@link IntermediateEphemeris} has the requested subframe. */
     public final boolean hasSubframe;
 
     /**
@@ -753,7 +739,7 @@ public class GpsNavigationMessageStore {
 
     /**
      * @return {@code true} if the requested subframe has been decoded in the intermediate state,
-     *         {@code false} otherwise.
+     *     {@code false} otherwise.
      */
     public boolean isSubframeDecoded() {
       return hasSubframe && issueOfDataMatches;

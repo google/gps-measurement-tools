@@ -50,9 +50,7 @@ public class RealTimePositionVelocityCalculator implements MeasurementListener {
   /** Residual analysis where the user is moving */
   public static final int RESIDUAL_MODE_MOVING = 1;
 
-  /**
-   * Residual analysis where the user chose to enter a LLA input as their position
-   */
+  /** Residual analysis where the user chose to enter a LLA input as their position */
   public static final int RESIDUAL_MODE_AT_INPUT_LOCATION = 2;
 
   private static final long EARTH_RADIUS_METERS = 6371000;
@@ -320,11 +318,9 @@ public class RealTimePositionVelocityCalculator implements MeasurementListener {
                         mPlotFragment.updatePseudorangeResidualTab(
                             mPseudorangePositionVelocityFromRealTimeEvents
                                 .getPseudorangeResidualsMeters(),
-                            TimeUnit.NANOSECONDS.toSeconds(
-                                event.getClock().getTimeNanos()));
+                            TimeUnit.NANOSECONDS.toSeconds(event.getClock().getTimeNanos()));
                       }
-                    }
-                );
+                    });
               } else {
                 mMainActivity.runOnUiThread(
                     new Runnable() {
@@ -334,11 +330,9 @@ public class RealTimePositionVelocityCalculator implements MeasurementListener {
                         mPlotFragment.updatePseudorangeResidualTab(
                             GpsMathOperations.createAndFillArray(
                                 GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN),
-                            TimeUnit.NANOSECONDS.toSeconds(
-                                event.getClock().getTimeNanos()));
+                            TimeUnit.NANOSECONDS.toSeconds(event.getClock().getTimeNanos()));
                       }
-                    }
-                );
+                    });
               }
             } catch (Exception e) {
               e.printStackTrace();
@@ -422,9 +416,7 @@ public class RealTimePositionVelocityCalculator implements MeasurementListener {
     return mRgbColorArray[mCurrentColorIndex % mRgbColorArray.length];
   }
 
-  /**
-   * Return the distance (measured along the surface of the sphere) between 2 points
-   */
+  /** Return the distance (measured along the surface of the sphere) between 2 points */
   public double getDistanceMeters(
       double lat1Degree, double lng1Degree, double lat2Degree, double lng2Degree) {
 
@@ -442,9 +434,7 @@ public class RealTimePositionVelocityCalculator implements MeasurementListener {
     return EARTH_RADIUS_METERS * angularDistanceRad;
   }
 
-  /**
-   * Update the ground truth for pseudorange residual analysis based on the user activity.
-   */
+  /** Update the ground truth for pseudorange residual analysis based on the user activity. */
   private synchronized void updateGroundTruth(double[] posSolution) {
 
     // In case of switching between modes, last ground truth from previous mode will be used.
@@ -476,9 +466,7 @@ public class RealTimePositionVelocityCalculator implements MeasurementListener {
     }
   }
 
-  /**
-   * Sets {@link MapFragment} for receiving WLS location update
-   */
+  /** Sets {@link MapFragment} for receiving WLS location update */
   public void setMapFragment(MapFragment mapFragment) {
     this.mMapFragment = mapFragment;
   }
@@ -491,16 +479,14 @@ public class RealTimePositionVelocityCalculator implements MeasurementListener {
     this.mPlotFragment = plotFragment;
   }
 
-  /**
-   * Sets {@link MainActivity} for running some UI tasks on UI thread
-   */
+  /** Sets {@link MainActivity} for running some UI tasks on UI thread */
   public void setMainActivity(MainActivity mainActivity) {
     this.mMainActivity = mainActivity;
   }
 
   /**
-   * Sets the ground truth mode in {@link PseudorangePositionVelocityFromRealTimeEvents}
-   * for calculating corrected pseudorange residuals, also logs the change in ResultFragment
+   * Sets the ground truth mode in {@link PseudorangePositionVelocityFromRealTimeEvents} for
+   * calculating corrected pseudorange residuals, also logs the change in ResultFragment
    */
   public void setResidualPlotMode(int residualPlotStatus, double[] fixedGroundTruth) {
     mResidualPlotStatus = residualPlotStatus;

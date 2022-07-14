@@ -20,21 +20,20 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
- * Converts ECEF (Earth Centered Earth Fixed) Cartesian coordinates to local ENU (East, North,
- * and Up).
+ * Converts ECEF (Earth Centered Earth Fixed) Cartesian coordinates to local ENU (East, North, and
+ * Up).
  *
- * <p> Source: reference from Navipedia:
+ * <p>Source: reference from Navipedia:
  * http://www.navipedia.net/index.php/Transformations_between_ECEF_and_ENU_coordinates
  */
-
 public class Ecef2EnuConverter {
 
   /**
-   * Converts a vector represented by coordinates ecefX, ecefY, ecefZ in an
-   * Earth-Centered Earth-Fixed (ECEF) Cartesian system into a vector in a
-   * local east-north-up (ENU) Cartesian system.
+   * Converts a vector represented by coordinates ecefX, ecefY, ecefZ in an Earth-Centered
+   * Earth-Fixed (ECEF) Cartesian system into a vector in a local east-north-up (ENU) Cartesian
+   * system.
    *
-   * <p> For example it can be used to rotate a speed vector or position offset vector to ENU.
+   * <p>For example it can be used to rotate a speed vector or position offset vector to ENU.
    *
    * @param ecefX X coordinates in ECEF
    * @param ecefY Y coordinates in ECEF
@@ -43,34 +42,33 @@ public class Ecef2EnuConverter {
    * @param refLng Longitude in Radians of the Reference Position
    * @return the converted values in {@code EnuValues}
    */
-  public static EnuValues convertEcefToEnu(double ecefX, double ecefY, double ecefZ,
-      double refLat, double refLng){
+  public static EnuValues convertEcefToEnu(
+      double ecefX, double ecefY, double ecefZ, double refLat, double refLng) {
 
     RealMatrix rotationMatrix = getRotationMatrix(refLat, refLng);
-    RealMatrix ecefCoordinates = new Array2DRowRealMatrix(new double[]{ecefX, ecefY, ecefZ});
+    RealMatrix ecefCoordinates = new Array2DRowRealMatrix(new double[] {ecefX, ecefY, ecefZ});
 
     RealMatrix enuResult = rotationMatrix.multiply(ecefCoordinates);
-    return new EnuValues(enuResult.getEntry(0, 0),
-        enuResult.getEntry(1, 0), enuResult.getEntry(2 , 0));
+    return new EnuValues(
+        enuResult.getEntry(0, 0), enuResult.getEntry(1, 0), enuResult.getEntry(2, 0));
   }
 
   /**
    * Computes a rotation matrix for converting a vector in Earth-Centered Earth-Fixed (ECEF)
-   * Cartesian system into a vector in local east-north-up (ENU) Cartesian system with respect to
-   * a reference location. The matrix has the following content:
+   * Cartesian system into a vector in local east-north-up (ENU) Cartesian system with respect to a
+   * reference location. The matrix has the following content:
    *
-   * - sinLng                     cosLng            0
-   * - sinLat * cosLng      - sinLat * sinLng      cosLat
-   *   cosLat * cosLng        cosLat * sinLng      sinLat
+   * <p>- sinLng cosLng 0 - sinLat * cosLng - sinLat * sinLng cosLat cosLat * cosLng cosLat * sinLng
+   * sinLat
    *
-   * <p> Reference: Pratap Misra and Per Enge
-   * "Global Positioning System: Signals, Measurements, and Performance" Page 137.
+   * <p>Reference: Pratap Misra and Per Enge "Global Positioning System: Signals, Measurements, and
+   * Performance" Page 137.
    *
    * @param refLat Latitude of reference location
    * @param refLng Longitude of reference location
    * @return the Ecef to Enu rotation matrix
    */
-  public static RealMatrix getRotationMatrix(double refLat, double refLng){
+  public static RealMatrix getRotationMatrix(double refLat, double refLng) {
     RealMatrix rotationMatrix = new Array2DRowRealMatrix(3, 3);
 
     // Fill in the rotation Matrix
@@ -86,34 +84,23 @@ public class Ecef2EnuConverter {
     return rotationMatrix;
   }
 
-  /**
-   * A container for values in ENU (East, North, Up) coordination system.
-   */
+  /** A container for values in ENU (East, North, Up) coordination system. */
   public static class EnuValues {
 
-    /**
-     * East Coordinates in local ENU
-     */
+    /** East Coordinates in local ENU */
     public final double enuEast;
 
-    /**
-     * North Coordinates in local ENU
-     */
+    /** North Coordinates in local ENU */
     public final double enuNorth;
 
-    /**
-     * Up Coordinates in local ENU
-     */
+    /** Up Coordinates in local ENU */
     public final double enuUP;
 
-    /**
-     * Constructor
-     */
-    public EnuValues(double enuEast, double enuNorth, double enuUP){
+    /** Constructor */
+    public EnuValues(double enuEast, double enuNorth, double enuUP) {
       this.enuEast = enuEast;
       this.enuNorth = enuNorth;
       this.enuUP = enuUP;
     }
-   }
-
+  }
 }

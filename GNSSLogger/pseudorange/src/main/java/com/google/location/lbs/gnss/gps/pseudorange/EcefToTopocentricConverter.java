@@ -19,9 +19,7 @@ package com.google.location.lbs.gnss.gps.pseudorange;
 import com.google.location.lbs.gnss.gps.pseudorange.Ecef2LlaConverter.GeodeticLlaValues;
 import org.apache.commons.math3.linear.RealMatrix;
 
-/**
- * Transformations from ECEF coordinates to Topocentric coordinates
- */
+/** Transformations from ECEF coordinates to Topocentric coordinates */
 public class EcefToTopocentricConverter {
   private static final double MIN_DISTANCE_MAGNITUDE_METERS = 1.0e-22;
   private static final int EAST_IDX = 0;
@@ -35,19 +33,20 @@ public class EcefToTopocentricConverter {
    *
    * <p>Source: http://www.navipedia.net/index.php/Transformations_between_ECEF_and_ENU_coordinates
    * http://kom.aau.dk/~borre/life-l99/topocent.m
-   *
    */
   public static TopocentricAEDValues convertCartesianToTopocentricRadMeters(
       final double[] originECEFMeters, final double[] inputVectorMeters) {
 
-    GeodeticLlaValues latLngAlt = Ecef2LlaConverter.convertECEFToLLACloseForm(originECEFMeters[0],
-        originECEFMeters[1], originECEFMeters[2]);
+    GeodeticLlaValues latLngAlt =
+        Ecef2LlaConverter.convertECEFToLLACloseForm(
+            originECEFMeters[0], originECEFMeters[1], originECEFMeters[2]);
 
     RealMatrix rotationMatrix =
-        Ecef2EnuConverter.
-            getRotationMatrix(latLngAlt.latitudeRadians, latLngAlt.longitudeRadians).transpose();
-    double[] eastNorthUpVectorMeters = GpsMathOperations.matrixByColVectMultiplication(
-        rotationMatrix.transpose().getData(), inputVectorMeters);
+        Ecef2EnuConverter.getRotationMatrix(latLngAlt.latitudeRadians, latLngAlt.longitudeRadians)
+            .transpose();
+    double[] eastNorthUpVectorMeters =
+        GpsMathOperations.matrixByColVectMultiplication(
+            rotationMatrix.transpose().getData(), inputVectorMeters);
     double eastMeters = eastNorthUpVectorMeters[EAST_IDX];
     double northMeters = eastNorthUpVectorMeters[NORTH_IDX];
     double upMeters = eastNorthUpVectorMeters[UP_IDX];
@@ -68,26 +67,28 @@ public class EcefToTopocentricConverter {
       azimuthRadians += 2 * Math.PI;
     }
 
-    double distanceMeters = Math.sqrt(Math.pow(inputVectorMeters[0], 2)
-        + Math.pow(inputVectorMeters[1], 2) + Math.pow(inputVectorMeters[2], 2));
+    double distanceMeters =
+        Math.sqrt(
+            Math.pow(inputVectorMeters[0], 2)
+                + Math.pow(inputVectorMeters[1], 2)
+                + Math.pow(inputVectorMeters[2], 2));
     return new TopocentricAEDValues(elevationRadians, azimuthRadians, distanceMeters);
   }
 
   /**
    * Calculates azimuth, elevation in radians,and distance in meters between the user position in
-   * ECEF meters {@code userPositionECEFMeters} and the satellite position in ECEF meters
-   * {@code satPositionECEFMeters}
+   * ECEF meters {@code userPositionECEFMeters} and the satellite position in ECEF meters {@code
+   * satPositionECEFMeters}
    */
   public static TopocentricAEDValues calculateElAzDistBetween2Points(
       double[] userPositionECEFMeters, double[] satPositionECEFMeters) {
 
-    return convertCartesianToTopocentricRadMeters(userPositionECEFMeters,
+    return convertCartesianToTopocentricRadMeters(
+        userPositionECEFMeters,
         GpsMathOperations.subtractTwoVectors(satPositionECEFMeters, userPositionECEFMeters));
-
   }
 
   /**
-   *
    * Class containing topocenter coordinates: azimuth in radians, elevation in radians, and distance
    * in meters
    */
@@ -97,8 +98,8 @@ public class EcefToTopocentricConverter {
     public final double azimuthRadians;
     public final double distanceMeters;
 
-    public TopocentricAEDValues(double elevationRadians, double azimuthRadians,
-        double distanceMeters) {
+    public TopocentricAEDValues(
+        double elevationRadians, double azimuthRadians, double distanceMeters) {
       this.elevationRadians = elevationRadians;
       this.azimuthRadians = azimuthRadians;
       this.distanceMeters = distanceMeters;

@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import androidx.fragment.app.Fragment;
 
 /** The UI fragment that hosts a logging view. */
@@ -91,7 +90,8 @@ public class ResultFragment extends Fragment {
   }
 
   /**
-   * A facade for UI and Activity related operations that are required for {@link MeasurementListener}s.
+   * A facade for UI and Activity related operations that are required for {@link
+   * MeasurementListener}s.
    */
   public class UIResultComponent {
 
@@ -117,21 +117,22 @@ public class ResultFragment extends Fragment {
             @Override
             public void run() {
               mLogView.append(builder);
-              SharedPreferences sharedPreferences = PreferenceManager.
-                  getDefaultSharedPreferences(getActivity());
+              SharedPreferences sharedPreferences =
+                  PreferenceManager.getDefaultSharedPreferences(getActivity());
               Editable editable = mLogView.getEditableText();
               int length = editable.length();
               if (length > MAX_LENGTH) {
                 editable.delete(0, length - LOWER_THRESHOLD);
               }
               if (sharedPreferences.getBoolean(
-                  SettingsFragment.PREFERENCE_KEY_AUTO_SCROLL, false /*default return value*/)){
-                mScrollView.post(new Runnable() {
-                  @Override
-                  public void run() {
-                    mScrollView.fullScroll(View.FOCUS_DOWN);
-                  }
-                });
+                  SettingsFragment.PREFERENCE_KEY_AUTO_SCROLL, false /*default return value*/)) {
+                mScrollView.post(
+                    new Runnable() {
+                      @Override
+                      public void run() {
+                        mScrollView.fullScroll(View.FOCUS_DOWN);
+                      }
+                    });
               }
             }
           });

@@ -34,5 +34,5 @@ interface PseudorangeSmoother {
    * <p>The method does not modify the input list.
    */
   List<GpsMeasurementWithRangeAndUncertainty> updatePseudorangeSmoothingResult(
-          List<GpsMeasurementWithRangeAndUncertainty> usefulSatellitesToGPSReceiverMeasurements);
+      List<GpsMeasurementWithRangeAndUncertainty> usefulSatellitesToGPSReceiverMeasurements);
 }

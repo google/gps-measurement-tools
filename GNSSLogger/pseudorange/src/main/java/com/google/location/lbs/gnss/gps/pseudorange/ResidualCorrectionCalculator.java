@@ -18,8 +18,7 @@ package com.google.location.lbs.gnss.gps.pseudorange;
 
 import com.google.common.base.Preconditions;
 import com.google.location.lbs.gnss.gps.pseudorange.EcefToTopocentricConverter.TopocentricAEDValues;
-import com.google.location.lbs.gnss.gps.pseudorange.UserPositionVelocityWeightedLeastSquare.
-    SatellitesPositionPseudorangesResidualAndCovarianceMatrix;
+import com.google.location.lbs.gnss.gps.pseudorange.UserPositionVelocityWeightedLeastSquare.SatellitesPositionPseudorangesResidualAndCovarianceMatrix;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -32,7 +31,6 @@ import java.util.Comparator;
  * truth position by applying an adjustment using the distance of WLS to satellites vs ground-truth
  * to satellites.
  */
-
 public class ResidualCorrectionCalculator {
 
   /**
@@ -60,7 +58,6 @@ public class ResidualCorrectionCalculator {
       double[] positionVelocitySolutionECEF,
       double[] groundTruthInputECEFMeters) {
 
-
     double[] residuals = satellitesPositionPseudorangesResidual.pseudorangeResidualsMeters.clone();
     int[] satellitePrn = satellitesPositionPseudorangesResidual.satellitePRNs.clone();
     double[] satelliteElevationDegree = new double[residuals.length];
@@ -80,8 +77,7 @@ public class ResidualCorrectionCalculator {
       double wlsUserSatelliteDistance =
           GpsMathOperations.vectorNorm(
               GpsMathOperations.subtractTwoVectors(
-                  Arrays.copyOf(positionVelocitySolutionECEF, 3),
-                  satellitePos));
+                  Arrays.copyOf(positionVelocitySolutionECEF, 3), satellitePos));
       double groundTruthSatelliteDistance =
           GpsMathOperations.vectorNorm(
               GpsMathOperations.subtractTwoVectors(groundTruthInputECEFMeters, satellitePos));
@@ -95,9 +91,8 @@ public class ResidualCorrectionCalculator {
       // Calculate the elevation in degrees of satellites
       TopocentricAEDValues topocentricAedValues =
           EcefToTopocentricConverter.calculateElAzDistBetween2Points(
-              groundTruthInputECEFMeters, satellitesPositionPseudorangesResidual.
-                  satellitesPositionsMeters[i]
-          );
+              groundTruthInputECEFMeters,
+              satellitesPositionPseudorangesResidual.satellitesPositionsMeters[i]);
 
       satelliteElevationDegree[i] = Math.toDegrees(topocentricAedValues.elevationRadians);
 
@@ -105,8 +100,9 @@ public class ResidualCorrectionCalculator {
       // list with clock correction removed.
       satelliteResidualsListAndElevation[i] =
           new SatelliteElevationAndResiduals(
-              satelliteElevationDegree[i], residuals[i]
-              + positionVelocitySolutionECEF[3], satellitePrn[i]);
+              satelliteElevationDegree[i],
+              residuals[i] + positionVelocitySolutionECEF[3],
+              satellitePrn[i]);
     }
 
     double bestUserClockBiasMeters = calculateBestUserClockBias(satelliteResidualsListAndElevation);
@@ -115,11 +111,9 @@ public class ResidualCorrectionCalculator {
     // removed from the reported residuals in the analysis
     double[] correctedResidualsMeters =
         GpsMathOperations.createAndFillArray(
-            GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN
-        );
+            GpsNavigationMessageStore.MAX_NUMBER_OF_SATELLITES, Double.NaN);
 
-    for (SatelliteElevationAndResiduals element :
-        satelliteResidualsListAndElevation) {
+    for (SatelliteElevationAndResiduals element : satelliteResidualsListAndElevation) {
       correctedResidualsMeters[element.svID - 1] = element.residual - bestUserClockBiasMeters;
     }
 
@@ -130,8 +124,8 @@ public class ResidualCorrectionCalculator {
    * Computes the user clock bias by iteratively averaging the clock bias of top elevation
    * satellites.
    *
-   * @param satelliteResidualsAndElevationList a list of satellite elevation and
-   *        pseudorange residuals
+   * @param satelliteResidualsAndElevationList a list of satellite elevation and pseudorange
+   *     residuals
    * @return the corrected best user clock bias
    */
   private static double calculateBestUserClockBias(
@@ -142,19 +136,18 @@ public class ResidualCorrectionCalculator {
         satelliteResidualsAndElevationList,
         new Comparator<SatelliteElevationAndResiduals>() {
           @Override
-          public int compare(
-              SatelliteElevationAndResiduals o1, SatelliteElevationAndResiduals o2) {
+          public int compare(SatelliteElevationAndResiduals o1, SatelliteElevationAndResiduals o2) {
             return Double.compare(o2.elevationDegree, o1.elevationDegree);
           }
         });
 
     // Pick up the top elevation satellites
-    double[] topElevationSatsResiduals = GpsMathOperations.createAndFillArray(
-        MIN_SATS_FOR_BIAS_COMPUTATION, Double.NaN
-    );
+    double[] topElevationSatsResiduals =
+        GpsMathOperations.createAndFillArray(MIN_SATS_FOR_BIAS_COMPUTATION, Double.NaN);
     int numOfUsefulSatsToComputeBias = 0;
-    for (int i = 0; i < satelliteResidualsAndElevationList.length
-        && i < topElevationSatsResiduals.length; i++) {
+    for (int i = 0;
+        i < satelliteResidualsAndElevationList.length && i < topElevationSatsResiduals.length;
+        i++) {
       topElevationSatsResiduals[i] = satelliteResidualsAndElevationList[i].residual;
       numOfUsefulSatsToComputeBias++;
     }
@@ -171,8 +164,8 @@ public class ResidualCorrectionCalculator {
         numOfUsefulSatsToComputeBias--;
       }
       meanResidual = GpsMathOperations.meanOfVector(topElevationSatsResiduals);
-      deltaResidualFromMean
-          = GpsMathOperations.subtractByScalar(topElevationSatsResiduals, meanResidual);
+      deltaResidualFromMean =
+          GpsMathOperations.subtractByScalar(topElevationSatsResiduals, meanResidual);
       maxDeltaIndex = GpsMathOperations.maxIndexOfVector(deltaResidualFromMean);
     } while (deltaResidualFromMean[maxDeltaIndex] > BEST_USER_CLOCK_BIAS_RESIDUAL_THRESHOLD_METERS
         && numOfUsefulSatsToComputeBias > 2);
@@ -191,12 +184,10 @@ public class ResidualCorrectionCalculator {
     /** Satellite ID */
     final int svID;
 
-    SatelliteElevationAndResiduals(
-        double elevationDegree, double residual, int svID) {
+    SatelliteElevationAndResiduals(double elevationDegree, double residual, int svID) {
       this.residual = residual;
       this.svID = svID;
       this.elevationDegree = elevationDegree;
     }
   }
-
 }

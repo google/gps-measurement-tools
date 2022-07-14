@@ -20,9 +20,9 @@ import com.google.location.lbs.gnss.gps.pseudorange.Ecef2LlaConverter.GeodeticLl
 import com.google.location.lbs.gnss.gps.pseudorange.EcefToTopocentricConverter.TopocentricAEDValues;
 
 /**
- * Calculates the Ionospheric correction of the pseudorange given the {@code userPosition},
- * {@code satellitePosition}, {@code gpsTimeSeconds} and the ionospheric parameters sent by the
- * satellite {@code alpha} and {@code beta}
+ * Calculates the Ionospheric correction of the pseudorange given the {@code userPosition}, {@code
+ * satellitePosition}, {@code gpsTimeSeconds} and the ionospheric parameters sent by the satellite
+ * {@code alpha} and {@code beta}
  *
  * <p>Source: http://www.navipedia.net/index.php/Klobuchar_Ionospheric_Model and
  * http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4104345 and
@@ -60,12 +60,14 @@ public class IonosphericModel {
       double[] beta,
       double frequencyHz) {
 
-    TopocentricAEDValues elevationAndAzimuthRadians = EcefToTopocentricConverter
-        .calculateElAzDistBetween2Points(userPositionECEFMeters, satellitePositionECEFMeters);
+    TopocentricAEDValues elevationAndAzimuthRadians =
+        EcefToTopocentricConverter.calculateElAzDistBetween2Points(
+            userPositionECEFMeters, satellitePositionECEFMeters);
     double elevationSemiCircle = elevationAndAzimuthRadians.elevationRadians / Math.PI;
     double azimuthSemiCircle = elevationAndAzimuthRadians.azimuthRadians / Math.PI;
-    GeodeticLlaValues latLngAlt = Ecef2LlaConverter.convertECEFToLLACloseForm(
-        userPositionECEFMeters[0], userPositionECEFMeters[1], userPositionECEFMeters[2]);
+    GeodeticLlaValues latLngAlt =
+        Ecef2LlaConverter.convertECEFToLLACloseForm(
+            userPositionECEFMeters[0], userPositionECEFMeters[1], userPositionECEFMeters[2]);
     double latitudeUSemiCircle = latLngAlt.latitudeRadians / Math.PI;
     double longitudeUSemiCircle = latLngAlt.longitudeRadians / Math.PI;
 
@@ -83,12 +85,18 @@ public class IonosphericModel {
     }
 
     // geodetic longitude of the Ionospheric Pierce Point (IPP) (semi-circles)
-    double longitudeISemiCircle = longitudeUSemiCircle + earthCentredAngleSemiCircle
-        * Math.sin(azimuthSemiCircle * Math.PI) / Math.cos(latitudeISemiCircle * Math.PI);
+    double longitudeISemiCircle =
+        longitudeUSemiCircle
+            + earthCentredAngleSemiCircle
+                * Math.sin(azimuthSemiCircle * Math.PI)
+                / Math.cos(latitudeISemiCircle * Math.PI);
 
     // geomagnetic latitude of the Ionospheric Pierce Point (IPP) (semi-circles)
-    double geomLatIPPSemiCircle = latitudeISemiCircle + GEOMETRIC_LATITUDE_CONSTANT
-        * Math.cos(longitudeISemiCircle * Math.PI - NORTH_GEOMAGNETIC_POLE_LONGITUDE_RADIANS);
+    double geomLatIPPSemiCircle =
+        latitudeISemiCircle
+            + GEOMETRIC_LATITUDE_CONSTANT
+                * Math.cos(
+                    longitudeISemiCircle * Math.PI - NORTH_GEOMAGNETIC_POLE_LONGITUDE_RADIANS);
 
     // local time (sec) at the Ionospheric Pierce Point (IPP)
     double localTimeSeconds = SECONDS_PER_DAY / 2.0 * longitudeISemiCircle + gpsTOWSeconds;
@@ -98,17 +106,24 @@ public class IonosphericModel {
     }
 
     // amplitude of the ionospheric delay (seconds)
-    double amplitudeOfDelaySeconds = alpha[IONO_0_IDX] + alpha[IONO_1_IDX] * geomLatIPPSemiCircle
-        + alpha[IONO_2_IDX] * geomLatIPPSemiCircle * geomLatIPPSemiCircle + alpha[IONO_3_IDX]
-        * geomLatIPPSemiCircle * geomLatIPPSemiCircle * geomLatIPPSemiCircle;
+    double amplitudeOfDelaySeconds =
+        alpha[IONO_0_IDX]
+            + alpha[IONO_1_IDX] * geomLatIPPSemiCircle
+            + alpha[IONO_2_IDX] * geomLatIPPSemiCircle * geomLatIPPSemiCircle
+            + alpha[IONO_3_IDX]
+                * geomLatIPPSemiCircle
+                * geomLatIPPSemiCircle
+                * geomLatIPPSemiCircle;
     if (amplitudeOfDelaySeconds < 0) {
       amplitudeOfDelaySeconds = 0;
     }
 
     // period of ionospheric delay
-    double periodOfDelaySeconds = beta[IONO_0_IDX] + beta[IONO_1_IDX] * geomLatIPPSemiCircle
-        + beta[IONO_2_IDX] * geomLatIPPSemiCircle * geomLatIPPSemiCircle + beta[IONO_3_IDX]
-        * geomLatIPPSemiCircle * geomLatIPPSemiCircle * geomLatIPPSemiCircle;
+    double periodOfDelaySeconds =
+        beta[IONO_0_IDX]
+            + beta[IONO_1_IDX] * geomLatIPPSemiCircle
+            + beta[IONO_2_IDX] * geomLatIPPSemiCircle * geomLatIPPSemiCircle
+            + beta[IONO_3_IDX] * geomLatIPPSemiCircle * geomLatIPPSemiCircle * geomLatIPPSemiCircle;
     if (periodOfDelaySeconds < PERIOD_OF_DELAY_THRESHOLD_SECONDS) {
       periodOfDelaySeconds = PERIOD_OF_DELAY_THRESHOLD_SECONDS;
     }
@@ -126,9 +141,13 @@ public class IonosphericModel {
     if (Math.abs(phaseOfDelayRadians) >= Math.PI / 2.0) {
       ionoDelaySeconds = DC_TERM * slantFactor;
     } else {
-      ionoDelaySeconds = (DC_TERM
-          + (1 - Math.pow(phaseOfDelayRadians, 2) / 2.0 + Math.pow(phaseOfDelayRadians, 4) / 24.0)
-          * amplitudeOfDelaySeconds) * slantFactor;
+      ionoDelaySeconds =
+          (DC_TERM
+                  + (1
+                          - Math.pow(phaseOfDelayRadians, 2) / 2.0
+                          + Math.pow(phaseOfDelayRadians, 4) / 24.0)
+                      * amplitudeOfDelaySeconds)
+              * slantFactor;
     }
 
     // apply factor for frequency bands other than L1

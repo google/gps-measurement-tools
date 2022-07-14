@@ -32,23 +32,27 @@ class GpsMeasurement {
   public final double accumulatedDeltaRangeMeters;
 
   /** Accumulated delta range state */
-  public final boolean validAccumulatedDeltaRangeMeters; 
+  public final boolean validAccumulatedDeltaRangeMeters;
 
   /** Pseudorange rate measurement (meters per second) */
-  public final double pseudorangeRateMps;  
+  public final double pseudorangeRateMps;
 
   /** Signal to noise ratio (dB) */
-  public final double signalToNoiseRatioDb;  
+  public final double signalToNoiseRatioDb;
 
   /** Accumulated Delta Range Uncertainty (meters) */
   public final double accumulatedDeltaRangeUncertaintyMeters;
 
   /** Pseudorange rate uncertainty (meter per seconds) */
   public final double pseudorangeRateUncertaintyMps;
-  
-  public GpsMeasurement(long arrivalTimeSinceGpsWeekNs, double accumulatedDeltaRangeMeters,
-      boolean validAccumulatedDeltaRangeMeters, double pseudorangeRateMps,
-      double signalToNoiseRatioDb, double accumulatedDeltaRangeUncertaintyMeters,
+
+  public GpsMeasurement(
+      long arrivalTimeSinceGpsWeekNs,
+      double accumulatedDeltaRangeMeters,
+      boolean validAccumulatedDeltaRangeMeters,
+      double pseudorangeRateMps,
+      double signalToNoiseRatioDb,
+      double accumulatedDeltaRangeUncertaintyMeters,
       double pseudorangeRateUncertaintyMps) {
     this.arrivalTimeSinceGpsWeekNs = arrivalTimeSinceGpsWeekNs;
     this.accumulatedDeltaRangeMeters = accumulatedDeltaRangeMeters;
@@ -57,12 +61,16 @@ class GpsMeasurement {
     this.signalToNoiseRatioDb = signalToNoiseRatioDb;
     this.accumulatedDeltaRangeUncertaintyMeters = accumulatedDeltaRangeUncertaintyMeters;
     this.pseudorangeRateUncertaintyMps = pseudorangeRateUncertaintyMps;
-  }  
+  }
 
   protected GpsMeasurement(GpsMeasurement another) {
-    this(another.arrivalTimeSinceGpsWeekNs, another.accumulatedDeltaRangeMeters,
-        another.validAccumulatedDeltaRangeMeters, another.pseudorangeRateMps,
-        another.signalToNoiseRatioDb, another.accumulatedDeltaRangeUncertaintyMeters,
+    this(
+        another.arrivalTimeSinceGpsWeekNs,
+        another.accumulatedDeltaRangeMeters,
+        another.validAccumulatedDeltaRangeMeters,
+        another.pseudorangeRateMps,
+        another.signalToNoiseRatioDb,
+        another.accumulatedDeltaRangeUncertaintyMeters,
         another.pseudorangeRateUncertaintyMps);
-  } 
+  }
 }

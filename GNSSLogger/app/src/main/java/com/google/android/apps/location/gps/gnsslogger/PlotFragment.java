@@ -34,10 +34,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
 import androidx.collection.ArrayMap;
 import androidx.fragment.app.Fragment;
-
 import com.google.location.lbs.gnss.gps.pseudorange.GpsNavigationMessageStore;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -65,7 +63,7 @@ public class PlotFragment extends Fragment {
   /** The position of the CN0 over time plot tab */
   private static final int CN0_TAB = 0;
 
-  /** The position of the prearrange residual plot tab*/
+  /** The position of the prearrange residual plot tab */
   private static final int PR_RESIDUAL_TAB = 1;
 
   /** The number of Gnss constellations */
@@ -89,8 +87,9 @@ public class PlotFragment extends Fragment {
   /** The average of the average of strongest satellite signal strength over history */
   private double mAverageCn0 = 0;
 
-  /** Total number of {@link GnssMeasurementsEvent} has been received*/
+  /** Total number of {@link GnssMeasurementsEvent} has been received */
   private int mMeasurementCount = 0;
+
   private double mInitialTimeSeconds = -1;
   private TextView mAnalysisView;
   private double mLastTimeReceivedSeconds = 0;
@@ -105,43 +104,44 @@ public class PlotFragment extends Fragment {
       LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View plotView = inflater.inflate(R.layout.fragment_plot, container, false /* attachToRoot */);
 
-    mDataSetManager
-        = new DataSetManager(NUMBER_OF_TABS, NUMBER_OF_CONSTELLATIONS, getContext(), mColorMap);
+    mDataSetManager =
+        new DataSetManager(NUMBER_OF_TABS, NUMBER_OF_CONSTELLATIONS, getContext(), mColorMap);
 
     // Set UI elements handlers
     final Spinner spinner = plotView.findViewById(R.id.constellation_spinner);
     final Spinner tabSpinner = plotView.findViewById(R.id.tab_spinner);
 
-    OnItemSelectedListener spinnerOnSelectedListener = new OnItemSelectedListener() {
+    OnItemSelectedListener spinnerOnSelectedListener =
+        new OnItemSelectedListener() {
 
-      @Override
-      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        mCurrentTab = tabSpinner.getSelectedItemPosition();
-        XYMultipleSeriesRenderer renderer
-            = mDataSetManager.getRenderer(mCurrentTab, spinner.getSelectedItemPosition());
-        XYMultipleSeriesDataset dataSet
-            = mDataSetManager.getDataSet(mCurrentTab, spinner.getSelectedItemPosition());
-        if (mLastTimeReceivedSeconds > TIME_INTERVAL_SECONDS) {
-          renderer.setXAxisMax(mLastTimeReceivedSeconds);
-          renderer.setXAxisMin(mLastTimeReceivedSeconds - TIME_INTERVAL_SECONDS);
-        }
-        mCurrentRenderer = renderer;
-        mLayout.removeAllViews();
-        mChartView = ChartFactory.getLineChartView(getContext(), dataSet, renderer);
-        mLayout.addView(mChartView);
-      }
+          @Override
+          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            mCurrentTab = tabSpinner.getSelectedItemPosition();
+            XYMultipleSeriesRenderer renderer =
+                mDataSetManager.getRenderer(mCurrentTab, spinner.getSelectedItemPosition());
+            XYMultipleSeriesDataset dataSet =
+                mDataSetManager.getDataSet(mCurrentTab, spinner.getSelectedItemPosition());
+            if (mLastTimeReceivedSeconds > TIME_INTERVAL_SECONDS) {
+              renderer.setXAxisMax(mLastTimeReceivedSeconds);
+              renderer.setXAxisMin(mLastTimeReceivedSeconds - TIME_INTERVAL_SECONDS);
+            }
+            mCurrentRenderer = renderer;
+            mLayout.removeAllViews();
+            mChartView = ChartFactory.getLineChartView(getContext(), dataSet, renderer);
+            mLayout.addView(mChartView);
+          }
 
-      @Override
-      public void onNothingSelected(AdapterView<?> parent) {}
-    };
+          @Override
+          public void onNothingSelected(AdapterView<?> parent) {}
+        };
 
     spinner.setOnItemSelectedListener(spinnerOnSelectedListener);
     tabSpinner.setOnItemSelectedListener(spinnerOnSelectedListener);
 
     // Set up the Graph View
     mCurrentRenderer = mDataSetManager.getRenderer(mCurrentTab, DATA_SET_INDEX_ALL);
-    XYMultipleSeriesDataset currentDataSet
-        = mDataSetManager.getDataSet(mCurrentTab, DATA_SET_INDEX_ALL);
+    XYMultipleSeriesDataset currentDataSet =
+        mDataSetManager.getDataSet(mCurrentTab, DATA_SET_INDEX_ALL);
     mChartView = ChartFactory.getLineChartView(getContext(), currentDataSet, mCurrentRenderer);
     mAnalysisView = plotView.findViewById(R.id.analysis);
     mAnalysisView.setTextColor(Color.BLACK);
@@ -150,12 +150,9 @@ public class PlotFragment extends Fragment {
     return plotView;
   }
 
-  /**
-   *  Updates the CN0 versus Time plot data from a {@link GnssMeasurement}
-   */
+  /** Updates the CN0 versus Time plot data from a {@link GnssMeasurement} */
   protected void updateCnoTab(GnssMeasurementsEvent event) {
-    long timeInSeconds =
-        TimeUnit.NANOSECONDS.toSeconds(event.getClock().getTimeNanos());
+    long timeInSeconds = TimeUnit.NANOSECONDS.toSeconds(event.getClock().getTimeNanos());
     if (mInitialTimeSeconds < 0) {
       mInitialTimeSeconds = timeInSeconds;
     }
@@ -181,10 +178,10 @@ public class PlotFragment extends Fragment {
                   + measurements.get(3).getCn0DbHz())
               / NUMBER_OF_STRONGEST_SATELLITES;
     }
-    builder.append(getString(R.string.history_average_hint,
-        sDataFormat.format(mAverageCn0) + "\n"));
-    builder.append(getString(R.string.current_average_hint,
-        sDataFormat.format(currentAverage) + "\n"));
+    builder.append(
+        getString(R.string.history_average_hint, sDataFormat.format(mAverageCn0) + "\n"));
+    builder.append(
+        getString(R.string.current_average_hint, sDataFormat.format(currentAverage) + "\n"));
     for (int i = 0; i < NUMBER_OF_STRONGEST_SATELLITES && i < measurements.size(); i++) {
       int start = builder.length();
       builder.append(
@@ -212,11 +209,7 @@ public class PlotFragment extends Fragment {
       int svID = measurement.getSvid();
       if (constellationType != GnssStatus.CONSTELLATION_UNKNOWN) {
         mDataSetManager.addValue(
-            CN0_TAB,
-            constellationType,
-            svID,
-            mLastTimeReceivedSeconds,
-            measurement.getCn0DbHz());
+            CN0_TAB, constellationType, svID, mLastTimeReceivedSeconds, measurement.getCn0DbHz());
       }
     }
 
@@ -232,12 +225,12 @@ public class PlotFragment extends Fragment {
   }
 
   /**
-   * Updates the pseudorange residual plot from residual results calculated by
-   * {@link RealTimePositionVelocityCalculator}
+   * Updates the pseudorange residual plot from residual results calculated by {@link
+   * RealTimePositionVelocityCalculator}
    *
    * @param residuals An array of MAX_NUMBER_OF_SATELLITES elements where indexes of satellites was
-   *        not seen are fixed with {@code Double.NaN} and indexes of satellites what were seen
-   *        are filled with pseudorange residual in meters
+   *     not seen are fixed with {@code Double.NaN} and indexes of satellites what were seen are
+   *     filled with pseudorange residual in meters
    * @param timeInSeconds the time at which measurements are received
    */
   protected void updatePseudorangeResidualTab(double[] residuals, double timeInSeconds) {
@@ -284,6 +277,7 @@ public class PlotFragment extends Fragment {
       "#008856", "#E68FAC", "#0067A5", "#F99379", "#604E97", "#F6A600", "#B3446C", "#DCD300",
       "#882D17", "#8DB600", "#654522", "#E25822", "#2B3D26"
     };
+
     private final Random mRandom = new Random();
 
     private int getColor(int svId, int constellationType) {
@@ -303,28 +297,30 @@ public class PlotFragment extends Fragment {
     }
   }
 
-  private static int getUniqueSatelliteIdentifier(int constellationType, int svID){
+  private static int getUniqueSatelliteIdentifier(int constellationType, int svID) {
     return constellationType * 1000 + svID;
   }
 
   /**
-   * An utility class stores and maintains all the data sets and corresponding renders.
-   * We use 0 as the {@code dataSetIndex} of all constellations and 1 - 6 as the
-   * {@code dataSetIndex} of each satellite constellations
+   * An utility class stores and maintains all the data sets and corresponding renders. We use 0 as
+   * the {@code dataSetIndex} of all constellations and 1 - 6 as the {@code dataSetIndex} of each
+   * satellite constellations
    */
   private static class DataSetManager {
     /** The Y min and max of each plot */
     private static final int[][] RENDER_HEIGHTS = {{5, 45}, {-60, 60}};
     /**
-     *  <ul>
-     *    <li>A list of constellation prefix</li>
-     *    <li>G : GPS, US Constellation</li>
-     *    <li>S : Satellite-based Augmentation System</li>
-     *    <li>R : GLONASS, Russia Constellation</li>
-     *    <li>J : QZSS, Japan Constellation</li>
-     *    <li>C : BEIDOU China Constellation</li>
-     *    <li>E : GALILEO EU Constellation</li>
-     *  </ul>
+     *
+     *
+     * <ul>
+     *   <li>A list of constellation prefix
+     *   <li>G : GPS, US Constellation
+     *   <li>S : Satellite-based Augmentation System
+     *   <li>R : GLONASS, Russia Constellation
+     *   <li>J : QZSS, Japan Constellation
+     *   <li>C : BEIDOU China Constellation
+     *   <li>E : GALILEO EU Constellation
+     * </ul>
      */
     private static final String[] CONSTELLATION_PREFIX = {"G", "S", "R", "J", "C", "E"};
 
@@ -335,8 +331,8 @@ public class PlotFragment extends Fragment {
     private final Context mContext;
     private final ColorMap mColorMap;
 
-    public DataSetManager(int numberOfTabs, int numberOfConstellations,
-        Context context, ColorMap colorMap) {
+    public DataSetManager(
+        int numberOfTabs, int numberOfConstellations, Context context, ColorMap colorMap) {
       mDataSetList = new ArrayList[numberOfTabs];
       mRendererList = new ArrayList[numberOfTabs];
       mSatelliteIndex = new ArrayList[numberOfTabs];
@@ -385,8 +381,8 @@ public class PlotFragment extends Fragment {
      * Adds a value into the both the data set containing all constellations and individual data set
      * of the constellation of the satellite
      */
-    private void addValue(int tab, int constellationType, int svID,
-        double timeInSeconds, double value) {
+    private void addValue(
+        int tab, int constellationType, int svID, double timeInSeconds, double value) {
       XYMultipleSeriesDataset dataSetAll = getDataSet(tab, DATA_SET_INDEX_ALL);
       XYMultipleSeriesRenderer rendererAll = getRenderer(tab, DATA_SET_INDEX_ALL);
       value = Double.parseDouble(sDataFormat.format(value));
@@ -433,16 +429,12 @@ public class PlotFragment extends Fragment {
       }
     }
 
-    /**
-     * Returns a boolean indicating whether the input satellite has been seen.
-     */
+    /** Returns a boolean indicating whether the input satellite has been seen. */
     private boolean hasSeen(int constellationType, int svID, int tab) {
       return mSatelliteIndex[tab].get(constellationType).containsKey(svID);
     }
 
-    /**
-     * Set up a {@link XYMultipleSeriesRenderer} with the specs customized per plot tab.
-     */
+    /** Set up a {@link XYMultipleSeriesRenderer} with the specs customized per plot tab. */
     private void setUpRenderer(XYMultipleSeriesRenderer renderer, int tabNumber) {
       renderer.setXAxisMin(0);
       renderer.setXAxisMax(60);
@@ -461,8 +453,8 @@ public class PlotFragment extends Fragment {
       renderer.setPanEnabled(false, true);
       renderer.setClickEnabled(false);
       renderer.setMarginsColor(Color.WHITE);
-      renderer.setChartTitle(mContext.getResources()
-          .getStringArray(R.array.plot_titles)[tabNumber]);
+      renderer.setChartTitle(
+          mContext.getResources().getStringArray(R.array.plot_titles)[tabNumber]);
       renderer.setChartTitleTextSize(50);
     }
   }

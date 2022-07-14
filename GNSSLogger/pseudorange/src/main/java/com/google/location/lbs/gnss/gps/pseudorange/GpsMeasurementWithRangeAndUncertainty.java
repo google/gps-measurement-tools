@@ -19,8 +19,8 @@ package com.google.location.lbs.gnss.gps.pseudorange;
 /**
  * A container for the received GPS measurements for a single satellite.
  *
- * <p>The container extends {@link GpsMeasurement} to additionally include
- * {@link #pseudorangeMeters} and {@link #pseudorangeUncertaintyMeters}.
+ * <p>The container extends {@link GpsMeasurement} to additionally include {@link
+ * #pseudorangeMeters} and {@link #pseudorangeUncertaintyMeters}.
  */
 class GpsMeasurementWithRangeAndUncertainty extends GpsMeasurement {
 
@@ -29,12 +29,11 @@ class GpsMeasurementWithRangeAndUncertainty extends GpsMeasurement {
 
   /** Pseudorange uncertainty (meters) */
   public final double pseudorangeUncertaintyMeters;
-  
-  public GpsMeasurementWithRangeAndUncertainty(GpsMeasurement another, double pseudorangeMeters,
-      double pseudorangeUncertaintyMeters) {
+
+  public GpsMeasurementWithRangeAndUncertainty(
+      GpsMeasurement another, double pseudorangeMeters, double pseudorangeUncertaintyMeters) {
     super(another);
     this.pseudorangeMeters = pseudorangeMeters;
     this.pseudorangeUncertaintyMeters = pseudorangeUncertaintyMeters;
-  } 
-
+  }
 }

@@ -29,8 +29,8 @@ public class Lla2EcefConverter {
   private static final double EARTH_SEMI_MAJOR_AXIS_METERS = 6378137.0;
 
   /**
-   * Converts LLA (latitude,longitude, and altitude) coordinates to  ECEF
-   * (Earth-Centered Earth-Fixed) Cartesian coordinates
+   * Converts LLA (latitude,longitude, and altitude) coordinates to ECEF (Earth-Centered
+   * Earth-Fixed) Cartesian coordinates
    *
    * <p>Inputs is GeodeticLlaValues class {@link GeodeticLlaValues} containing geodetic latitude
    * (radians), geodetic longitude (radians), height above WGS84 ellipsoid (m)

@@ -40,14 +40,10 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
-
 import java.lang.reflect.InvocationTargetException;
 
-/**
- * The UI fragment showing a set of configurable settings for the client to request GPS data.
- */
+/** The UI fragment showing a set of configurable settings for the client to request GPS data. */
 public class SettingsFragment extends Fragment {
 
   public static final String TAG = ":SettingsFragment";
@@ -56,7 +52,7 @@ public class SettingsFragment extends Fragment {
   private static int AUTO_GROUND_TRUTH_MODE = 3;
 
   /** Key in the {@link SharedPreferences} indicating whether auto-scroll has been enabled */
-  protected static String PREFERENCE_KEY_AUTO_SCROLL =  "autoScroll";
+  protected static String PREFERENCE_KEY_AUTO_SCROLL = "autoScroll";
 
   private MeasurementProvider mGpsContainer;
   private HelpDialog helpDialog;
@@ -84,7 +80,9 @@ public class SettingsFragment extends Fragment {
     mModeSwitcher = modeSwitcher;
   }
 
-  /** Set up {@code RealTimePositionVelocityCalculator} for receiving changes in ground truth mode*/
+  /**
+   * Set up {@code RealTimePositionVelocityCalculator} for receiving changes in ground truth mode
+   */
   public void setRealTimePositionVelocityCalculator(
       RealTimePositionVelocityCalculator realTimePositionVelocityCalculator) {
     mRealTimePositionVelocityCalculator = realTimePositionVelocityCalculator;
@@ -98,7 +96,7 @@ public class SettingsFragment extends Fragment {
     final Switch registerLocation = (Switch) view.findViewById(R.id.register_location);
     final TextView registerLocationLabel =
         (TextView) view.findViewById(R.id.register_location_label);
-    //set the switch to OFF
+    // set the switch to OFF
     registerLocation.setChecked(false);
     registerLocationLabel.setText("Switch is OFF");
     registerLocation.setOnCheckedChangeListener(
@@ -122,7 +120,7 @@ public class SettingsFragment extends Fragment {
     final Switch registerMeasurements = (Switch) view.findViewById(R.id.register_measurements);
     final TextView registerMeasurementsLabel =
         (TextView) view.findViewById(R.id.register_measurement_label);
-    //set the switch to OFF
+    // set the switch to OFF
     registerMeasurements.setChecked(false);
     registerMeasurementsLabel.setText("Switch is OFF");
     registerMeasurements.setOnCheckedChangeListener(
@@ -144,7 +142,7 @@ public class SettingsFragment extends Fragment {
     final Switch registerNavigation = (Switch) view.findViewById(R.id.register_navigation);
     final TextView registerNavigationLabel =
         (TextView) view.findViewById(R.id.register_navigation_label);
-    //set the switch to OFF
+    // set the switch to OFF
     registerNavigation.setChecked(false);
     registerNavigationLabel.setText("Switch is OFF");
     registerNavigation.setOnCheckedChangeListener(
@@ -166,7 +164,7 @@ public class SettingsFragment extends Fragment {
     final Switch registerGpsStatus = (Switch) view.findViewById(R.id.register_status);
     final TextView registerGpsStatusLabel =
         (TextView) view.findViewById(R.id.register_status_label);
-    //set the switch to OFF
+    // set the switch to OFF
     registerGpsStatus.setChecked(false);
     registerGpsStatusLabel.setText("Switch is OFF");
     registerGpsStatus.setOnCheckedChangeListener(
@@ -187,7 +185,7 @@ public class SettingsFragment extends Fragment {
 
     final Switch registerNmea = (Switch) view.findViewById(R.id.register_nmea);
     final TextView registerNmeaLabel = (TextView) view.findViewById(R.id.register_nmea_label);
-    //set the switch to OFF
+    // set the switch to OFF
     registerNmea.setChecked(false);
     registerNmeaLabel.setText("Switch is OFF");
     registerNmea.setOnCheckedChangeListener(
@@ -237,10 +235,10 @@ public class SettingsFragment extends Fragment {
             if (isChecked) {
 
               LayoutInflater inflater =
-                  (LayoutInflater)
-                      getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-              View layout = inflater.inflate(R.layout.pop_up_window,
-                      (ViewGroup) getActivity().findViewById(R.id.pop));
+                  (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+              View layout =
+                  inflater.inflate(
+                      R.layout.pop_up_window, (ViewGroup) getActivity().findViewById(R.id.pop));
 
               // Find UI elements in pop up window
               final Spinner residualSpinner = layout.findViewById(R.id.residual_spinner);
@@ -271,18 +269,15 @@ public class SettingsFragment extends Fragment {
                     @Override
                     public void onDismiss() {
                       if (mResidualSetting
-                          == RealTimePositionVelocityCalculator.RESIDUAL_MODE_DISABLED){
+                          == RealTimePositionVelocityCalculator.RESIDUAL_MODE_DISABLED) {
                         residualPlotSwitch.setChecked(false);
                       } else {
-                        mRealTimePositionVelocityCalculator
-                            .setResidualPlotMode
-                                (mResidualSetting,
-                                    mFixedReferenceLocation);
+                        mRealTimePositionVelocityCalculator.setResidualPlotMode(
+                            mResidualSetting, mFixedReferenceLocation);
                         turnOnResidual.setText("Switch is ON");
                       }
                     }
-                  }
-              );
+                  });
 
               buttonCancel.setOnClickListener(
                   new OnClickListener() {
@@ -290,8 +285,7 @@ public class SettingsFragment extends Fragment {
                     public void onClick(View v) {
                       popupWindow.dismiss();
                     }
-                  }
-              );
+                  });
 
               // Button handler to dismiss the window and store settings
               buttonOk.setOnClickListener(
@@ -316,25 +310,22 @@ public class SettingsFragment extends Fragment {
 
                       // If user select auto, we need to put moving first and turn on AR updates
                       if (mResidualSetting == AUTO_GROUND_TRUTH_MODE) {
-                        mResidualSetting
-                            = RealTimePositionVelocityCalculator.RESIDUAL_MODE_MOVING;
+                        mResidualSetting = RealTimePositionVelocityCalculator.RESIDUAL_MODE_MOVING;
                         mModeSwitcher.setAutoSwitchGroundTruthModeEnabled(true);
                       }
                       popupWindow.dismiss();
                     }
-                  }
-              );
+                  });
 
             } else {
-                  mModeSwitcher.setAutoSwitchGroundTruthModeEnabled(false);
-                  mRealTimePositionVelocityCalculator.setResidualPlotMode(
-                      RealTimePositionVelocityCalculator.RESIDUAL_MODE_DISABLED,
-                      mFixedReferenceLocation);
-                  turnOnResidual.setText("Switch is OFF");
+              mModeSwitcher.setAutoSwitchGroundTruthModeEnabled(false);
+              mRealTimePositionVelocityCalculator.setResidualPlotMode(
+                  RealTimePositionVelocityCalculator.RESIDUAL_MODE_DISABLED,
+                  mFixedReferenceLocation);
+              turnOnResidual.setText("Switch is OFF");
             }
           }
-        }
-    );
+        });
     Button help = (Button) view.findViewById(R.id.help);
     helpDialog = new HelpDialog(getContext());
     helpDialog.setTitle("Help contents");
