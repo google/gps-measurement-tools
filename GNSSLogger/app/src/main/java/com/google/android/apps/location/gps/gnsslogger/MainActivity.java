@@ -150,7 +150,8 @@ public class MainActivity extends AppCompatActivity
 
   protected PendingIntent createActivityDetectionPendingIntent() {
     Intent intent = new Intent(this, DetectedActivitiesIntentReceiver.class);
-    /* Missing mutability is only broken on S+, but immutable is available on M+, so it is good for M+ to set this property. */
+    // Missing mutability is only broken on S+, but immutable is available on M+,
+    // so it is good for M+ to set this property.
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
       return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE);
     } else {
