@@ -141,7 +141,11 @@ public class MainActivity extends AppCompatActivity
   protected PendingIntent createActivityDetectionPendingIntent() {
     Intent intent = new Intent(this, DetectedActivitiesIntentReceiver.class);
     return PendingIntentCompat.getBroadcast(
-        this, 0, intent, true, PendingIntent.FLAG_UPDATE_CURRENT);
+        /* context= */ this,
+        /* requestCode= */ 0,
+        intent,
+        /* isMutable= */ true,
+        PendingIntent.FLAG_UPDATE_CURRENT);
   }
 
   private synchronized void buildGoogleApiClient() {
