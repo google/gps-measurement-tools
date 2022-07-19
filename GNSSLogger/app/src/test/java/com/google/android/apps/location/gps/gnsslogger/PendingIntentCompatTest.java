@@ -1,6 +1,5 @@
 package com.google.android.apps.location.gps.gnsslogger;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
 import static com.google.common.truth.Truth.assertThat;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -30,7 +29,12 @@ public class PendingIntentCompatTest {
     ShadowPendingIntent shadow =
         shadowOf(
             PendingIntentCompat.getActivities(
-                context, requestCode, intents, false, PendingIntent.FLAG_UPDATE_CURRENT, options));
+                context,
+                requestCode,
+                intents,
+                /* isMutable= */ false,
+                PendingIntent.FLAG_UPDATE_CURRENT,
+                options));
     assertThat(shadow.isActivityIntent()).isTrue();
     assertThat(shadow.getFlags()).isEqualTo(PendingIntent.FLAG_UPDATE_CURRENT);
     assertThat(shadow.getRequestCode()).isEqualTo(requestCode);
@@ -45,7 +49,12 @@ public class PendingIntentCompatTest {
     ShadowPendingIntent shadow =
         shadowOf(
             PendingIntentCompat.getActivities(
-                context, requestCode, intents, false, PendingIntent.FLAG_UPDATE_CURRENT, options));
+                context,
+                requestCode,
+                intents,
+                /* isMutable= */ false,
+                PendingIntent.FLAG_UPDATE_CURRENT,
+                options));
     assertThat(shadow.isActivityIntent()).isTrue();
     assertThat(shadow.getFlags())
         .isEqualTo(PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
@@ -61,9 +70,55 @@ public class PendingIntentCompatTest {
     ShadowPendingIntent shadow =
         shadowOf(
             PendingIntentCompat.getActivities(
-                context, requestCode, intents, false, PendingIntent.FLAG_UPDATE_CURRENT, options));
+                context,
+                requestCode,
+                intents,
+                /* isMutable= */ false,
+                PendingIntent.FLAG_UPDATE_CURRENT,
+                options));
     assertThat(shadow.isActivityIntent()).isTrue();
     assertThat(shadow.getFlags()).isEqualTo(PendingIntent.FLAG_UPDATE_CURRENT);
+    assertThat(shadow.getRequestCode()).isEqualTo(requestCode);
+  }
+
+  @Config(sdk = Build.VERSION_CODES.R)
+  @Test
+  public void getActivities_MutableOnPreS() {
+    int requestCode = 7465;
+    Intent[] intents = new Intent[] {};
+    Bundle options = new Bundle();
+    ShadowPendingIntent shadow =
+        shadowOf(
+            PendingIntentCompat.getActivities(
+                context,
+                requestCode,
+                intents,
+                /* isMutable= */ true,
+                PendingIntent.FLAG_UPDATE_CURRENT,
+                options));
+    assertThat(shadow.isActivityIntent()).isTrue();
+    assertThat(shadow.getFlags()).isEqualTo(PendingIntent.FLAG_UPDATE_CURRENT);
+    assertThat(shadow.getRequestCode()).isEqualTo(requestCode);
+  }
+
+  @Config(sdk = Build.VERSION_CODES.R)
+  @Test
+  public void getActivities_MutableOnSPlus() {
+    int requestCode = 7465;
+    Intent[] intents = new Intent[] {};
+    Bundle options = new Bundle();
+    ShadowPendingIntent shadow =
+        shadowOf(
+            PendingIntentCompat.getActivities(
+                context,
+                requestCode,
+                intents,
+                /* isMutable= */ true,
+                PendingIntent.FLAG_UPDATE_CURRENT,
+                options));
+    assertThat(shadow.isActivityIntent()).isTrue();
+    assertThat(shadow.getFlags())
+        .isEqualTo(PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     assertThat(shadow.getRequestCode()).isEqualTo(requestCode);
   }
 
@@ -76,9 +131,15 @@ public class PendingIntentCompatTest {
     ShadowPendingIntent shadow =
         shadowOf(
             PendingIntentCompat.getActivities(
-                context, requestCode, intents, false, PendingIntent.FLAG_UPDATE_CURRENT, options));
+                context,
+                requestCode,
+                intents,
+                /* isMutable= */ false,
+                PendingIntent.FLAG_UPDATE_CURRENT,
+                options));
     assertThat(shadow.isActivityIntent()).isTrue();
-    assertThat(shadow.getFlags()).isEqualTo(PendingIntent.FLAG_UPDATE_CURRENT | FLAG_IMMUTABLE);
+    assertThat(shadow.getFlags())
+        .isEqualTo(PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     assertThat(shadow.getRequestCode()).isEqualTo(requestCode);
   }
 
@@ -91,7 +152,12 @@ public class PendingIntentCompatTest {
     ShadowPendingIntent shadow =
         shadowOf(
             PendingIntentCompat.getActivities(
-                context, requestCode, intents, false, PendingIntent.FLAG_UPDATE_CURRENT, options));
+                context,
+                requestCode,
+                intents,
+                /* isMutable= */ false,
+                PendingIntent.FLAG_UPDATE_CURRENT,
+                options));
     assertThat(shadow.isService()).isTrue();
   }
 
@@ -104,7 +170,12 @@ public class PendingIntentCompatTest {
     ShadowPendingIntent shadow =
         shadowOf(
             PendingIntentCompat.getActivities(
-                context, requestCode, intents, false, PendingIntent.FLAG_UPDATE_CURRENT, options));
+                context,
+                requestCode,
+                intents,
+                /* isMutable= */ false,
+                PendingIntent.FLAG_UPDATE_CURRENT,
+                options));
     assertThat(shadow.isBroadcast()).isTrue();
   }
 }
