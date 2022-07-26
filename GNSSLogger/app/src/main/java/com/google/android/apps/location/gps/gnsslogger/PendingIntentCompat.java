@@ -19,83 +19,14 @@ package com.google.android.apps.location.gps.gnsslogger;
 import static android.app.PendingIntent.FLAG_IMMUTABLE;
 import static android.app.PendingIntent.FLAG_MUTABLE;
 
-import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 /** Helper for accessing features in {@link PendingIntent}. */
 public class PendingIntentCompat {
-
-  /**
-   * Retrieves a {@link PendingIntent} with mandatory mutability flag set on supported platform
-   * versions. The caller provides the flag as combination of all the other values except mutability
-   * flag. This method combines mutability flag when necessary. See {@link
-   * PendingIntent#getActivities(Context, int, Intent[], int, Bundle)}.
-   */
-  public static @NonNull PendingIntent getActivities(
-      @NonNull Context context,
-      int requestCode,
-      @NonNull @SuppressLint("ArrayReturn") Intent[] intents,
-      boolean isMutable,
-      int flags,
-      @NonNull Bundle options) {
-    return PendingIntent.getActivities(
-        context, requestCode, intents, addMutabilityFlags(isMutable, flags), options);
-  }
-
-  /**
-   * Retrieves a {@link PendingIntent} with mandatory mutability flag set on supported platform
-   * versions. The caller provides the flag as combination of all the other values except mutability
-   * flag. This method combines mutability flag when necessary. See {@link
-   * PendingIntent#getActivities(Context, int, Intent[], int, Bundle)}.
-   */
-  public static @NonNull PendingIntent getActivities(
-      @NonNull Context context,
-      int requestCode,
-      @NonNull @SuppressLint("ArrayReturn") Intent[] intents,
-      boolean isMutable,
-      int flags) {
-    return PendingIntent.getActivities(
-        context, requestCode, intents, addMutabilityFlags(isMutable, flags));
-  }
-
-  /**
-   * Retrieves a {@link PendingIntent} with mandatory mutability flag set on supported platform
-   * versions. The caller provides the flag as combination of all the other values except mutability
-   * flag. This method combines mutability flag when necessary. See {@link
-   * PendingIntent#getActivity(Context, int, Intent, int)}.
-   */
-  public static @NonNull PendingIntent getActivity(
-      @NonNull Context context,
-      int requestCode,
-      @NonNull Intent intent,
-      boolean isMutable,
-      int flags) {
-    return PendingIntent.getActivity(
-        context, requestCode, intent, addMutabilityFlags(isMutable, flags));
-  }
-
-  /**
-   * Retrieves a {@link PendingIntent} with mandatory mutability flag set on supported platform
-   * versions. The caller provides the flag as combination of all the other values except mutability
-   * flag. This method combines mutability flag when necessary. See {@link
-   * PendingIntent#getActivity(Context, int, Intent, int, Bundle)}.
-   */
-  public static @NonNull PendingIntent getActivity(
-      @NonNull Context context,
-      int requestCode,
-      @NonNull Intent intent,
-      boolean isMutable,
-      int flags,
-      @NonNull Bundle options) {
-    return PendingIntent.getActivity(
-        context, requestCode, intent, addMutabilityFlags(isMutable, flags), options);
-  }
 
   /**
    * Retrieves a {@link PendingIntent} with mandatory mutability flag set on supported platform
@@ -110,39 +41,6 @@ public class PendingIntentCompat {
       boolean isMutable,
       int flags) {
     return PendingIntent.getBroadcast(
-        context, requestCode, intent, addMutabilityFlags(isMutable, flags));
-  }
-
-  /**
-   * Retrieves a {@link PendingIntent} with mandatory mutability flag set on supported platform
-   * versions. The caller provides the flag as combination of all the other values except mutability
-   * flag. This method combines mutability flag when necessary. See {@link
-   * PendingIntent#getForegroundService(Context, int, Intent, int)} .
-   */
-  @RequiresApi(api = Build.VERSION_CODES.O)
-  public static @NonNull PendingIntent getForegroundService(
-      @NonNull Context context,
-      int requestCode,
-      @NonNull Intent intent,
-      boolean isMutable,
-      int flags) {
-    return PendingIntent.getForegroundService(
-        context, requestCode, intent, addMutabilityFlags(isMutable, flags));
-  }
-
-  /**
-   * Retrieves a {@link PendingIntent} with mandatory mutability flag set on supported platform
-   * versions. The caller provides the flag as combination of all the other values except mutability
-   * flag. This method combines mutability flag when necessary. See {@link
-   * PendingIntent#getService(Context, int, Intent, int)}.
-   */
-  public static @NonNull PendingIntent getService(
-      @NonNull Context context,
-      int requestCode,
-      @NonNull Intent intent,
-      boolean isMutable,
-      int flags) {
-    return PendingIntent.getService(
         context, requestCode, intent, addMutabilityFlags(isMutable, flags));
   }
 
