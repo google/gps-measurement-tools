@@ -38,4 +38,7 @@ dependencies {
     implementation files('libs/suplClient.jar')
     implementation files('libs/protobuf-nano.jar')
     implementation("com.google.guava:guava:31.1-android")
+    
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
 }

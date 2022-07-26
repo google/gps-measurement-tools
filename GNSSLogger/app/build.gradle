@@ -43,3 +43,12 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     implementation "androidx.core:core:1.8.0"
 }
+
+
+secrets {
+    // To add your Maps API key to this project:
+    // 1. Open the file local.properties found under the root project
+    // 2. Add this line, where YOUR_API_KEY is your API key:
+    //        MAPS_API_KEY=YOUR_API_KEY
+    defaultPropertiesFileName 'local.defaults.properties'
+}

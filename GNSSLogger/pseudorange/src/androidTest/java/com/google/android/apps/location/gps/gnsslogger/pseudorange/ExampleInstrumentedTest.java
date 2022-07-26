@@ -20,7 +20,7 @@ public class ExampleInstrumentedTest {
     // Context of the app under test.
     Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
     assertEquals(
-        "com.google.android.apps.location.gps.gnsslogger.pseudorange.test",
+        "com.google.location.lbs.gnss.gps.pseudorange.test",
         appContext.getPackageName());
   }
 }
