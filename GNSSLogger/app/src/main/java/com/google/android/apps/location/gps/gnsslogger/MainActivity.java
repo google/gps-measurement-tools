@@ -41,6 +41,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.ViewPager;
+import com.google.android.apps.location.gps.gnsslogger.util.PendingIntentCompat;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -144,8 +145,8 @@ public class MainActivity extends AppCompatActivity
         /* context= */ this,
         /* requestCode= */ 0,
         intent,
-        /* isMutable= */ true,
-        PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent.FLAG_UPDATE_CURRENT,
+        /* isMutable= */ true);
   }
 
   private synchronized void buildGoogleApiClient() {
