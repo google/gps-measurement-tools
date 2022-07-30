@@ -1,0 +1,51 @@
+name: Android CI Build
+
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch and only if files in the GNSSLogger directory is modified
+  push:
+    branches: [ master ]
+    paths:
+      - 'GNSSLogger/**'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'GNSSLogger/**'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./GNSSLogger
+    
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  test:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        api-level: [24, 29]
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+      
+    - name: Gradle Wrapper Validation
+      uses: gradle/wrapper-validation-action@v1.0.4
+
+    - name: Setup Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: 11
+        distribution: 'adopt'
+        
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
+
+    - name: run tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ matrix.api-level }}
+        arch: x86_64
+        profile: Nexus 6
+        working-directory: ./GNSSLogger
+        script: ./gradlew test check connectedCheck -x lint --stacktrace
