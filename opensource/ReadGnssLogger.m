@@ -166,6 +166,9 @@ end
 csvfileID = fopen(csvFileName,'w');
 while ischar(line)
    line = fgetl(txtfileID);
+   if line == -1
+     break
+   endif
    if isempty(strfind(line,'Raw,'))
        continue %skip to next line
    end
@@ -215,7 +218,7 @@ for i=1:numFields
     
     %longs
     if any(i == find(strcmp(header,'CodeType')))
-        formatSpec = append(formatSpec, ' %s');
+        formatSpec = strcat(formatSpec, ' %s');
     elseif i == find(strcmp(header,'TimeNanos')) || ...
             i == find(strcmp(header,'FullBiasNanos')) || ...
             i == find(strcmp(header,'ReceivedSvTimeNanos')) || ...
