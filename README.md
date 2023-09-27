@@ -116,6 +116,8 @@ with [Android Studio](https://developer.android.com/studio/index.html).
 
 The APK is also provided for convenience.
 
+For information about the data logged to files see [LOGGING_FORMAT.md](LOGGING_FORMAT.md].
+
 # Pseudorange Library
 
 Position Solution Engine from Gnss Raw measurements as a dependency android library of
