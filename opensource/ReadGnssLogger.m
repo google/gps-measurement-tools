@@ -88,8 +88,8 @@ function csvFileName = MakeCsv(dirName,fileName)
 %from grep and sed
 
 %make extended file name
-if dirName(end)~='/'
-    dirName = [dirName,'/']; %add /
+if dirName(end)~=filesep
+    dirName = [dirName,filesep]; %add filesep at the end
 end
 csvFileName = [dirName,'raw.csv'];
 if strcmp(fileName(end-3:end),'.csv')
@@ -168,7 +168,7 @@ while ischar(line)
    line = fgetl(txtfileID);
    if line == -1
      break
-   endif
+   end
    if isempty(strfind(line,'Raw,'))
        continue %skip to next line
    end
