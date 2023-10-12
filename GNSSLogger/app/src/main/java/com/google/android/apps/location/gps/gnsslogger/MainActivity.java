@@ -16,7 +16,6 @@
 
 package com.google.android.apps.location.gps.gnsslogger;
 
-
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -54,6 +53,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.Locale;
 
 /** The activity for the application. */
+@SuppressWarnings("nullness")
 public class MainActivity extends AppCompatActivity
     implements OnConnectionFailedListener, ConnectionCallbacks, GroundTruthModeSwitcher {
   private static final int LOCATION_REQUEST_ID = 1;
@@ -142,8 +142,8 @@ public class MainActivity extends AppCompatActivity
   protected PendingIntent createActivityDetectionPendingIntent() {
     Intent intent = new Intent(this, DetectedActivitiesIntentReceiver.class);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      return PendingIntent.getBroadcast(this, 0, intent,
-              PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+      return PendingIntent.getBroadcast(
+          this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
     } else {
       return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }

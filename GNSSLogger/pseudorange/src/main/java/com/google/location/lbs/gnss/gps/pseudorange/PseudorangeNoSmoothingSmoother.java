@@ -25,6 +25,7 @@ import java.util.List;
  * <p>A new list of {@link GpsMeasurementWithRangeAndUncertainty} instances is filled with a copy of
  * the input list.
  */
+@SuppressWarnings("nullness")
 class PseudorangeNoSmoothingSmoother implements PseudorangeSmoother {
 
   @Override

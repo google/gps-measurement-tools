@@ -23,6 +23,7 @@ package com.google.location.lbs.gnss.gps.pseudorange;
  * <p>Source: reference from Mathworks: https://microem.ru/files/2012/08/GPS.G1-X-00006.pdf
  * http://www.mathworks.com/help/aeroblks/ecefpositiontolla.html
  */
+@SuppressWarnings("nullness")
 public class Ecef2LlaConverter {
   // WGS84 Ellipsoid Parameters
   private static final double EARTH_SEMI_MAJOR_AXIS_METERS = 6378137.0;

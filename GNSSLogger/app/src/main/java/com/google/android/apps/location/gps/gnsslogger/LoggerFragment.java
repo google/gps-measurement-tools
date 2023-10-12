@@ -46,6 +46,7 @@ import com.google.android.apps.location.gps.gnsslogger.TimerService.TimerBinder;
 import com.google.android.apps.location.gps.gnsslogger.TimerService.TimerListener;
 
 /** The UI fragment that hosts a logging view. */
+@SuppressWarnings("nullness")
 public class LoggerFragment extends Fragment implements TimerListener {
   private static final String TIMER_FRAGMENT_TAG = "timer";
 
