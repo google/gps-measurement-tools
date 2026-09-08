@@ -31,6 +31,7 @@ import java.util.Comparator;
  * truth position by applying an adjustment using the distance of WLS to satellites vs ground-truth
  * to satellites.
  */
+@SuppressWarnings("nullness")
 public class ResidualCorrectionCalculator {
 
   /**

@@ -26,6 +26,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * <p>Source: reference from Navipedia:
  * http://www.navipedia.net/index.php/Transformations_between_ECEF_and_ENU_coordinates
  */
+@SuppressWarnings("nullness")
 public class Ecef2EnuConverter {
 
   /**

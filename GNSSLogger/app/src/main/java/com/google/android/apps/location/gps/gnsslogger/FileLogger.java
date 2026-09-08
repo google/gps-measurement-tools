@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 
 /** A GNSS logger to store information to a file. */
+@SuppressWarnings("nullness")
 public class FileLogger implements MeasurementListener {
 
   private static final String TAG = "FileLogger";

@@ -46,6 +46,7 @@ package com.google.location.lbs.gnss.gps.pseudorange;
  * <p>Hydrostatic and non-hydrostatic mapping functions are obtained from:
  * http://gauss2.gge.unb.ca/papers.pdf/iongpsgnss2003.guo.pdf
  */
+@SuppressWarnings("nullness")
 public class TroposphericModelEgnos {
   // parameters of the EGNOS models
   private static final int INDEX_15_DEGREES = 0;

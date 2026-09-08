@@ -34,6 +34,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 /** The UI fragment that hosts a logging view. */
+@SuppressWarnings("nullness")
 public class ResultFragment extends Fragment {
 
   private TextView mLogView;

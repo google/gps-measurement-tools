@@ -24,6 +24,7 @@ import android.location.cts.nano.Ephemeris.GpsEphemerisProto;
  *
  * <p>Source: Page 88 - 90 of the ICD-GPS 200
  */
+@SuppressWarnings("nullness")
 public class SatelliteClockCorrectionCalculator {
   private static final double SPEED_OF_LIGHT_MPS = 299792458.0;
   private static final double EARTH_UNIVERSAL_GRAVITATIONAL_CONSTANT_M3_SM2 = 3.986005e14;
