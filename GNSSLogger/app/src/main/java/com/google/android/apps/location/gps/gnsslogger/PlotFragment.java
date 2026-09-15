@@ -55,6 +55,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import org.achartengine.util.MathHelper;
 
 /** A plot fragment to show real-time Gnss analysis migrated from GnssAnalysis Tool. */
+@SuppressWarnings("nullness")
 public class PlotFragment extends Fragment {
 
   /** Total number of kinds of plot tabs */

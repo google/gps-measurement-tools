@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
  * where the raw Gps measurements are parsed as a {@link BufferedReader} with the option to apply
  * doppler smoothing, carrier phase smoothing or no smoothing.
  */
+@SuppressWarnings("nullness")
 public class PseudorangePositionVelocityFromRealTimeEvents {
 
   private static final String TAG = "PseudorangePositionVelocityFromRealTimeEvents";

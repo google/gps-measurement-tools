@@ -24,6 +24,7 @@ package com.google.location.lbs.gnss.gps.pseudorange;
  * to noise ratio dB, accumulated delta range uncertainty in meters, pseudorange rate uncertainty in
  * meters per second.
  */
+@SuppressWarnings("nullness")
 class GpsMeasurement {
   /** Time since GPS week start (Nano seconds) */
   public final long arrivalTimeSinceGpsWeekNs;

@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /** The Help Dialog of the Application */
+@SuppressWarnings("nullness")
 public class HelpDialog extends Dialog {
 
   private static Context mContext = null;

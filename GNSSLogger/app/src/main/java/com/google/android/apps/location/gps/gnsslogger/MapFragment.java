@@ -41,6 +41,7 @@ import java.util.Set;
  * A map fragment to show the computed least square position and the device computed position on
  * Google map.
  */
+@SuppressWarnings("nullness")
 public class MapFragment extends Fragment implements OnMapReadyCallback {
   private static final float ZOOM_LEVEL = 15;
   private static final String TAG = "MapFragment";

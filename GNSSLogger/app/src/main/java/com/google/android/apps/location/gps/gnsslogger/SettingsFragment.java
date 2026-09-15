@@ -44,6 +44,7 @@ import androidx.fragment.app.Fragment;
 import java.lang.reflect.InvocationTargetException;
 
 /** The UI fragment showing a set of configurable settings for the client to request GPS data. */
+@SuppressWarnings("nullness")
 public class SettingsFragment extends Fragment {
 
   public static final String TAG = ":SettingsFragment";

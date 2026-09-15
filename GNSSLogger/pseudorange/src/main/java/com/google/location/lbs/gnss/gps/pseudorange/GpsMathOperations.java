@@ -22,6 +22,7 @@ import java.util.Arrays;
  * Helper class containing the basic vector and matrix operations used for calculating the position
  * solution from pseudoranges
  */
+@SuppressWarnings("nullness")
 public class GpsMathOperations {
 
   /** Calculates the norm of a vector */

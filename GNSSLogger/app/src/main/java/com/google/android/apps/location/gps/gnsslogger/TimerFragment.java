@@ -29,6 +29,7 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.apps.location.gps.gnsslogger.TimerService.TimerListener;
 
 /** A {@link Dialog} allowing "Hours", "Minutes", and "Seconds" to be selected for a timer */
+@SuppressWarnings("nullness")
 public class TimerFragment extends DialogFragment {
   private TimerListener mListener;
 

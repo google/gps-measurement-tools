@@ -30,6 +30,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import java.util.concurrent.TimeUnit;
 
 /** A {@link Service} to be bound to that exposes a timer. */
+@SuppressWarnings("nullness")
 public class TimerService extends Service {
   static final String TIMER_ACTION =
       String.format("%s.TIMER_UPDATE", TimerService.class.getPackage().getName());

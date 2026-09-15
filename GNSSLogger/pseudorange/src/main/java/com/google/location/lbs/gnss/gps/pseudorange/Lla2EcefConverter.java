@@ -24,6 +24,7 @@ import com.google.location.lbs.gnss.gps.pseudorange.Ecef2LlaConverter.GeodeticLl
  *
  * <p>Source: https://www.mathworks.com/help/aeroblks/llatoecefposition.html
  */
+@SuppressWarnings("nullness")
 public class Lla2EcefConverter {
   private static final double ECCENTRICITY = 8.1819190842622e-2;
   private static final double EARTH_SEMI_MAJOR_AXIS_METERS = 6378137.0;

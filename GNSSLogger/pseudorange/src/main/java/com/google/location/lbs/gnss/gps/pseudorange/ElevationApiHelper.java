@@ -36,6 +36,7 @@ import java.net.URL;
  * <p>A key can be conveniently acquired from:
  * https://developers.google.com/maps/documentation/elevation/get-api-key
  */
+@SuppressWarnings("nullness")
 public class ElevationApiHelper {
 
   private static final String ELEVATION_XML_STRING = "<elevation>";

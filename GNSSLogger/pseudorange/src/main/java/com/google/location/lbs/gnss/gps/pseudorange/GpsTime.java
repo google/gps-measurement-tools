@@ -25,6 +25,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 /** A simple class to represent time unit used by GPS. */
+@SuppressWarnings("nullness")
 public class GpsTime implements Comparable<GpsTime> {
   public static final int MILLIS_IN_SECOND = 1000;
   public static final int SECONDS_IN_MINUTE = 60;
