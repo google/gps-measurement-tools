@@ -188,21 +188,20 @@ drift.
 
 Define physical constant: LIGHT_SPEED = 299792458.0
 
-Note on GNSS State Flags: For validation, use the standard
-android.location.GnssMeasurement state flag integer constants (STATE_CODE_LOCK,
-STATE_TOW_KNOWN, STATE_TOW_DECODED, etc.) directly from your pre-trained
-knowledge.
+Note on GNSS State Flags: For validation, use the exact
+android.location.GnssMeasurement state flag bitmask constants: STATE_CODE_LOCK =
+1 (1 << 0), STATE_TOW_DECODED = 8 (1 << 3), STATE_GLO_TOD_DECODED = 128 (1 <<
+7), STATE_GAL_E1BC_CODE_LOCK = 1024 (1 << 10), STATE_TOW_KNOWN = 16384 (1 <<
+14), STATE_GLO_TOD_KNOWN = 32768 (1 << 15).
 
-Step 1: Clock Bias Management (Vectorized) When computing tRxNanos and
-WeekNumberNanos, you must anchor FullBiasNanos to hardware clock
-discontinuities.
-
-Do not use a for-loop. Use Pandas vectorized operations:
-
-Group the DataFrame by HardwareClockDiscontinuityCount. Set a new column
-StableFullBiasNanos to the first valid (finite) value of FullBiasNanos for each
-group (e.g., using .transform('first') or .ffill()). This ensures that the clock
-bias represents the actual receiver hardware clock behavior.
+Step 1: Clock Bias Management (Vectorized, no for-loops) Group by
+`HardwareClockDiscontinuityCount` and anchor `StableFullBiasNanos` to the first
+epoch's `FullBiasNanos` in each group using `.transform('first')`:
+`df['StableFullBiasNanos'] =
+df.groupby('HardwareClockDiscontinuityCount')['FullBiasNanos'].transform('first')`
+**CRITICAL**: NEVER use `.ffill()` on `FullBiasNanos`! Because `FullBiasNanos`
+is non-NaN on every row and drifts across epochs, `.ffill()` is a no-op and
+causes a >200m pseudorange error.
 
 Step 2: Calculate Base Rx Time Compute the week number in nanoseconds:
 WeekNumberNanos = np.floor(-df['StableFullBiasNanos'] * 1e-9 / 604800) *
@@ -253,7 +252,7 @@ GLONASS: Must have either STATE_GLO_TOD_KNOWN or STATE_GLO_TOD_DECODED. For all
 others: Must have either STATE_TOW_DECODED or STATE_TOW_KNOWN.
 
 Create a field ‘pr_uncertainty_m’ = ReceivedSvTimeUncertaintyNanos *
-LIGHT_SPEED * 1e-9, this will be used later for WLS position calculations.
+LIGHT_SPEED * 1e-9.
 
 All code blocks must be self-contained, well-commented, and start with a `#
 @title` comment so cells can be easily minimized.
@@ -294,11 +293,11 @@ def compute_wls_positions(df_raw, known_xyz_m=None, known_isrbs_m=None, max_iter
         trx = (EARTH_ROTATION_RPS * (sv_xyz_at_ttx[:,0]*obs_ecef_m[1] - sv_xyz_at_ttx[:,1]*obs_ecef_m[0]) / LIGHTSPEED)
         return l2_norm + trx, los
     ```
-*   **Solver**: Loop until $dx < \text{convergence_threshold}$. Formulate design
-    matrix $H$ and weight matrix $W$ (weights $w_{pr} = 1.0 /
-    \text{uncertainty_m}$ from `ReceivedSvTimeUncertaintyNanos` in meters).
-    Compute unweighted `PostFitResidualMeters = corrected_pr_m - pr_hat` from
-    final states and return in `df_wls_meas`.
+*   **Solver**: Loop until `dx < convergence_threshold`. Formulate design matrix
+    `H` and weight matrix `W = np.diag(w_pr**2)` (weights `w_pr = 1.0 /
+    pr_uncertainty_m` from `ReceivedSvTimeUncertaintyNanos` in meters). Compute
+    unweighted `PostFitResidualMeters = corrected_pr_m - pr_hat` from final
+    states and return in `df_wls_meas`.
 
 WLS Convergence Rule: Do not save a WLS epoch to df_wls if updates fail to
 converge within max_iter or if singular matrix math (poor GDOP) causes a
