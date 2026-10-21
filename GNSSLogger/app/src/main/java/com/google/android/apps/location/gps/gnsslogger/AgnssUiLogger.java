@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  * A class representing a UI logger for the application. Its responsibility is show information in
  * the UI.
  */
+@SuppressWarnings("nullness")
 public class AgnssUiLogger implements MeasurementListener {
 
   private static final int USED_COLOR = Color.rgb(0x4a, 0x5f, 0x70);

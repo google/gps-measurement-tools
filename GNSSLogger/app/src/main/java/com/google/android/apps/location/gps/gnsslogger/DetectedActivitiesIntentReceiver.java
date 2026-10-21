@@ -26,6 +26,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
  * com.google.android.gms.location.ActivityRecognition
  * #ActivityRecognitionApi#requestActivityUpdates()} to {@link MainActivity} to be further analyzed.
  */
+@SuppressWarnings("nullness")
 public class DetectedActivitiesIntentReceiver extends BroadcastReceiver {
   public static String AR_RESULT_BROADCAST_ACTION =
       "com.google.android.apps.location.gps.gnsslogger.AR_RESULT_BROADCAST_ACTION";

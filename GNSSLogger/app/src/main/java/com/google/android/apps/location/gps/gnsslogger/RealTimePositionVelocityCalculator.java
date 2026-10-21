@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
  * computed position and velocity solutions are passed to the {@link ResultFragment} to be
  * visualized.
  */
+@SuppressWarnings("nullness")
 public class RealTimePositionVelocityCalculator implements MeasurementListener {
   /** Residual analysis where user disabled residual plots */
   public static final int RESIDUAL_MODE_DISABLED = -1;

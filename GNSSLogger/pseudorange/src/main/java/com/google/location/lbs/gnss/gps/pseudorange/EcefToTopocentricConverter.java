@@ -20,6 +20,7 @@ import com.google.location.lbs.gnss.gps.pseudorange.Ecef2LlaConverter.GeodeticLl
 import org.apache.commons.math3.linear.RealMatrix;
 
 /** Transformations from ECEF coordinates to Topocentric coordinates */
+@SuppressWarnings("nullness")
 public class EcefToTopocentricConverter {
   private static final double MIN_DISTANCE_MAGNITUDE_METERS = 1.0e-22;
   private static final int EAST_IDX = 0;

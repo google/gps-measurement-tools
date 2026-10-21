@@ -20,6 +20,7 @@ import android.location.cts.nano.Ephemeris.GpsEphemerisProto;
 import com.google.location.lbs.gnss.gps.pseudorange.SatelliteClockCorrectionCalculator.SatClockCorrection;
 
 /** Class to calculate GPS satellite positions from the ephemeris data */
+@SuppressWarnings("nullness")
 public class SatellitePositionCalculator {
   private static final double SPEED_OF_LIGHT_MPS = 299792458.0;
   private static final double UNIVERSAL_GRAVITATIONAL_PARAMETER_M3_SM2 = 3.986005e14;

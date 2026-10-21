@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
  * <p>References: http://www.gps.gov/technical/icwg/IS-GPS-200D.pdf and
  * http://www.gps.gov/technical/ps/1995-SPS-signal-specification.pdf
  */
+@SuppressWarnings("nullness")
 public class GpsNavigationMessageStore {
 
   private static final byte IONOSPHERIC_PARAMETERS_PAGE_18_SV_ID = 56;

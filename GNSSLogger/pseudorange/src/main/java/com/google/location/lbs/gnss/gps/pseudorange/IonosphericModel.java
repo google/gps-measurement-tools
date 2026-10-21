@@ -28,6 +28,7 @@ import com.google.location.lbs.gnss.gps.pseudorange.EcefToTopocentricConverter.T
  * http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4104345 and
  * http://www.ion.org/museum/files/ACF2A4.pdf
  */
+@SuppressWarnings("nullness")
 public class IonosphericModel {
   /** Center frequency of the L1 band in Hz. */
   public static final double L1_FREQ_HZ = 10.23 * 1e6 * 154;

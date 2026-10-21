@@ -38,6 +38,7 @@ import org.apache.commons.math3.linear.RealMatrix;
  * accumulated delta range (meters) measurements, receiver time of week, week number and the
  * navigation message.
  */
+@SuppressWarnings("nullness")
 class UserPositionVelocityWeightedLeastSquare {
   private static final double SPEED_OF_LIGHT_MPS = 299792458.0;
   private static final int SECONDS_IN_WEEK = 604800;

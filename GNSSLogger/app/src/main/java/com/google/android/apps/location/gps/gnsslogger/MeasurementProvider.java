@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  * A container for measurement-related API calls. It binds the measurement providers with the
  * various {@link MeasurementListener} implementations.
  */
+@SuppressWarnings("nullness")
 public class MeasurementProvider {
 
   public static final String TAG = "MeasurementProvider";
